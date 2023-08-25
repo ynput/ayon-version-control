@@ -3,8 +3,8 @@ import os
 
 VERSION_CONTROL_MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-from .. import OpenPypeModule
-from ..interfaces import ITrayService, IPluginPaths
+from openpype.modules import OpenPypeModule, ITrayService, IPluginPaths
+
 
 _typing = False
 if _typing:
