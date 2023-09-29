@@ -105,7 +105,7 @@ class VersionControlCommentWidget(QtWidgets.QWidget):
         Version Control api module
         """
         if self._vc_api is None:
-            import openpype.modules.version_control.api as api
+            import version_control.api as api
             self._vc_api = api
 
         return self._vc_api
