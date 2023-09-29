@@ -2,7 +2,7 @@ import six
 import os
 import requests
 
-from openpype.modules.version_control.backends import abstract
+from version_control.backends import abstract
 
 if six.PY2:
     import pathlib2 as pathlib

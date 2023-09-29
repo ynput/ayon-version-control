@@ -20,7 +20,7 @@ from aiohttp_json_rpc.exceptions import RpcError
 
 from openpype.lib import emit_event
 
-from openpype.modules.version_control.backends.perforce.rest_api import (
+from version_control.backends.perforce.rest_api import (
     PerforceModuleRestAPI
 )
 

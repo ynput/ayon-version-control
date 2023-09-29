@@ -1,7 +1,7 @@
 from aiohttp.web_response import Response
 from openpype.lib import Logger
 
-from openpype.modules.version_control.backends.perforce import rest_routes
+from version_control.backends.perforce import rest_routes
 
 
 class PerforceModuleRestAPI:

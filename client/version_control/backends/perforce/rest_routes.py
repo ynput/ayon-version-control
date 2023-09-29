@@ -11,7 +11,7 @@ from openpype.lib import Logger
 from openpype.settings import get_project_settings
 from openpype.modules.webserver.base_routes import RestApiEndpoint
 
-from openpype.modules.version_control.backends.perforce.backend import (
+from version_control.backends.perforce.backend import (
     VersionControlPerforce
 )
 
