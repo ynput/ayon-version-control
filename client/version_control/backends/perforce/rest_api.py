@@ -35,6 +35,13 @@ class PerforceModuleRestAPI:
             checkout.dispatch
         )
 
+        is_checkouted = rest_routes.IsCheckoutedEndpoint()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/is_checkouted",
+            is_checkouted.dispatch
+        )
+
         submit_change_list = rest_routes.SubmitChangelist()
         self.server_manager.add_route(
             "POST",

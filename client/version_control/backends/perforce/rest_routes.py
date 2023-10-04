@@ -73,6 +73,21 @@ class CheckoutEndpoint(PerforceRestApiEndpoint):
         )
 
 
+class IsCheckoutedEndpoint(PerforceRestApiEndpoint):
+    """Checks if file is checkouted by sameone."""
+    async def post(self, request) -> Response:
+        log.info("CheckoutEndpoint called")
+
+        content = await request.json()
+
+        result = VersionControlPerforce.is_checkedout(content["path"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
 class SubmitChangelist(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:

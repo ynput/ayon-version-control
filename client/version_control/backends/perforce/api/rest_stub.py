@@ -50,6 +50,11 @@ class PerforceRestStub(abstract.VersionControl):
                                                comment=comment)
         return response
 
+    @staticmethod
+    def is_checkouted(path):
+        response = PerforceRestStub._wrap_call("is_checkouted",
+                                               path=path)
+        return response
 
     @staticmethod
     def submit_change_list(comment):
