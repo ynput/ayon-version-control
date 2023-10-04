@@ -473,6 +473,7 @@ class P4ConnectionManager:
                 self._run_successfully = True
                 self._break_run_loop = True
                 return
+            print(str(error))
 
         return
 
