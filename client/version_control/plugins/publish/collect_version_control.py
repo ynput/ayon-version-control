@@ -33,7 +33,7 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
 
         filtering_criteria = {
             "hosts": host_name,
-            "families": family,
+            "product_types": family,
             "tasks": task_name
         }
         profile = filter_profiles(
@@ -48,13 +48,21 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         if profile:
             add_version_control = profile["add_version_control"]
 
-        result_str = "Not adding"
-        if add_version_control:
-            result_str = "Adding"
-            if version_control_family not in families:
-                families.append(version_control_family)
+        if not add_version_control:
+            return
 
-            instance.data["version_control_template_name"] = profile["template_name"]  # noqa
+        result_str = "Adding"
+        if version_control_family not in families:
+            families.append(version_control_family)
+
+        instance.data["version_control_template_name"] = profile["template_name"]  # noqa
+
+        project_settings = instance.context.data["project_settings"]
+        workspace_dir = (project_settings["version_control"]
+                                         ["local_setting"]
+                                         .get("workspace_dir"))
+
+        instance.data["version_control_roots"] = workspace_dir
 
         self.log.debug("{} 'version_control' family for instance with '{}'".format(  # noqa
             result_str, family

@@ -51,6 +51,13 @@ class PublishPluginsModel(BaseSettingsModel):
         description="Configure which products should be version controlled externally.")  # noqa
 
 
+class LocalSubmodel(BaseSettingsModel):
+    """Select your local and remote site"""
+    workspace_dir: str = Field("",
+                               title="My Workspace Directory",
+                               scope=["site"])
+
+
 class VersionControlSettings(BaseSettingsModel):
     """Version Control Project Settings."""
 
@@ -65,6 +72,13 @@ class VersionControlSettings(BaseSettingsModel):
     publish: PublishPluginsModel = Field(
         default_factory=PublishPluginsModel,
         title="Publish Plugins",
+    )
+
+    local_setting: LocalSubmodel = Field(
+        default_factory=LocalSubmodel,
+        title="Local setting",
+        scope=["site"],
+        description="This setting is only applicable for artist's site",
     )
 
 
