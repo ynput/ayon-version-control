@@ -56,3 +56,10 @@ class PerforceRestStub(abstract.VersionControl):
         response = PerforceRestStub._wrap_call("submit_change_list",
                                                comment=comment)
         return response
+
+
+    @staticmethod
+    def exists_on_server(path):
+        response = PerforceRestStub._wrap_call("exists_on_server",
+                                               path=path)
+        return response

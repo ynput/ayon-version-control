@@ -87,6 +87,20 @@ class SubmitChangelist(PerforceRestApiEndpoint):
         )
 
 
+class ExistsOnServer(PerforceRestApiEndpoint):
+    """Returns information about file on 'path'."""
+    async def post(self, request) -> Response:
+        log.info("exists_on_server called")
+        content = await request.json()
+
+        result = VersionControlPerforce.exists_on_server(content["path"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
 class GetServerVersionEndpoint(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def get(self) -> Response:

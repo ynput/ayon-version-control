@@ -41,3 +41,10 @@ class PerforceModuleRestAPI:
             self.prefix + "/submit_change_list",
             submit_change_list.dispatch
         )
+
+        exists_on_server = rest_routes.ExistsOnServer()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/exists_on_server",
+            exists_on_server.dispatch
+        )
