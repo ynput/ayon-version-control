@@ -6,7 +6,6 @@ Provides:
     instance     -> families ([])
 """
 import pyblish.api
-
 from openpype.lib import filter_profiles
 
 
@@ -43,7 +42,6 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         )
 
         add_version_control = False
-        families = instance.data.setdefault("families", [])
 
         if profile:
             add_version_control = profile["add_version_control"]
@@ -51,18 +49,24 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         if not add_version_control:
             return
 
+        families = instance.data.setdefault("families", [])
+        if not version_control_family in families:
+            instance.data["families"].append(version_control_family)
+
         result_str = "Adding"
-        if version_control_family not in families:
-            families.append(version_control_family)
+        version_settings = (instance.context.data["project_settings"]
+                                                 ["version_control"])
+        local_setting = version_settings["local_setting"]
+        username = local_setting["username"]
+        password = local_setting["password"]
+        workspace_dir = local_setting["workspace_dir"]
 
-        instance.data["version_control_template_name"] = profile["template_name"]  # noqa
-
-        project_settings = instance.context.data["project_settings"]
-        workspace_dir = (project_settings["version_control"]
-                                         ["local_setting"]
-                                         .get("workspace_dir"))
-
-        instance.data["version_control_roots"] = workspace_dir
+        instance.data["version_control"] = {}
+        instance.data["version_control"]["roots"] = {"work": workspace_dir}
+        instance.data["version_control"]["username"] = username
+        instance.data["version_control"]["roots"] = password
+        instance.data["version_control"]["template_name"] = \
+            profile["template_name"]
 
         self.log.debug("{} 'version_control' family for instance with '{}'".format(  # noqa
             result_str, family
