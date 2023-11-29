@@ -1,19 +1,16 @@
-import os
 import json
 import datetime
-import collections
-import subprocess
 from bson.objectid import ObjectId
 from aiohttp.web_response import Response
 
 
 from openpype.lib import Logger
-from openpype.settings import get_project_settings
 from openpype.modules.webserver.base_routes import RestApiEndpoint
 
 from version_control.backends.perforce.backend import (
     VersionControlPerforce
 )
+from version_control.backends.perforce import api
 
 
 log = Logger.get_logger("P4routes")
@@ -40,6 +37,31 @@ class PerforceRestApiEndpoint(RestApiEndpoint):
             indent=4,
             default=cls.json_dump_handler
         ).encode("utf-8")
+
+
+class LoginEndpoint(PerforceRestApiEndpoint):
+    """Returns list of workspaces."""
+    async def post(self, request) -> Response:
+        content = await request.json()
+        result = api.login(content["username"], content["password"],
+                           content["workspace"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
+class IsPathInAnyWorkspace(PerforceRestApiEndpoint):
+    """Returns list of workspaces."""
+    async def post(self, request) -> Response:
+        content = await request.json()
+        result = api._is_path_under_any_root(content["path"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
 
 
 class AddEndpoint(PerforceRestApiEndpoint):

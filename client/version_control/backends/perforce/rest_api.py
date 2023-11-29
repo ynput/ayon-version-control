@@ -21,6 +21,20 @@ class PerforceModuleRestAPI:
         return self._log
 
     def register(self):
+        login = rest_routes.LoginEndpoint()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/login",
+            login.dispatch
+        )
+
+        is_in_any_workspace = rest_routes.IsPathInAnyWorkspace()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/is_in_any_workspace",
+            is_in_any_workspace.dispatch
+        )
+
         add_file = rest_routes.AddEndpoint()
         self.server_manager.add_route(
             "POST",

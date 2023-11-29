@@ -6,6 +6,7 @@ An easier, more pythonic inteface for working with P4, built on P4Python.
 """
 from __future__ import annotations
 
+import os
 import collections.abc as col_abc
 import dataclasses
 import datetime
@@ -942,6 +943,19 @@ class P4ConnectionManager:
 
         return results
 
+    def login(self, username: str, password: str, workspace: str):
+        """Connects from values in Settings
+
+        Override P4CONFIG values.
+        """
+        conn_manager = _get_connection_manager()
+        conn_manager.p4.user = username
+        conn_manager.p4.password = password
+        conn_manager.p4.connect()
+        conn_manager.p4.run_login(password=password)
+        conn_manager.p4.client = workspace
+        conn_manager.__workspace_cache__ = self._connect_get_workspaces()
+
     # Connect Methods:
     def _connect_add(
         self,
@@ -1846,9 +1860,10 @@ _connection_manager = None
 
 
 def _get_connection_manager() -> P4ConnectionManager:
-    if threading.current_thread() is not threading.main_thread():
-        # Generate a new P4ConnectionManager per thread:
-        return P4ConnectionManager()
+    # this doesn't work with REST api where thread is not main
+    #if threading.current_thread() is not threading.main_thread():
+        # # Generate a new P4ConnectionManager per thread:
+        # return P4ConnectionManager()
 
     global _connection_manager
     if _connection_manager is None:
@@ -1862,6 +1877,7 @@ __all__ = (
     "P4ConnectionManager",
     "P4PathDateData",
     "exceptions",  # type: ignore
+    "login",  # type: ignore
     "add",  # type: ignore
     "checkout",  # type: ignore
     "create_change_list",  # type: ignore

@@ -34,6 +34,21 @@ class PerforceRestStub(abstract.VersionControl):
             raise RuntimeError(response.text)
         return response.json()
 
+    @staticmethod
+    def is_in_any_workspace(path):
+        response = PerforceRestStub._wrap_call("is_in_any_workspace",
+                                               path=path)
+        return response
+
+    @staticmethod
+    def login(username, password, workspace):
+        # type: (None | str, str, str) -> bool
+        response = PerforceRestStub._wrap_call("login",
+                                               username=username,
+                                               password=password,
+                                               workspace=workspace)
+        return response
+
 
     @staticmethod
     def add(path, comment=""):
