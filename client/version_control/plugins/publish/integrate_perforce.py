@@ -23,9 +23,9 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
 
     def process(self, instance):
         version_template_key = (
-            instance.data.get("version_control_template_name"))
+            instance.data.get("version_control", {})["template_name"])
         if not version_template_key:
-            raise RuntimeError("Instance data missing 'version_control_template_name'")   # noqa
+            raise RuntimeError("Instance data missing 'version_control[template_name]'")   # noqa
 
         anatomy = instance.context.data["anatomy"]
         template = anatomy.templates_obj.templates[version_template_key]["path"]  # noqa
@@ -34,7 +34,7 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
                                format(version_template_key))
 
         anatomy_data = copy.deepcopy(instance.data["anatomyData"])
-        anatomy_data["root"] = instance.data["version_control_roots"]
+        anatomy_data["root"] = instance.data["version_control"]["roots"]
         # anatomy_data["output"] = ''
         # anatomy_data["frame"] = ''
         # anatomy_data["udim"] = ''
@@ -52,10 +52,10 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
 
-            file_info = PerforceRestStub.exists_on_server(version_control_path)
+            is_on_server = PerforceRestStub.exists_on_server(version_control_path)
             actual_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             comment = os.path.basename(version_control_path) + actual_time
-            if file_info:
+            if is_on_server:
                 if PerforceRestStub.is_checkouted(version_control_path):
                     raise RuntimeError("{} is checkouted by someone already, "
                                        "cannot commit right now.".format(
@@ -66,7 +66,7 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
                                      format(version_control_path))
 
             shutil.copy(source_path, version_control_path)
-            if not file_info:
+            if not is_on_server:
                 if not PerforceRestStub.add(version_control_path,
                                             comment):
                     raise ValueError("File {} not added to changelist".

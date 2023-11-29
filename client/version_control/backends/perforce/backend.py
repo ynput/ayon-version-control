@@ -53,7 +53,7 @@ class VersionControlPerforce(abstract.VersionControl):
     @staticmethod
     def exists_on_server(path):
         # type: (pathlib.Path | str) -> bool
-        if api.get_stat(path, ["-m 1"]) is None:
+        if not api.get_stat(path, ["-m 1"]):
             return False
 
         return True
