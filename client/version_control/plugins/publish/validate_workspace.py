@@ -2,7 +2,6 @@ import pyblish.api
 from openpype.pipeline.publish import ValidateContentsOrder
 from openpype.pipeline.publish import (
     PublishXmlValidationError,
-    get_publish_template_name,
 )
 
 
@@ -16,10 +15,10 @@ class ValidateWorkspaceDir(pyblish.api.InstancePlugin):
 
     def process(self, instance):
 
-        if "version_control_roots" not in instance.data.keys():
+        if "version_control" not in instance.data.keys():
             return
 
-        workspace_dir = instance.data["version_control_roots"]
+        workspace_dir = instance.data["version_control"]["roots"]
 
         if not workspace_dir:
             project_name = instance.context.data.get("projectName")
