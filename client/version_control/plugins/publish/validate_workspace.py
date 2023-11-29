@@ -31,7 +31,7 @@ class ValidateWorkspaceDir(pyblish.api.InstancePlugin):
 
         workspace = os.path.basename(workspace_dir)
         username = instance.data["version_control"]["username"]
-        password = instance.data["version_control"]["roots"]
+        password = instance.data["version_control"]["password"]
 
         PerforceRestStub.login(username=username,
                                password=password,

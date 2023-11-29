@@ -64,7 +64,7 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         instance.data["version_control"] = {}
         instance.data["version_control"]["roots"] = {"work": workspace_dir}
         instance.data["version_control"]["username"] = username
-        instance.data["version_control"]["roots"] = password
+        instance.data["version_control"]["password"] = password
         instance.data["version_control"]["template_name"] = \
             profile["template_name"]
 
