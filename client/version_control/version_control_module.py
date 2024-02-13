@@ -4,6 +4,7 @@ import os
 VERSION_CONTROL_MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 from openpype.modules import OpenPypeModule, ITrayService, IPluginPaths
+from openpype.settings import get_project_settings
 
 
 _typing = False
@@ -47,6 +48,21 @@ class VersionControlModule(OpenPypeModule, ITrayService, IPluginPaths):
     def get_global_environments(self):
         # return {"ACTIVE_VERSION_CONTROL_SYSTEM": self.active_version_control_system}
         return {}
+
+    def get_connection_info(self, project_name, project_settings=None):
+        if not project_settings:
+            project_settings = get_project_settings(project_name)
+
+        version_settings = project_settings["version_control"]
+        local_setting = version_settings["local_setting"]
+        conn_info = {}
+        conn_info["host"] = version_settings["host"]
+        conn_info["port"] = version_settings["port"]
+        conn_info["username"] = local_setting["username"]
+        conn_info["password"] = local_setting["password"]
+        conn_info["workspace_dir"] = local_setting["workspace_dir"]
+
+        return conn_info
 
     def tray_exit(self):
         if self.enabled and \
