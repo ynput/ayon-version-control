@@ -80,6 +80,35 @@ class AddEndpoint(PerforceRestApiEndpoint):
         )
 
 
+class SyncLatestEndpoint(PerforceRestApiEndpoint):
+    """Returns list of dict with project info (id, name)."""
+    async def post(self, request) -> Response:
+        log.info("SyncLatestEndpoint called")
+        content = await request.json()
+
+        result = VersionControlPerforce.sync_latest_version(content["path"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
+class SyncVersionEndpoint(PerforceRestApiEndpoint):
+    """Returns list of dict with project info (id, name)."""
+    async def post(self, request) -> Response:
+        log.info("SyncVersionEndpoint called")
+        content = await request.json()
+
+        result = VersionControlPerforce.sync_to_version(content["path"],
+                                                        content["version"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
 class CheckoutEndpoint(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:

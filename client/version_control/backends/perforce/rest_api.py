@@ -42,6 +42,20 @@ class PerforceModuleRestAPI:
             add_file.dispatch
         )
 
+        sync_latest_version = rest_routes.SyncLatestEndpoint()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/sync_latest_version",
+            sync_latest_version.dispatch
+        )
+
+        sync_to_version = rest_routes.SyncVersionEndpoint()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/sync_to_version",
+            sync_to_version.dispatch
+        )
+
         checkout = rest_routes.CheckoutEndpoint()
         self.server_manager.add_route(
             "POST",

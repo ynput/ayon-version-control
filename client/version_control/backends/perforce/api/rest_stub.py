@@ -61,6 +61,19 @@ class PerforceRestStub(abstract.VersionControl):
         return response
 
     @staticmethod
+    def sync_latest_version(path):
+        response = PerforceRestStub._wrap_call("sync_latest_version",
+                                               path=path)
+        return response
+
+    @staticmethod
+    def sync_to_version(path, version):
+        response = PerforceRestStub._wrap_call("sync_to_version",
+                                               path=path,
+                                               version=version)
+        return response
+
+    @staticmethod
     def checkout(path, comment=""):
         response = PerforceRestStub._wrap_call("checkout",
                                                path=path,
