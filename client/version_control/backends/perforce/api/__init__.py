@@ -14,7 +14,7 @@ import enum
 import functools
 import inspect
 import pathlib
-import Qt.QtCore as QtCore  # type: ignore
+from qtpy import QtCore
 import socket
 import sys
 import threading
@@ -943,7 +943,8 @@ class P4ConnectionManager:
 
         return results
 
-    def login(self, username: str, password: str, workspace: str):
+    def login(self, host: str, port: int,
+              username: str, password: str, workspace: str):
         """Connects from values in Settings
 
         Override P4CONFIG values.
@@ -951,6 +952,7 @@ class P4ConnectionManager:
         conn_manager = _get_connection_manager()
         conn_manager.p4.user = username
         conn_manager.p4.password = password
+        conn_manager.p4.port = f"{host}:{port}"
         conn_manager.p4.connect()
         conn_manager.p4.run_login(password=password)
         conn_manager.p4.client = workspace
