@@ -75,6 +75,16 @@ class VersionControlSettings(BaseSettingsModel):
         title="Backend name"
     )
 
+    host_name: str = Field(
+        "perforce",
+        title="Host name"
+    )
+
+    port: int = Field(
+        1666,
+        title="Port"
+    )
+
     publish: PublishPluginsModel = Field(
         default_factory=PublishPluginsModel,
         title="Publish Plugins",

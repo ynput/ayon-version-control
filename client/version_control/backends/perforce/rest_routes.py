@@ -43,7 +43,8 @@ class LoginEndpoint(PerforceRestApiEndpoint):
     """Returns list of workspaces."""
     async def post(self, request) -> Response:
         content = await request.json()
-        result = api.login(content["username"], content["password"],
+        result = api.login(content["host"], content["port"],
+                           content["username"], content["password"],
                            content["workspace"])
         return Response(
             status=200,

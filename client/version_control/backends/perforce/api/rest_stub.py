@@ -41,9 +41,11 @@ class PerforceRestStub(abstract.VersionControl):
         return response
 
     @staticmethod
-    def login(username, password, workspace):
+    def login(host, port, username, password, workspace):
         # type: (None | str, str, str) -> bool
         response = PerforceRestStub._wrap_call("login",
+                                               host=host,
+                                               port=port,
                                                username=username,
                                                password=password,
                                                workspace=workspace)
