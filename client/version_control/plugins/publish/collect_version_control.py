@@ -1,6 +1,6 @@
 """
 Requires:
-    none
+    instance.context.data["version_control"] - connection info for VC
 
 Provides:
     instance     -> families ([])
@@ -10,15 +10,18 @@ from openpype.lib import filter_profiles
 
 
 class CollectVersionControl(pyblish.api.InstancePlugin):
-    """Adds flag to instance that it should be version controlled also externally.
-    """
+    """Mark instance to be submitted."""
 
-    label = "Collect Version Control"
-    order = pyblish.api.CollectorOrder + 0.4990
+    label = "Collect Version Control Submission Info"
+    order = pyblish.api.CollectorOrder + 0.4992
 
     profiles = None
 
     def process(self, instance):
+        conn_info = instance.context.data.get("version_control")
+        if not conn_info:
+            self.log.info("No Version control set and enabled")
+
         if not self.profiles:
             self.log.warning("No profiles present for adding "
                              "version_control family")
@@ -54,12 +57,9 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
             instance.data["families"].append(version_control_family)
 
         result_str = "Adding"
-        version_settings = (instance.context.data["project_settings"]
-                                                 ["version_control"])
-        local_setting = version_settings["local_setting"]
-        username = local_setting["username"]
-        password = local_setting["password"]
-        workspace_dir = local_setting["workspace_dir"]
+        username = conn_info["username"]
+        password = conn_info["password"]
+        workspace_dir = conn_info["workspace_dir"]
 
         instance.data["version_control"] = {}
         instance.data["version_control"]["roots"] = {"work": workspace_dir}

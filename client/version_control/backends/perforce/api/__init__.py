@@ -950,9 +950,10 @@ class P4ConnectionManager:
         Override P4CONFIG values.
         """
         conn_manager = _get_connection_manager()
-        conn_manager.p4.user = username
-        conn_manager.p4.password = password
-        conn_manager.p4.port = f"{host}:{port}"
+        if conn_manager.p4.user != username:
+            conn_manager.p4.user = username
+            conn_manager.p4.password = password
+            conn_manager.p4.port = f"{host}:{port}"
         conn_manager.p4.connect()
         conn_manager.p4.run_login(password=password)
         conn_manager.p4.client = workspace
