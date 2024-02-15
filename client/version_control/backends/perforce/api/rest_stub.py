@@ -87,6 +87,12 @@ class PerforceRestStub(abstract.VersionControl):
         return response
 
     @staticmethod
+    def get_last_change_list_number():
+        response = PerforceRestStub._wrap_call("get_last_change_list_number")
+        return response
+
+
+    @staticmethod
     def submit_change_list(comment):
         response = PerforceRestStub._wrap_call("submit_change_list",
                                                comment=comment)

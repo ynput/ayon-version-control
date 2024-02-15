@@ -140,6 +140,22 @@ class IsCheckoutedEndpoint(PerforceRestApiEndpoint):
         )
 
 
+class GetLastChangelist(PerforceRestApiEndpoint):
+    """Returns list of dict with project info (id, name)."""
+    async def post(self, request) -> Response:
+        log.info("GetLatestChangelist called")
+        content = await request.json()
+
+        result = VersionControlPerforce.get_last_change_list_number()
+        with open("c:/projects/temp.txt", "w") as fp:
+            fp.write(str(result))
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
 class SubmitChangelist(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:

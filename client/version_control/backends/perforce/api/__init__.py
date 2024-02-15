@@ -1183,12 +1183,21 @@ class P4ConnectionManager:
 
         return result
 
+    def _connect_get_last_change_list_number(self):
+        change_dict = self._connect_run_command("changes",
+                                                "-s", "submitted",
+                                                "-m", 1)
+        if not change_dict:
+            return
+
+        return change_dict[0]["change"]
+
     def _connect_get_change_list_number(self, description: str):
         change_dict = self._connect_get_existing_change_list(description)
         if not change_dict:
             return
 
-        return change_dict["Change"]
+        return change_dict["change"]
 
     def _connect_create_workspace(self, name: str, root: str, stream: str):
         client = self.p4.fetch_client()
@@ -1890,6 +1899,7 @@ __all__ = (
     "exceptions",  # type: ignore
     "get_attribute",  # type: ignore
     "checked_out_by",  # type: ignore
+    "get_last_change_list_number",  # type: ignore
     "get_change_list_number",  # type: ignore
     "get_client_root",  # type: ignore
     "get_current_client_revision",  # type: ignore

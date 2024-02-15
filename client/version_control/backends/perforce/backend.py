@@ -99,6 +99,11 @@ class VersionControlPerforce(abstract.VersionControl):
         return api.get_existing_change_list(comment)
 
     @staticmethod
+    def get_last_change_list_number():
+        # type: (str) -> (str) | None
+        return api.get_last_change_list_number()
+
+    @staticmethod
     def get_files_in_folder_in_date_order(path, name_pattern=None, extensions=None):
         # type: (pathlib.Path | str, str | None, Sequence[str] | None) -> tuple[pathlib.Path | None]
         return tuple(
