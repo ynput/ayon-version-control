@@ -42,7 +42,7 @@ class PerforceRestStub(abstract.VersionControl):
 
     @staticmethod
     def login(host, port, username, password, workspace):
-        # type: (None | str, str, str) -> bool
+        # type: (None | str, str, str, str) -> dict
         response = PerforceRestStub._wrap_call("login",
                                                host=host,
                                                port=port,
@@ -87,8 +87,9 @@ class PerforceRestStub(abstract.VersionControl):
         return response
 
     @staticmethod
-    def get_last_change_list_number():
-        response = PerforceRestStub._wrap_call("get_last_change_list_number")
+    def get_last_change_list():
+        # type: (None) -> dict
+        response = PerforceRestStub._wrap_call("get_last_change_list")
         return response
 
 

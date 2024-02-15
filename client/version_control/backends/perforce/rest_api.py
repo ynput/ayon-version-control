@@ -70,11 +70,11 @@ class PerforceModuleRestAPI:
             is_checkouted.dispatch
         )
 
-        get_last_change_list_number = rest_routes.GetLastChangelist()
+        get_last_change_list = rest_routes.GetLastChangelist()
         self.server_manager.add_route(
             "POST",
-            self.prefix + "/get_last_change_list_number",
-            get_last_change_list_number.dispatch
+            self.prefix + "/get_last_change_list",
+            get_last_change_list.dispatch
         )
 
         submit_change_list = rest_routes.SubmitChangelist()
