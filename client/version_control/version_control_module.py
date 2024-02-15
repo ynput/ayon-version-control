@@ -3,8 +3,8 @@ import os
 
 VERSION_CONTROL_MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-from openpype.modules import OpenPypeModule, ITrayService, IPluginPaths
-from openpype.settings import get_project_settings
+from ayon_core.modules import AYONAddon, ITrayService, IPluginPaths
+from ayon_core.settings import get_project_settings
 
 
 _typing = False
@@ -13,7 +13,7 @@ if _typing:
 del _typing
 
 
-class VersionControlModule(OpenPypeModule, ITrayService, IPluginPaths):
+class VersionControlModule(AYONAddon, ITrayService, IPluginPaths):
     # _icon_name = "mdi.jira"
     # _icon_scale = 1.3
 
@@ -82,11 +82,16 @@ class VersionControlModule(OpenPypeModule, ITrayService, IPluginPaths):
         click_group.add_command(cli_main)
 
     def get_plugin_paths(self):
-        """Publish plugin paths."""
-        return {
-            "publish": [os.path.join(VERSION_CONTROL_MODULE_DIR,
-                                     "plugins", "publish")]
-        }
+        return {}
+
+    def get_create_plugin_paths(self, host_name):
+        if host_name != "unreal":
+            return []
+        return ["{}/plugins/create/unreal".format(VERSION_CONTROL_MODULE_DIR)]
+
+    def get_publish_plugin_paths(self, host_name):
+        return [os.path.join(VERSION_CONTROL_MODULE_DIR,
+                             "plugins", "publish")]
 
 
 @click.group("version_control", help="Version Control module related commands.")
