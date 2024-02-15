@@ -24,16 +24,8 @@ class ValidateWorkspaceDir(pyblish.api.InstancePlugin):
         # TODO implement multiple roots
         workspace_dir = instance.data["version_control"]["roots"]["work"]
 
-        if not workspace_dir:
+        if not workspace_dir or not os.path.exists(workspace_dir):
             project_name = instance.context.data.get("projectName")
             msg = ("Please provide your local folder for workspace in "
                    "`ayon+settings://version_control/local_setting/workspace_dir?project={}`".format(project_name))  # noqa
             raise PublishXmlValidationError(self, msg)
-
-        workspace = os.path.basename(workspace_dir)
-        username = instance.data["version_control"]["username"]
-        password = instance.data["version_control"]["password"]
-
-        PerforceRestStub.login(username=username,
-                               password=password,
-                               workspace=workspace)
