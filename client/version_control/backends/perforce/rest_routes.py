@@ -147,8 +147,6 @@ class GetLastChangelist(PerforceRestApiEndpoint):
         content = await request.json()
 
         result = VersionControlPerforce.get_last_change_list()
-        with open("c:/projects/temp.txt", "w") as fp:
-            fp.write(str(result))
         return Response(
             status=200,
             body=self.encode(result),
