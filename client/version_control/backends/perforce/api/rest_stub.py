@@ -92,6 +92,12 @@ class PerforceRestStub(abstract.VersionControl):
         response = PerforceRestStub._wrap_call("get_last_change_list")
         return response
 
+    @staticmethod
+    def get_changes():
+        # type: (None) -> dict
+        response = PerforceRestStub._wrap_call("get_changes")
+        return response
+
 
     @staticmethod
     def submit_change_list(comment):

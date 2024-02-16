@@ -1183,6 +1183,15 @@ class P4ConnectionManager:
 
         return result
 
+    def _connect_get_changes(self):
+        change_list = self._connect_run_command("changes",
+                                                "-s", "submitted")
+        if not change_list:
+            return
+
+        # returns list as _process_result_ breaks dictionary
+        return change_list
+
     def _connect_get_last_change_list(self):
         change_list = self._connect_run_command("changes",
                                                 "-s", "submitted",
@@ -1900,6 +1909,7 @@ __all__ = (
     "exceptions",  # type: ignore
     "get_attribute",  # type: ignore
     "checked_out_by",  # type: ignore
+    "get_changes",  # type: ignore
     "get_last_change_list",  # type: ignore
     "get_change_list_number",  # type: ignore
     "get_client_root",  # type: ignore

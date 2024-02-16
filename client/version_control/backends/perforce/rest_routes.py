@@ -140,6 +140,20 @@ class IsCheckoutedEndpoint(PerforceRestApiEndpoint):
         )
 
 
+class GetChanges(PerforceRestApiEndpoint):
+    """Returns list of submitted changes."""
+    async def post(self, request) -> Response:
+        log.info("GetChanges called")
+        content = await request.json()
+
+        result = VersionControlPerforce.get_changes()
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
 class GetLastChangelist(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:

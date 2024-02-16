@@ -70,6 +70,13 @@ class PerforceModuleRestAPI:
             is_checkouted.dispatch
         )
 
+        get_changes = rest_routes.GetChanges()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/get_changes",
+            get_changes.dispatch
+        )
+
         get_last_change_list = rest_routes.GetLastChangelist()
         self.server_manager.add_route(
             "POST",

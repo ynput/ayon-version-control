@@ -94,6 +94,11 @@ class VersionControlPerforce(abstract.VersionControl):
         return api.move(path, new_path, change_description=change_description)
 
     @staticmethod
+    def get_changes():
+        # type: (None) -> (list(dict)) | None
+        return api.get_changes()
+
+    @staticmethod
     def get_existing_change_list(comment):
         # type: (str) -> dict[str, Any] | None
         return api.get_existing_change_list(comment)
