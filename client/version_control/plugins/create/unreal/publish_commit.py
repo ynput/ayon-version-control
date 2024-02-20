@@ -31,7 +31,6 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
     default_variant = ""
 
     def create(self, options=None):
-        self.log.info("1")
         existing_instance = None
         for instance in self.create_context.instances:
             if instance.family == self.family:
@@ -43,14 +42,11 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
         asset_name = context.get_current_asset_name()
         task_name = context.get_current_task_name()
         host_name = context.host_name
-        self.log.info("2")
         if existing_instance is None:
             existing_instance_asset = None
         else:
             existing_instance_asset = existing_instance["folderPath"]
-        self.log.info("3")
         if existing_instance is None:
-            self.log.info("4")
             asset_doc = get_asset_by_name(project_name, asset_name)
             subset_name = self.get_subset_name(
                 self.default_variant, task_name, asset_doc,
@@ -73,7 +69,6 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             new_instance = CreatedInstance(
                 self.family, subset_name, data, self
             )
-            self.log.info("5")
             self._add_instance_to_context(new_instance)
             instance_name = f"{subset_name}{self.suffix}"
 
@@ -86,7 +81,7 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             imprint(f"{self.root}/{instance_name}",
                     new_instance.data_to_store())
 
-            return instance
+            return pub_instance
 
         elif (
                 existing_instance_asset != asset_name
