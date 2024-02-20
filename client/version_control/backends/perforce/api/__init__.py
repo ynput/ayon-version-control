@@ -1531,9 +1531,12 @@ class P4ConnectionManager:
             revision = tuple([revision] * len(path))
 
         if not len(revision) == len(path):
-            raise AttributeError(f"revision count ({len(revision)}) must match path count({len(path)})!")
+            raise AttributeError(f"revision count ({len(revision)}) "
+                                 f"must match path count({len(path)})!")
 
-        sync_result = self.p4.run_sync([f"{_path}#{_revision}" for _path, _revision in zip(path, revision)])
+        paths = [f"{_path}@{_revision}"
+                 for _path, _revision in zip(path, revision)]
+        sync_result = self.p4.run_sync(paths)
         result = self._process_result(
             sync_result,
             "action",
