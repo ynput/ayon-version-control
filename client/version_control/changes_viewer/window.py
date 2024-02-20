@@ -15,6 +15,7 @@ from ayon_core.tools.utils.models import RecursiveSortFilterProxyModel
 from .control import ChangesViewerController
 from .model import (
     ChangesModel,
+    CHANGE_ROLE
 )
 from .widgets import ChangesDetail
 
@@ -45,9 +46,10 @@ class ChangesWindows(QtWidgets.QDialog):
         proxy = RecursiveSortFilterProxyModel()
         proxy.setSourceModel(model)
         proxy.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        proxy.setSortRole(CHANGE_ROLE)
 
         details_widget = ChangesDetail(proxy, self)
-        details_widget.save_triggered.connect(self._on_sync_to)
+        details_widget.sync_triggered.connect(self._on_sync_to)
 
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(details_widget, stretch=1)
@@ -58,19 +60,17 @@ class ChangesWindows(QtWidgets.QDialog):
         self._proxy = proxy
         self._details_widget = details_widget
 
-    def _on_refresh_clicked(self):
-        self.refresh()
-
     def _on_sync_to(self):
-        current_index = self._details_widget.selectionModel().currentIndex()
+        current_index = (
+            self._details_widget._changes_view.selectionModel().currentIndex())
         if not current_index.isValid():
             return
 
-        item_id = current_index.data(0)
-        if item_id != self._details_widget.item_id():
-            return
+        change_id = current_index.data(0)
+        self._controller.sync_to(change_id)
 
-        # sync to X change list
+    def _on_refresh_clicked(self):
+        self.refresh()
 
     def refresh(self):
         self._model.refresh()

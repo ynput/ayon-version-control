@@ -1,4 +1,3 @@
-import json
 from qtpy import QtWidgets, QtCore
 
 from ayon_core.tools.utils import TreeView
@@ -6,7 +5,7 @@ from ayon_core.tools.utils import TreeView
 
 class ChangesDetail(QtWidgets.QWidget):
     """Table printing list of changes from Perforce"""
-    save_triggered = QtCore.Signal()
+    sync_triggered = QtCore.Signal()
 
     def __init__(self, model, parent=None):
         super(ChangesDetail, self).__init__(parent)
@@ -19,6 +18,7 @@ class ChangesDetail(QtWidgets.QWidget):
         changes_view.setSortingEnabled(True)
         changes_view.setAlternatingRowColors(True)
         changes_view.setModel(model)
+        changes_view.setIndentation(0)
 
         sync_btn = QtWidgets.QPushButton("Sync to", self)
 
@@ -38,30 +38,4 @@ class ChangesDetail(QtWidgets.QWidget):
         self.sync_btn = sync_btn
 
     def _on_sync_clicked(self):
-        if self.is_valid():
-            self.save_triggered.emit()
-
-    def item_id(self):
-        return self._item_id
-
-    def is_valid(self):
-        if not self._item_id:
-            return True
-
-        value = self._details_widget.toPlainText()
-        valid = False
-        try:
-            jsoned = json.loads(value)
-            if jsoned and isinstance(jsoned, dict):
-                valid = True
-
-        except Exception:
-            pass
-        return valid
-
-    def _on_text_change(self):
-        if self._block_changes or not self._item_id:
-            return
-
-        valid = self.is_valid()
-        self.update_state(valid)
+        self.sync_triggered.emit()
