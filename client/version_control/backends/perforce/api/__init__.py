@@ -956,7 +956,7 @@ class P4ConnectionManager:
             conn_manager.p4.port = f"{host}:{port}"
         conn_manager.p4.connect()
         conn_manager.p4.run_login(password=password)
-        conn_manager.p4.client = workspace
+        conn_manager.p4.client = os.path.basename(workspace)
         conn_manager.__workspace_cache__ = self._connect_get_workspaces()
 
     # Connect Methods:
