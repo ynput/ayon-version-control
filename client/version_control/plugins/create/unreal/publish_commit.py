@@ -1,5 +1,4 @@
 from ayon_core.pipeline import (
-    AutoCreator,
     CreatedInstance
 )
 from ayon_core.client import get_asset_by_name
@@ -25,7 +24,7 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
     unreal addon andd only be imported from there.
     """
     identifier = "io.ayon.creators.unreal.publish_commit"
-    family = "publish_commit"
+    product_type = "publish_commit"
     label = "Publish commit"
 
     default_variant = ""
@@ -33,7 +32,7 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
     def create(self, options=None):
         existing_instance = None
         for instance in self.create_context.instances:
-            if instance.family == self.family:
+            if instance.product_type == self.product_type:
                 existing_instance = instance
                 break
 
@@ -48,9 +47,9 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             existing_instance_asset = existing_instance["folderPath"]
         if existing_instance is None:
             asset_doc = get_asset_by_name(project_name, asset_name)
-            subset_name = self.get_subset_name(
-                self.default_variant, task_name, asset_doc,
-                project_name, host_name
+            product_name = self.get_product_name(
+                project_name, asset_doc, task_name, self.default_variant,
+                host_name
             )
             data = {
                 "folderPath": asset_name,
@@ -67,10 +66,10 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             #     data["active"] = False
 
             new_instance = CreatedInstance(
-                self.family, subset_name, data, self
+                self.product_type, product_name, data, self
             )
             self._add_instance_to_context(new_instance)
-            instance_name = f"{subset_name}{self.suffix}"
+            instance_name = f"{product_name}{self.suffix}"
 
             pub_instance = create_publish_instance(instance_name, self.root)
             pub_instance.set_editor_property('add_external_assets', True)
@@ -88,10 +87,10 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
                 or existing_instance["task"] != task_name
         ):
             asset_doc = get_asset_by_name(project_name, asset_name)
-            subset_name = self.get_subset_name(
-                self.default_variant, task_name, asset_doc,
-                project_name, host_name
+            product_name = self.get_product_name(
+                project_name, asset_doc, task_name, self.default_variant,
+                host_name
             )
             existing_instance["folderPath"] = asset_name
             existing_instance["task"] = task_name
-            existing_instance["subset"] = subset_name
+            existing_instance["product_name"] = product_name
