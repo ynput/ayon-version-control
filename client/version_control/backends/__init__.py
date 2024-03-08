@@ -33,8 +33,8 @@ if six.PY3:
     # this avoids having to import every sub-package to find where
     # the object should be imported from:
     _object_import_map = {
-        "VERSION_CONTROL_MODULE_DIR": "version_control_module",
-        "VersionControlModule": "version_control_module"
+        "VERSION_CONTROL_ADDON_DIR": "addon",
+        "VersionControlAddon": "addon"
     }
 
     def __getattr__(name):

@@ -1,7 +1,7 @@
 import click
 import os
 
-VERSION_CONTROL_MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+VERSION_CONTROL_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
 
 from ayon_core.modules import AYONAddon, ITrayService, IPluginPaths
 from ayon_core.settings import get_project_settings
@@ -13,7 +13,7 @@ if _typing:
 del _typing
 
 
-class VersionControlModule(AYONAddon, ITrayService, IPluginPaths):
+class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
     # _icon_name = "mdi.jira"
     # _icon_scale = 1.3
 
@@ -56,7 +56,7 @@ class VersionControlModule(AYONAddon, ITrayService, IPluginPaths):
         version_settings = project_settings["version_control"]
         local_setting = version_settings["local_setting"]
         conn_info = {}
-        conn_info["host"] = version_settings["host"]
+        conn_info["host"] = version_settings["host_name"]
         conn_info["port"] = version_settings["port"]
         conn_info["username"] = local_setting["username"]
         conn_info["password"] = local_setting["password"]
@@ -112,10 +112,10 @@ class VersionControlModule(AYONAddon, ITrayService, IPluginPaths):
     def get_create_plugin_paths(self, host_name):
         if host_name != "unreal":
             return []
-        return ["{}/plugins/create/unreal".format(VERSION_CONTROL_MODULE_DIR)]
+        return ["{}/plugins/create/unreal".format(VERSION_CONTROL_ADDON_DIR)]
 
     def get_publish_plugin_paths(self, host_name):
-        return [os.path.join(VERSION_CONTROL_MODULE_DIR,
+        return [os.path.join(VERSION_CONTROL_ADDON_DIR,
                              "plugins", "publish")]
 
 

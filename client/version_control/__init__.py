@@ -6,8 +6,8 @@ _compatible_dcc = True
 
 import six
 
-from .version_control_module import VERSION_CONTROL_MODULE_DIR
-from .version_control_module import VersionControlModule
+from .addon import VERSION_CONTROL_ADDON_DIR
+from .addon import VersionControlAddon
 
 if six.PY3:
     # This is a clever hack to get python to import in a lazy (sensible) way
@@ -66,7 +66,7 @@ __all__ = (
     "hosts",
     "lib",
     "widgets",
-    "VersionControlModule",
-    "VERSION_CONTROL_MODULE_DIR",
+    "VersionControlAddon",
+    "VERSION_CONTROL_ADDON_DIR",
     "_compatible_dcc"
 )
