@@ -20,6 +20,8 @@ class ExtractChangeListInfo(publish.Extractor):
     order = publish.Extractor.order
     label = "Extract Change List Info"
     families = ["publish_commit"]
+    targets = ["local"]
+
 
     def process(self, instance):
         change_info = instance.data.get("version_control", {}).get("change_info")  # noqa

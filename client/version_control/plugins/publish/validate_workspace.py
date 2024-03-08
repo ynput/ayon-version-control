@@ -19,6 +19,8 @@ class ValidateWorkspaceDir(pyblish.api.InstancePlugin):
     order = ValidateContentsOrder
     label = "Validate P4 workspace dir"
     families = ["version_control"]
+    targets = ["local"]
+
 
     def process(self, instance):
         # TODO implement multiple roots

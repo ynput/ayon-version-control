@@ -18,6 +18,7 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
 
     label = "Integrate Perforce items"
     order = pyblish.api.IntegratorOrder + 0.499
+    targets = ["local"]
 
     families = ["version_control"]
 

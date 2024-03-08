@@ -21,6 +21,7 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
 
     label = "Collect Latest Changelist"
     order = pyblish.api.CollectorOrder + 0.4995
+    targets = ["local"]
 
     families = ["publish_commit"]
 

@@ -18,6 +18,8 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
 
     label = "Collect Version Control Connection Info"
     order = pyblish.api.CollectorOrder + 0.4990
+    targets = ["local"]
+
 
     def process(self, context):
         version_control = ModulesManager().get("version_control")

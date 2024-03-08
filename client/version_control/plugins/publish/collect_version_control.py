@@ -14,6 +14,7 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
 
     label = "Collect Version Control Submission Info"
     order = pyblish.api.CollectorOrder + 0.4992
+    targets = ["local"]
 
     profiles = None
 
