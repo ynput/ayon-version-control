@@ -205,3 +205,16 @@ class GetServerVersionEndpoint(PerforceRestApiEndpoint):
             body=self.encode(result),
             content_type="application/json"
         )
+
+
+class GetStreamEndpoint(PerforceRestApiEndpoint):
+    """Returns stream attached to workspace."""
+    async def post(self, request) -> Response:
+        content = await request.json()
+
+        result = VersionControlPerforce.get_stream(content["workspace_dir"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )

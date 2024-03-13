@@ -111,3 +111,9 @@ class PerforceRestStub(abstract.VersionControl):
         response = PerforceRestStub._wrap_call("exists_on_server",
                                                path=path)
         return response
+
+    @staticmethod
+    def get_stream(workspace_dir):
+        response = PerforceRestStub._wrap_call("get_stream",
+                                               workspace_dir=workspace_dir)
+        return response

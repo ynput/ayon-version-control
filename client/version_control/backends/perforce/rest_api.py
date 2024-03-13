@@ -97,3 +97,10 @@ class PerforceModuleRestAPI:
             self.prefix + "/exists_on_server",
             exists_on_server.dispatch
         )
+
+        get_stream = rest_routes.GetStreamEndpoint()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/get_stream",
+            get_stream.dispatch
+        )
