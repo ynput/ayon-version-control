@@ -1,5 +1,10 @@
 from qtpy import QtCore, QtGui
 
+CHANGE_ROLE = QtCore.Qt.UserRole + 1
+DESC_ROLE = QtCore.Qt.UserRole + 2
+AUTHOR_ROLE = QtCore.Qt.UserRole + 3
+CREATED_ROLE = QtCore.Qt.UserRole + 4
+
 
 class ChangesModel(QtGui.QStandardItemModel):
     column_labels = [
@@ -25,8 +30,12 @@ class ChangesModel(QtGui.QStandardItemModel):
         self.removeRows(0, self.rowCount())  # Clear existing data
         changes = self._controller.get_changes()
         for i, change in enumerate(changes):
-            number_item = QtGui.QStandardItem(str(change["change"]))
-            number_item.setData(change["change"], QtGui.Qt.UserRole)  # Store number for sorting
+            number_item = QtGui.QStandardItem(change["change"])
+            number_item.setData(int(change["change"]), CHANGE_ROLE)  # Store number for sorting
+            # number_item.setData(change["user"], DESC_ROLE)  # Store number for sorting
+            # number_item.setData(change["user"], AUTHOR_ROLE)  # Store number for sorting
+            # number_item.setData(change["time"], CREATED_ROLE)  # Store number for sorting
+            # self.appendRow(number_item)
             desc_item = QtGui.QStandardItem(change["desc"])
             author_item = QtGui.QStandardItem(change["user"])
             date_item = QtGui.QStandardItem(change["time"])
@@ -35,14 +44,14 @@ class ChangesModel(QtGui.QStandardItemModel):
     def data(self, index, role=QtGui.Qt.DisplayRole):
         if role == QtGui.Qt.DisplayRole:
             return super().data(index, role)
-        elif role == QtGui.Qt.UserRole:
+        elif role == CHANGE_ROLE:
             # Return actual data stored for sorting
-            return index.model().item(index.row(), 0).data(QtGui.Qt.UserRole)
+            return index.model().item(index.row(), 0).data(CHANGE_ROLE)
         return None
 
     def sort(self, column, order=QtGui.Qt.AscendingOrder):
         if column == 0:  # Sort by number (stored in user role)
-            self.sortItems(0, order, QtGui.Qt.UserRole)
+            self.sortItems(0, order, CHANGE_ROLE)
         else:
             super().sort(column, order)
 

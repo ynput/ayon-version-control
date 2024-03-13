@@ -1,7 +1,6 @@
 import ayon_api
 
 from ayon_core.lib.events import QueuedEventSystem
-from ayon_core.host import ILoadHost
 from ayon_core.pipeline import (
     registered_host,
     get_current_context,
@@ -43,6 +42,7 @@ class ChangesViewerController:
         self._current_project = None
         self._current_folder_id = None
         self._current_folder_set = False
+        self._conn_info = None
 
         self._hierarchy_model.reset()
 
@@ -59,6 +59,7 @@ class ChangesViewerController:
                      "password": "pass12349ers",
                      "workspace_dir": "c:/projects/ayon_test/unreal/admin_ygor_7550"}  # TEMP!!!!
         if conn_info:
+            self._conn_info = conn_info
             PerforceRestStub.login(host=conn_info["host"],
                                    port=conn_info["port"],
                                    username=conn_info["username"],
@@ -67,6 +68,20 @@ class ChangesViewerController:
 
     def get_changes(self):
         return PerforceRestStub.get_changes()
+
+    def sync_to(self, change_id):
+        manager = ModulesManager()
+        version_control_addon = manager.get("version_control")
+        if not version_control_addon or not version_control_addon.enabled:
+            return
+
+        conn_info = version_control_addon.get_connection_info(
+            project_name=self.get_current_project_name()
+        )
+        if conn_info:
+            self._conn_info = conn_info
+            version_control_addon.sync_to_version(conn_info, change_id)
+
     def get_current_context(self):
         if self._current_context is None:
             if hasattr(self._host, "get_current_context"):
@@ -97,14 +112,6 @@ class ChangesViewerController:
         self._current_folder_id = folder_id
         self._current_folder_set = True
         return self._current_folder_id
-
-    def get_containers(self):
-        host = self._host
-        if isinstance(host, ILoadHost):
-            return list(host.get_containers())
-        elif hasattr(host, "ls"):
-            return list(host.ls())
-        return []
 
     def _create_event_system(self):
         return QueuedEventSystem()
