@@ -55,12 +55,17 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
         version_settings = project_settings["version_control"]
         local_setting = version_settings["local_setting"]
+
+        workspace_dir = local_setting["workspace_dir"]
+        if workspace_dir:
+            workspace_dir = os.path.normpath(workspace_dir)
+
         conn_info = {}
         conn_info["host"] = version_settings["host_name"]
         conn_info["port"] = version_settings["port"]
         conn_info["username"] = local_setting["username"]
         conn_info["password"] = local_setting["password"]
-        conn_info["workspace_dir"] = local_setting["workspace_dir"]
+        conn_info["workspace_dir"] = workspace_dir
 
         return conn_info
 
