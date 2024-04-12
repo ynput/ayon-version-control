@@ -55,9 +55,7 @@ class ChangesViewerController:
         conn_info = version_control_addon.get_connection_info(
             project_name=self.get_current_project_name()
         )
-        conn_info = {"host": "localhost", "port": 1666, "username": "admin",
-                     "password": "pass12349ers",
-                     "workspace_dir": "c:/projects/ayon_test/unreal/admin_ygor_7550"}  # TEMP!!!!
+
         if conn_info:
             self._conn_info = conn_info
             PerforceRestStub.login(host=conn_info["host"],
