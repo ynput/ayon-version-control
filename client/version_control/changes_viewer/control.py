@@ -5,7 +5,7 @@ from ayon_core.pipeline import (
     registered_host,
     get_current_context,
 )
-from ayon_core.tools.ayon_utils.models import HierarchyModel
+from ayon_core.tools.common_models import HierarchyModel
 from ayon_core.modules import ModulesManager
 from version_control.backends.perforce.api.rest_stub import PerforceRestStub
 
