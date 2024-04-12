@@ -3,13 +3,9 @@
 from ayon_server.addons import BaseServerAddon
 
 from .settings import VersionControlSettings, DEFAULT_VALUES
-from .version import __version__
 
 
 class VersionControlAddon(BaseServerAddon):
-    name = "version_control"
-    title = "Version Control"
-    version = __version__
     #settings_model: Type[VersionControlSettings] = VersionControlSettings
     settings_model = VersionControlSettings
 
