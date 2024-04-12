@@ -123,6 +123,16 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         return [os.path.join(VERSION_CONTROL_ADDON_DIR,
                              "plugins", "publish")]
 
+    def get_launch_hook_paths(self, _app):
+        """Implementation for applications launch hooks.
+
+        Returns:
+            (str): full absolut path to directory with hooks for the module
+        """
+
+        return os.path.join(VERSION_CONTROL_ADDON_DIR, "launch_hooks",
+                            self.active_version_control_system)
+
 
 @click.group("version_control", help="Version Control module related commands.")
 def cli_main():
