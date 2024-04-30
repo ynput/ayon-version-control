@@ -53,7 +53,6 @@ class SyncUnrealProject(PreLaunchHook):
             changes_tool.activateWindow()
             changes_tool.showNormal()
 
-            changes_tool.refresh()
             changes_tool.exec_()
 
     def _get_unreal_project_path(self, version_control_addon):

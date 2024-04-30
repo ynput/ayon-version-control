@@ -3,7 +3,6 @@ from ayon_core.pipeline import (
     registered_host,
     get_current_context,
 )
-from ayon_core.tools.common_models import HierarchyModel
 from ayon_core.modules import ModulesManager
 from version_control.backends.perforce.api.rest_stub import PerforceRestStub
 
@@ -26,8 +25,6 @@ class ChangesViewerController:
         self._version_control_addon = version_control_addon
         self.enabled = version_control_addon and version_control_addon.enabled
 
-        # Switch dialog requirements
-        self._hierarchy_model = HierarchyModel(self)
         self._event_system = self._create_event_system()
 
     def emit_event(self, topic, data=None, source=None):
@@ -37,13 +34,6 @@ class ChangesViewerController:
 
     def register_event_callback(self, topic, callback):
         self._event_system.add_callback(topic, callback)
-
-    def reset(self):
-        self._current_project = None
-        self._current_folder_id = None
-        self._conn_info = None
-
-        self._hierarchy_model.reset()
 
     def login(self):
         if not self.enabled:
@@ -83,3 +73,4 @@ class ChangesViewerController:
 
     def _create_event_system(self):
         return QueuedEventSystem()
+
