@@ -100,8 +100,10 @@ class SyncVersionEndpoint(PerforceRestApiEndpoint):
         log.debug("SyncVersionEndpoint called")
         content = await request.json()
 
+        log.debug(f"Syncing '{content['path']}' to {content['version']}")
         result = VersionControlPerforce.sync_to_version(content["path"],
                                                         content["version"])
+        log.debug("Synced")
         return Response(
             status=200,
             body=self.encode(result),
