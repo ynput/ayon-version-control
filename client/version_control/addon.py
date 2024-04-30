@@ -96,7 +96,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_exit(self):
         if self.enabled and \
-                self.webserver and self.webserver.server_is_running():
+                self.webserver and self.webserver.server_is_running:
             self.webserver.stop()
 
     def tray_init(self):
