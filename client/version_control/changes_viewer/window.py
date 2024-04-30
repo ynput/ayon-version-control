@@ -25,7 +25,7 @@ module.window = None
 
 
 class ChangesWindows(QtWidgets.QDialog):
-    def __init__(self, controller=None, parent=None):
+    def __init__(self, controller=None, parent=None, launch_data=None):
         super(ChangesWindows, self).__init__(parent=parent)
         self.setWindowTitle("Changes Viewer")
         self.setObjectName("ChangesViewer")
@@ -37,7 +37,7 @@ class ChangesWindows(QtWidgets.QDialog):
         self.resize(780, 430)
 
         if controller is None:
-            controller = ChangesViewerController()
+            controller = ChangesViewerController(launch_data=launch_data)
 
         # Trigger refresh on first called show
         self._first_show = True

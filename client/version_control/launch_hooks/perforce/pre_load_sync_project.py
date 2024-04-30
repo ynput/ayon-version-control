@@ -47,7 +47,7 @@ class SyncUnrealProject(PreLaunchHook):
             version_control_addon)
 
         with qt_app_context():
-            changes_tool = ChangesWindows()
+            changes_tool = ChangesWindows(launch_data=self.data)
             changes_tool.show()
             changes_tool.raise_()
             changes_tool.activateWindow()
