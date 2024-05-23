@@ -1,6 +1,5 @@
 import json
 import datetime
-from bson.objectid import ObjectId
 from aiohttp.web_response import Response
 
 
@@ -24,8 +23,6 @@ class PerforceRestApiEndpoint(RestApiEndpoint):
     def json_dump_handler(value):
         if isinstance(value, datetime.datetime):
             return value.isoformat()
-        if isinstance(value, ObjectId):
-            return str(value)
         if isinstance(value, set):
             return list(value)
         raise TypeError(value)
