@@ -1,3 +1,5 @@
 [tool.poetry.dependencies]
 python = "^3.9"
+
+[ayon.runtimeDependencies]
 p4python = "^2023.1.2454917"
