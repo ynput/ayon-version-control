@@ -4,7 +4,7 @@ from ayon_core.pipeline import (
     get_current_context,
 )
 from ayon_core.modules import ModulesManager
-from version_control.backends.perforce.api.rest_stub import PerforceRestStub
+from version_control.rest.perforce.rest_stub import PerforceRestStub
 
 
 class ChangesViewerController:

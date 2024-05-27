@@ -3,8 +3,8 @@ import datetime
 from aiohttp.web_response import Response
 
 
-from openpype.lib import Logger
-from openpype.modules.webserver.base_routes import RestApiEndpoint
+from ayon_core.lib import Logger
+from ayon_core.modules.webserver.base_routes import RestApiEndpoint
 
 from version_control.backends.perforce.backend import (
     VersionControlPerforce

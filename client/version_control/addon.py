@@ -70,7 +70,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         return conn_info
 
     def sync_to_latest(self, conn_info):
-        from version_control.backends.perforce.api.rest_stub import \
+        from version_control.rest.perforce.rest_stub import \
             PerforceRestStub
 
         PerforceRestStub.login(host=conn_info["host"],
@@ -82,7 +82,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         return
 
     def sync_to_version(self, conn_info, change_id):
-        from version_control.backends.perforce.api.rest_stub import \
+        from version_control.rest.perforce.rest_stub import \
             PerforceRestStub
 
         PerforceRestStub.login(host=conn_info["host"],
@@ -104,7 +104,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_start(self):
         if self.enabled:
-            from .backends.perforce.communication_server import WebServer
+            from version_control.rest.communication_server import WebServer
             self.webserver = WebServer()
             self.webserver.start()
 

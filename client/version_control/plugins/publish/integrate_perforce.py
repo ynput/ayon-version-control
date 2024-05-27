@@ -5,9 +5,9 @@ import datetime
 
 import pyblish.api
 
-from openpype.lib import StringTemplate
+from ayon_core.lib import StringTemplate
 
-from version_control.backends.perforce.api.rest_stub import (
+from version_control.rest.perforce.rest_stub import (
     PerforceRestStub
 )
 
@@ -28,12 +28,19 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
         if not version_template_key:
             raise RuntimeError("Instance data missing 'version_control[template_name]'")   # noqa
 
+        if "_" in version_template_key:
+            template_area, template_name = version_template_key.split("_")
+        else:
+            template_area = version_template_key
+            template_name = "default"
         anatomy = instance.context.data["anatomy"]
-        template = anatomy.templates_obj.templates[version_template_key]["path"]  # noqa
+        template = anatomy.templates_obj.templates[template_area][template_name]  # noqa
         if not template:
             raise RuntimeError("Anatomy is missing configuration for '{}'".
                                format(version_template_key))
 
+        template_file_path = os.path.join(template["directory"],
+                                          template["file"])
         anatomy_data = copy.deepcopy(instance.data["anatomyData"])
         anatomy_data["root"] = instance.data["version_control"]["roots"]
         # anatomy_data["output"] = ''
@@ -44,7 +51,7 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
             anatomy_data["ext"] = repre["ext"]
 
             version_control_path = StringTemplate.format_template(
-                template, anatomy_data
+                template_file_path, anatomy_data
             )
 
             source_path = repre["published_path"]
