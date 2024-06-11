@@ -11,7 +11,7 @@ import os
 import json
 import tempfile
 
-from openpype.pipeline import publish
+from ayon_core.pipeline import publish
 
 
 class ExtractChangeListInfo(publish.Extractor):
