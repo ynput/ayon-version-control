@@ -40,6 +40,8 @@ class ChangesDetailWidget(QtWidgets.QWidget):
         time_delegate = PrettyTimeDelegate()
         changes_view.setItemDelegateForColumn(3, time_delegate)
 
+        message_label_widget = QtWidgets.QLabel(self)
+
         sync_btn = QtWidgets.QPushButton("Sync to", self)
 
         self._block_changes = False
@@ -49,6 +51,8 @@ class ChangesDetailWidget(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(changes_view, 1)
+        layout.addWidget(message_label_widget, 0,
+                         QtCore.Qt.AlignLeft | QtCore.Qt.AlignBottom)
         layout.addWidget(sync_btn, 0, QtCore.Qt.AlignRight)
 
         sync_btn.clicked.connect(self._on_sync_clicked)
@@ -59,6 +63,7 @@ class ChangesDetailWidget(QtWidgets.QWidget):
         self.sync_btn = sync_btn
         self._thread = None
         self._time_delegate = time_delegate
+        self._message_label_widget = message_label_widget
 
     def reset(self):
         self._model.refresh()
@@ -71,14 +76,17 @@ class ChangesDetailWidget(QtWidgets.QWidget):
 
         change_id = current_index.data(CHANGE_ROLE)
 
+        self._message_label_widget.setText(f"Syncing to '{change_id}'...")
+
         self.sync_btn.setEnabled(False)
         thread = SyncThread(self._controller, change_id)
-        thread.finished.connect(self._on_thread_finished)
+        thread.finished.connect(lambda: self._on_thread_finished(change_id))
         thread.start()
 
         self._thread = thread
 
-    def _on_thread_finished(self):
+    def _on_thread_finished(self, change_id):
+        self._message_label_widget.setText(f"Synced to '{change_id}'")
         self.sync_btn.setEnabled(True)
 
 
