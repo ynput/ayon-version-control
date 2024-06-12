@@ -86,7 +86,10 @@ class ChangesDetailWidget(QtWidgets.QWidget):
         self._thread = thread
 
     def _on_thread_finished(self, change_id):
-        self._message_label_widget.setText(f"Synced to '{change_id}'")
+        self._message_label_widget.setText(
+            f"Synced to '{change_id}'. "
+            "Please close Viewer to continue."
+        )
         self.sync_btn.setEnabled(True)
 
 
