@@ -70,7 +70,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         return conn_info
 
     def sync_to_latest(self, conn_info):
-        from version_control.backends.perforce.api.rest_stub import \
+        from version_control.rest.perforce.rest_stub import \
             PerforceRestStub
 
         PerforceRestStub.login(host=conn_info["host"],
@@ -82,7 +82,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         return
 
     def sync_to_version(self, conn_info, change_id):
-        from version_control.backends.perforce.api.rest_stub import \
+        from version_control.rest.perforce.rest_stub import \
             PerforceRestStub
 
         PerforceRestStub.login(host=conn_info["host"],
@@ -96,7 +96,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_exit(self):
         if self.enabled and \
-                self.webserver and self.webserver.server_is_running():
+                self.webserver and self.webserver.server_is_running:
             self.webserver.stop()
 
     def tray_init(self):
@@ -104,7 +104,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_start(self):
         if self.enabled:
-            from .backends.perforce.communication_server import WebServer
+            from version_control.rest.communication_server import WebServer
             self.webserver = WebServer()
             self.webserver.start()
 
@@ -122,6 +122,16 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
     def get_publish_plugin_paths(self, host_name):
         return [os.path.join(VERSION_CONTROL_ADDON_DIR,
                              "plugins", "publish")]
+
+    def get_launch_hook_paths(self, _app):
+        """Implementation for applications launch hooks.
+
+        Returns:
+            (str): full absolut path to directory with hooks for the module
+        """
+
+        return os.path.join(VERSION_CONTROL_ADDON_DIR, "launch_hooks",
+                            self.active_version_control_system)
 
 
 @click.group("version_control", help="Version Control module related commands.")

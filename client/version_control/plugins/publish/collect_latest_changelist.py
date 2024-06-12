@@ -11,7 +11,7 @@ Provides:
 """
 import pyblish.api
 
-from version_control.backends.perforce.api.rest_stub import (
+from version_control.rest.perforce.rest_stub import (
     PerforceRestStub
 )
 

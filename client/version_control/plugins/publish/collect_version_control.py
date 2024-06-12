@@ -6,7 +6,7 @@ Provides:
     instance     -> families ([])
 """
 import pyblish.api
-from openpype.lib import filter_profiles
+from ayon_core.lib import filter_profiles
 
 
 class CollectVersionControl(pyblish.api.InstancePlugin):

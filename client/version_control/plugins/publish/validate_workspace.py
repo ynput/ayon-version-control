@@ -1,12 +1,8 @@
 import os
 
 import pyblish.api
-from openpype.pipeline.publish import ValidateContentsOrder
-from openpype.pipeline.publish import (
-    PublishXmlValidationError,
-)
-
-from version_control.backends.perforce.api.rest_stub import PerforceRestStub
+from ayon_core.pipeline.publish import ValidateContentsOrder
+from ayon_core.pipeline import PublishXmlValidationError
 
 
 class ValidateWorkspaceDir(pyblish.api.InstancePlugin):

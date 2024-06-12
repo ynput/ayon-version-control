@@ -4,8 +4,6 @@ import os
 import pathlib
 import six
 
-from openpype.lib import local_settings
-
 # @sharkmob-shea.richardson:
 # This need to be evaluated at runtime to provide
 # the correct type annotations for @class_property
@@ -98,10 +96,6 @@ class VersionControl(object):
     # Public Properties:
     @property
     def settings(self):
-        # type: () -> local_settings.OpenPypeSettingsRegistry
-        if self._settings is None:
-            self._settings = local_settings.OpenPypeSettingsRegistry("version_control")
-
         return self._settings
 
     @property

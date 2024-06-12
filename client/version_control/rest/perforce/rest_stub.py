@@ -2,8 +2,6 @@ import six
 import os
 import requests
 
-from version_control.backends import abstract
-
 if six.PY2:
     import pathlib2 as pathlib
 else:
@@ -16,7 +14,7 @@ if _typing:
 del _typing
 
 
-class PerforceRestStub(abstract.VersionControl):
+class PerforceRestStub:
 
     @staticmethod
     def _wrap_call(command, **kwargs):

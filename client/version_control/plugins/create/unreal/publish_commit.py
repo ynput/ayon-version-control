@@ -1,8 +1,7 @@
-from ayon_core.pipeline import (
-    CreatedInstance
-)
-from ayon_core.client import get_asset_by_name
 import unreal
+
+from ayon_core.pipeline import CreatedInstance
+from ayon_api import get_folder_by_path
 
 try:
     from ayon_core.hosts.unreal.api.plugin import UnrealBaseAutoCreator
@@ -38,21 +37,21 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
 
         context = self.create_context
         project_name = context.get_current_project_name()
-        asset_name = context.get_current_asset_name()
+        folder_path = context.get_current_folder_path()
         task_name = context.get_current_task_name()
         host_name = context.host_name
         if existing_instance is None:
-            existing_instance_asset = None
+            existing_instance_folder_path = None
         else:
-            existing_instance_asset = existing_instance["folderPath"]
+            existing_instance_folder_path = existing_instance["folderPath"]
         if existing_instance is None:
-            asset_doc = get_asset_by_name(project_name, asset_name)
+            asset_doc = get_folder_by_path(project_name, folder_path)
             product_name = self.get_product_name(
                 project_name, asset_doc, task_name, self.default_variant,
                 host_name
             )
             data = {
-                "folderPath": asset_name,
+                "folderPath": folder_path,
                 "task": task_name,
                 "variant": self.default_variant
             }
@@ -83,14 +82,14 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             return pub_instance
 
         elif (
-                existing_instance_asset != asset_name
+                existing_instance_folder_path != folder_path
                 or existing_instance["task"] != task_name
         ):
-            asset_doc = get_asset_by_name(project_name, asset_name)
+            asset_doc = folder_path(project_name, folder_path)
             product_name = self.get_product_name(
                 project_name, asset_doc, task_name, self.default_variant,
                 host_name
             )
-            existing_instance["folderPath"] = asset_name
+            existing_instance["folderPath"] = folder_path
             existing_instance["task"] = task_name
             existing_instance["product_name"] = product_name
