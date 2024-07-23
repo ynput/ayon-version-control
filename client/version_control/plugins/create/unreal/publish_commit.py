@@ -1,12 +1,8 @@
 from ayon_core.pipeline import CreatedInstance
 from ayon_api import get_folder_by_path
 
-from ayon_core.hosts.unreal.api.plugin import UnrealBaseAutoCreator
-from ayon_core.hosts.unreal.api.pipeline import (
-    create_publish_instance,
-    imprint
-)
-
+from ayon_unreal.api.plugin import UnrealBaseAutoCreator
+from ayon_unreal.api.pipeline import create_publish_instance, imprint
 
 class UnrealPublishCommit(UnrealBaseAutoCreator):
     """Auto creator to mark current version of project as published.
