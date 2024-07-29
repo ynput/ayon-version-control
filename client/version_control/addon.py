@@ -127,7 +127,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         """Implementation for applications launch hooks.
 
         Returns:
-            (str): full absolut path to directory with hooks for the module
+            (str): full absolute path to directory with hooks for the module
         """
 
         return os.path.join(VERSION_CONTROL_ADDON_DIR, "launch_hooks",
