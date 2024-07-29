@@ -23,7 +23,7 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
     order = pyblish.api.CollectorOrder + 0.4995
     targets = ["local"]
 
-    families = ["publish_commit"]
+    families = ["changelist_metadata"]
 
     def process(self, instance):
         if not instance.context.data.get("version_control"):

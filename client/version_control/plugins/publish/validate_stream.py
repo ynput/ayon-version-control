@@ -13,7 +13,7 @@ class ValidateStream(pyblish.api.InstancePlugin):
 
     order = ValidateContentsOrder
     label = "Validate P4 Stream"
-    families = ["publish_commit"]
+    families = ["changelist_metadata"]
     targets = ["local"]
 
     def process(self, instance):

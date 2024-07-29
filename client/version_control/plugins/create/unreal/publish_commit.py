@@ -13,8 +13,8 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
     This logic should be eventually moved to UnrealBaseAutoCreator class in
     unreal addon andd only be imported from there.
     """
-    identifier = "io.ayon.creators.unreal.publish_commit"
-    product_type = "publish_commit"
+    identifier = "io.ayon.creators.unreal.changelist_metadata"
+    product_type = "changelist_metadata"
     label = "Publish Changelist Metadata"
 
     default_variant = ""

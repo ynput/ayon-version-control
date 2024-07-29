@@ -4,7 +4,7 @@ Requires:
         change list
 
 Provides:
-    new representation with name == "publish_commit"
+    new representation with name == "changelist_metadata"
 """
 
 import os
@@ -19,7 +19,7 @@ class ExtractChangeListInfo(publish.Extractor):
 
     order = publish.Extractor.order
     label = "Extract Change List Info"
-    families = ["publish_commit"]
+    families = ["changelist_metadata"]
     targets = ["local"]
 
 
@@ -36,7 +36,7 @@ class ExtractChangeListInfo(publish.Extractor):
             json.dump(change_info, fp)
 
         repre_data = {
-            "name": "publish_commit",
+            "name": "changelist_metadata",
             "ext": "json",
             "files": file_name,
             "stagingDir": staging_dir
