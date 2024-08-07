@@ -16,6 +16,8 @@ del _typing
 class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
     # _icon_name = "mdi.jira"
     # _icon_scale = 1.3
+    webserver = None
+    active_version_control_system = None
 
     # Properties:
     @property
@@ -34,7 +36,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         assert self.name in settings, (
             "{} not found in settings - make sure they are defined in the defaults".format(self.name)
         )
-        vc_settings = settings[self.name]  #  type: dict[str, Any]
+        vc_settings = settings[self.name]  # type: dict[str, Any]
         enabled = vc_settings["enabled"]  # type: bool
         active_version_control_system = vc_settings["active_version_control_system"]  # type: str
         self.active_version_control_system = active_version_control_system
@@ -60,14 +62,13 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         if workspace_dir:
             workspace_dir = os.path.normpath(workspace_dir)
 
-        conn_info = {}
-        conn_info["host"] = version_settings["host_name"]
-        conn_info["port"] = version_settings["port"]
-        conn_info["username"] = local_setting["username"]
-        conn_info["password"] = local_setting["password"]
-        conn_info["workspace_dir"] = workspace_dir
-
-        return conn_info
+        return {
+            "host": version_settings["host_name"],
+            "port": version_settings["port"],
+            "username": local_setting["username"],
+            "password": local_setting["password"],
+            "workspace_dir": workspace_dir
+        }
 
     def sync_to_latest(self, conn_info):
         from version_control.rest.perforce.rest_stub import \
