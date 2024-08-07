@@ -1,19 +1,14 @@
 import os
 
 import pyblish.api
-from openpype.pipeline.publish import ValidateContentsOrder
-from openpype.pipeline.publish import (
-    PublishXmlValidationError,
-)
-
-from version_control.backends.perforce.api.rest_stub import PerforceRestStub
+from ayon_core.pipeline.publish import ValidateContentsOrder
+from ayon_core.pipeline import PublishXmlValidationError
 
 
 class ValidateWorkspaceDir(pyblish.api.InstancePlugin):
     """Validates if workspace_dir was collected and is valid.
 
-    Login will overrride P4CONFIG env variables if present on systems with
-    P4V installed.
+    Used for committing to P4 directly from AYON.
     """
 
     order = ValidateContentsOrder

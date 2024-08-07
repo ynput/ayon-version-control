@@ -1,11 +1,10 @@
 import json
 import datetime
-from bson.objectid import ObjectId
 from aiohttp.web_response import Response
 
 
-from openpype.lib import Logger
-from openpype.modules.webserver.base_routes import RestApiEndpoint
+from ayon_core.lib import Logger
+from ayon_core.tools.tray.webserver.base_routes import RestApiEndpoint
 
 from version_control.backends.perforce.backend import (
     VersionControlPerforce
@@ -24,8 +23,6 @@ class PerforceRestApiEndpoint(RestApiEndpoint):
     def json_dump_handler(value):
         if isinstance(value, datetime.datetime):
             return value.isoformat()
-        if isinstance(value, ObjectId):
-            return str(value)
         if isinstance(value, set):
             return list(value)
         raise TypeError(value)
@@ -68,7 +65,7 @@ class IsPathInAnyWorkspace(PerforceRestApiEndpoint):
 class AddEndpoint(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:
-        log.info("AddEndpoint called")
+        log.debug("AddEndpoint called")
         content = await request.json()
 
         result = VersionControlPerforce.add(content["path"],
@@ -83,7 +80,7 @@ class AddEndpoint(PerforceRestApiEndpoint):
 class SyncLatestEndpoint(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:
-        log.info("SyncLatestEndpoint called")
+        log.debug("SyncLatestEndpoint called")
         content = await request.json()
 
         result = VersionControlPerforce.sync_latest_version(content["path"])
@@ -97,11 +94,13 @@ class SyncLatestEndpoint(PerforceRestApiEndpoint):
 class SyncVersionEndpoint(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:
-        log.info("SyncVersionEndpoint called")
+        log.debug("SyncVersionEndpoint called")
         content = await request.json()
 
+        log.debug(f"Syncing '{content['path']}' to {content['version']}")
         result = VersionControlPerforce.sync_to_version(content["path"],
                                                         content["version"])
+        log.debug("Synced")
         return Response(
             status=200,
             body=self.encode(result),
@@ -112,7 +111,7 @@ class SyncVersionEndpoint(PerforceRestApiEndpoint):
 class CheckoutEndpoint(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:
-        log.info("CheckoutEndpoint called")
+        log.debug("CheckoutEndpoint called")
 
         content = await request.json()
 
@@ -128,7 +127,7 @@ class CheckoutEndpoint(PerforceRestApiEndpoint):
 class IsCheckoutedEndpoint(PerforceRestApiEndpoint):
     """Checks if file is checkouted by sameone."""
     async def post(self, request) -> Response:
-        log.info("CheckoutEndpoint called")
+        log.debug("CheckoutEndpoint called")
 
         content = await request.json()
 
@@ -143,7 +142,7 @@ class IsCheckoutedEndpoint(PerforceRestApiEndpoint):
 class GetChanges(PerforceRestApiEndpoint):
     """Returns list of submitted changes."""
     async def post(self, request) -> Response:
-        log.info("GetChanges called")
+        log.debug("GetChanges called")
         content = await request.json()
 
         result = VersionControlPerforce.get_changes()
@@ -157,7 +156,7 @@ class GetChanges(PerforceRestApiEndpoint):
 class GetLastChangelist(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:
-        log.info("GetLatestChangelist called")
+        log.debug("GetLatestChangelist called")
         content = await request.json()
 
         result = VersionControlPerforce.get_last_change_list()
@@ -171,7 +170,7 @@ class GetLastChangelist(PerforceRestApiEndpoint):
 class SubmitChangelist(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:
-        log.info("SubmitChangelist called")
+        log.debug("SubmitChangelist called")
         content = await request.json()
 
         result = VersionControlPerforce.submit_change_list(content["comment"])
@@ -185,7 +184,7 @@ class SubmitChangelist(PerforceRestApiEndpoint):
 class ExistsOnServer(PerforceRestApiEndpoint):
     """Returns information about file on 'path'."""
     async def post(self, request) -> Response:
-        log.info("exists_on_server called")
+        log.debug("exists_on_server called")
         content = await request.json()
 
         result = VersionControlPerforce.exists_on_server(content["path"])

@@ -1,4 +1,5 @@
 from qtpy import QtCore, QtGui
+from datetime import datetime
 
 CHANGE_ROLE = QtCore.Qt.UserRole + 1
 DESC_ROLE = QtCore.Qt.UserRole + 2
@@ -8,13 +9,13 @@ CREATED_ROLE = QtCore.Qt.UserRole + 4
 
 class ChangesModel(QtGui.QStandardItemModel):
     column_labels = [
-        "Change number",
+        "Change",
         "Description",
         "Author",
         "Date submitted",
     ]
 
-    def __init__(self, controller, *args, parent=None, **kwargs):
+    def __init__(self, controller, *args, **kwargs):
         super(ChangesModel, self).__init__(*args, **kwargs)
         self._changes_by_item_id = {}
 
@@ -29,31 +30,38 @@ class ChangesModel(QtGui.QStandardItemModel):
     def refresh(self):
         self.removeRows(0, self.rowCount())  # Clear existing data
         changes = self._controller.get_changes()
-        for i, change in enumerate(changes):
+
+        for change in changes:
+            date_time = datetime.fromtimestamp(int(change["time"]))
+            date_string = date_time.strftime("%Y%m%dT%H%M%SZ")
+
             number_item = QtGui.QStandardItem(change["change"])
             number_item.setData(int(change["change"]), CHANGE_ROLE)  # Store number for sorting
-            # number_item.setData(change["user"], DESC_ROLE)  # Store number for sorting
-            # number_item.setData(change["user"], AUTHOR_ROLE)  # Store number for sorting
-            # number_item.setData(change["time"], CREATED_ROLE)  # Store number for sorting
-            # self.appendRow(number_item)
             desc_item = QtGui.QStandardItem(change["desc"])
             author_item = QtGui.QStandardItem(change["user"])
-            date_item = QtGui.QStandardItem(change["time"])
+            date_item = QtGui.QStandardItem(date_string)
             self.appendRow([number_item, desc_item, author_item, date_item])
 
     def data(self, index, role=QtGui.Qt.DisplayRole):
-        if role == QtGui.Qt.DisplayRole:
-            return super().data(index, role)
-        elif role == CHANGE_ROLE:
+        if role == CHANGE_ROLE:
             # Return actual data stored for sorting
             return index.model().item(index.row(), 0).data(CHANGE_ROLE)
-        return None
-
-    def sort(self, column, order=QtGui.Qt.AscendingOrder):
-        if column == 0:  # Sort by number (stored in user role)
-            self.sortItems(0, order, CHANGE_ROLE)
-        else:
-            super().sort(column, order)
+        return super().data(index, role)
 
     def get_change_by_id(self, item_id):
         return self._changes_by_item_id.get(item_id)
+
+
+class CustomSortProxyModel(QtCore.QSortFilterProxyModel):
+    def lessThan(self, source_left, source_right):
+        first_column = 0
+
+        # Use different sort roles for the first column and others
+        SORT_ROLE = QtGui.Qt.DisplayRole
+        if source_left.column() == first_column:
+            SORT_ROLE = CHANGE_ROLE
+
+        left_data = self.sourceModel().data(source_left, SORT_ROLE)
+        right_data = self.sourceModel().data(source_right, SORT_ROLE)
+
+        return left_data < right_data

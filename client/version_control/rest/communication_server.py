@@ -1,28 +1,13 @@
 import os
-import json
-import time
-import subprocess
-import collections
 import asyncio
 import logging
 import socket
 import threading
-from queue import Queue
 from contextlib import closing
-import aiohttp
 
 from aiohttp import web
-from aiohttp_json_rpc import JsonRpc
-from aiohttp_json_rpc.protocol import (
-    encode_request, encode_error, decode_msg, JsonRpcMsgTyp
-)
-from aiohttp_json_rpc.exceptions import RpcError
 
-from openpype.lib import emit_event
-
-from version_control.backends.perforce.rest_api import (
-    PerforceModuleRestAPI
-)
+from version_control.rest.perforce.rest_api import PerforceModuleRestAPI
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

@@ -8,9 +8,9 @@ Provides:
 
 import pyblish.api
 
-from openpype.modules import ModulesManager
+from ayon_core.addon import AddonsManager
 
-from version_control.backends.perforce.api.rest_stub import PerforceRestStub
+from version_control.rest.perforce.rest_stub import PerforceRestStub
 
 
 class CollectVersionControlLogin(pyblish.api.ContextPlugin):
@@ -22,7 +22,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
 
 
     def process(self, context):
-        version_control = ModulesManager().get("version_control")
+        version_control = AddonsManager().get("version_control")
         if not version_control or not version_control.enabled:
             self.log.info("No version control enabled")
             return

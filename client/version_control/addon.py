@@ -16,6 +16,8 @@ del _typing
 class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
     # _icon_name = "mdi.jira"
     # _icon_scale = 1.3
+    webserver = None
+    active_version_control_system = None
 
     # Properties:
     @property
@@ -34,7 +36,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         assert self.name in settings, (
             "{} not found in settings - make sure they are defined in the defaults".format(self.name)
         )
-        vc_settings = settings[self.name]  #  type: dict[str, Any]
+        vc_settings = settings[self.name]  # type: dict[str, Any]
         enabled = vc_settings["enabled"]  # type: bool
         active_version_control_system = vc_settings["active_version_control_system"]  # type: str
         self.active_version_control_system = active_version_control_system
@@ -60,17 +62,16 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         if workspace_dir:
             workspace_dir = os.path.normpath(workspace_dir)
 
-        conn_info = {}
-        conn_info["host"] = version_settings["host_name"]
-        conn_info["port"] = version_settings["port"]
-        conn_info["username"] = local_setting["username"]
-        conn_info["password"] = local_setting["password"]
-        conn_info["workspace_dir"] = workspace_dir
-
-        return conn_info
+        return {
+            "host": version_settings["host_name"],
+            "port": version_settings["port"],
+            "username": local_setting["username"],
+            "password": local_setting["password"],
+            "workspace_dir": workspace_dir
+        }
 
     def sync_to_latest(self, conn_info):
-        from version_control.backends.perforce.api.rest_stub import \
+        from version_control.rest.perforce.rest_stub import \
             PerforceRestStub
 
         PerforceRestStub.login(host=conn_info["host"],
@@ -82,7 +83,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         return
 
     def sync_to_version(self, conn_info, change_id):
-        from version_control.backends.perforce.api.rest_stub import \
+        from version_control.rest.perforce.rest_stub import \
             PerforceRestStub
 
         PerforceRestStub.login(host=conn_info["host"],
@@ -96,7 +97,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_exit(self):
         if self.enabled and \
-                self.webserver and self.webserver.server_is_running():
+                self.webserver and self.webserver.server_is_running:
             self.webserver.stop()
 
     def tray_init(self):
@@ -104,7 +105,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_start(self):
         if self.enabled:
-            from .backends.perforce.communication_server import WebServer
+            from version_control.rest.communication_server import WebServer
             self.webserver = WebServer()
             self.webserver.start()
 
@@ -122,6 +123,16 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
     def get_publish_plugin_paths(self, host_name):
         return [os.path.join(VERSION_CONTROL_ADDON_DIR,
                              "plugins", "publish")]
+
+    def get_launch_hook_paths(self, _app):
+        """Implementation for applications launch hooks.
+
+        Returns:
+            (str): full absolute path to directory with hooks for the module
+        """
+
+        return os.path.join(VERSION_CONTROL_ADDON_DIR, "launch_hooks",
+                            self.active_version_control_system)
 
 
 @click.group("version_control", help="Version Control module related commands.")

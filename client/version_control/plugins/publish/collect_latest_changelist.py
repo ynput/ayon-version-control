@@ -11,7 +11,7 @@ Provides:
 """
 import pyblish.api
 
-from version_control.backends.perforce.api.rest_stub import (
+from version_control.rest.perforce.rest_stub import (
     PerforceRestStub
 )
 
@@ -23,7 +23,7 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
     order = pyblish.api.CollectorOrder + 0.4995
     targets = ["local"]
 
-    families = ["publish_commit"]
+    families = ["changelist_metadata"]
 
     def process(self, instance):
         if not instance.context.data.get("version_control"):

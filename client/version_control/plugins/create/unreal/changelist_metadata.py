@@ -1,17 +1,8 @@
-from ayon_core.pipeline import (
-    CreatedInstance
-)
-from ayon_core.client import get_asset_by_name
-import unreal
+from ayon_core.pipeline import CreatedInstance
+from ayon_api import get_folder_by_path
 
-try:
-    from ayon_core.hosts.unreal.api.plugin import UnrealBaseAutoCreator
-    from ayon_core.hosts.unreal.api.pipeline import (
-        create_publish_instance, imprint)
-except ImportError:
-    # should be used after splitting unreal host to separate addon
-    from ayon_unreal.api.plugin import UnrealBaseAutoCreator
-    from ayon_unreal.api.pipeline import create_publish_instance, imprint
+from ayon_unreal.api.plugin import UnrealBaseAutoCreator
+from ayon_unreal.api.pipeline import create_publish_instance, imprint
 
 
 class UnrealPublishCommit(UnrealBaseAutoCreator):
@@ -23,11 +14,11 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
     This logic should be eventually moved to UnrealBaseAutoCreator class in
     unreal addon andd only be imported from there.
     """
-    identifier = "io.ayon.creators.unreal.publish_commit"
-    product_type = "publish_commit"
-    label = "Publish commit"
+    identifier = "io.ayon.creators.unreal.changelist_metadata"
+    product_type = "changelist_metadata"
+    label = "Publish Changelist Metadata"
 
-    default_variant = ""
+    default_variant = "Main"
 
     def create(self, options=None):
         existing_instance = None
@@ -38,27 +29,32 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
 
         context = self.create_context
         project_name = context.get_current_project_name()
-        asset_name = context.get_current_asset_name()
-        task_name = context.get_current_task_name()
+        folder_path = context.get_current_folder_path()
+        folder_entity = get_folder_by_path(project_name, folder_path)
+        task_entity = context.get_current_task_entity()
+        task_name = task_entity["name"]
         host_name = context.host_name
         if existing_instance is None:
-            existing_instance_asset = None
-        else:
-            existing_instance_asset = existing_instance["folderPath"]
-        if existing_instance is None:
-            asset_doc = get_asset_by_name(project_name, asset_name)
+
             product_name = self.get_product_name(
-                project_name, asset_doc, task_name, self.default_variant,
+                project_name, folder_entity, task_entity, self.default_variant,
                 host_name
             )
+
             data = {
-                "folderPath": asset_name,
+                "folderPath": folder_path,
                 "task": task_name,
-                "variant": self.default_variant
+                "variant": self.default_variant,
+                "productName": product_name
             }
+
             data.update(self.get_dynamic_data(
-                self.default_variant, task_name, asset_doc,
-                project_name, host_name, None
+                project_name,
+                folder_entity,
+                task_entity,
+                self.default_variant,
+                host_name,
+                None
             ))
 
             # TODO enable when Settings available
@@ -73,9 +69,6 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
 
             pub_instance = create_publish_instance(instance_name, self.root)
             pub_instance.set_editor_property('add_external_assets', True)
-            assets = pub_instance.get_editor_property('asset_data_external')
-
-            ar = unreal.AssetRegistryHelpers.get_asset_registry()
 
             imprint(f"{self.root}/{instance_name}",
                     new_instance.data_to_store())
@@ -83,14 +76,13 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             return pub_instance
 
         elif (
-                existing_instance_asset != asset_name
-                or existing_instance["task"] != task_name
+                existing_instance["folderPath"] != folder_path
+                or existing_instance.get("task") != task_name
         ):
-            asset_doc = get_asset_by_name(project_name, asset_name)
             product_name = self.get_product_name(
-                project_name, asset_doc, task_name, self.default_variant,
+                project_name, folder_entity, task_entity, self.default_variant,
                 host_name
             )
-            existing_instance["folderPath"] = asset_name
+            existing_instance["folderPath"] = folder_path
             existing_instance["task"] = task_name
-            existing_instance["product_name"] = product_name
+            existing_instance["productName"] = product_name

@@ -1,5 +1,5 @@
 from aiohttp.web_response import Response
-from openpype.lib import Logger
+from ayon_core.lib import Logger
 
 from version_control.backends.perforce import rest_routes
 
