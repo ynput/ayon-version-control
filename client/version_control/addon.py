@@ -1,9 +1,7 @@
 import click
 import os
 
-VERSION_CONTROL_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
-
-from ayon_core.modules import AYONAddon, ITrayService, IPluginPaths
+from ayon_core.addon import AYONAddon, ITrayService, IPluginPaths
 from ayon_core.settings import get_project_settings
 
 
@@ -12,8 +10,18 @@ if _typing:
     from typing import Any
 del _typing
 
+from .version import __version__
+
+
+VERSION_CONTROL_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
+    
+    label = "Version Control"
+    name = "version_control"
+    version = __version__
+    
     # _icon_name = "mdi.jira"
     # _icon_scale = 1.3
     webserver = None
