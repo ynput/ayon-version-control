@@ -16,7 +16,7 @@ from ayon_applications import (
 )
 
 from ayon_core.tools.utils import qt_app_context
-from ayon_core.modules import ModulesManager
+from ayon_core.addon import AddonsManager
 
 from version_control.changes_viewer import ChangesWindows
 
@@ -71,7 +71,7 @@ class SyncUnrealProject(PreLaunchHook):
         return project_files[0]
 
     def _get_enabled_version_control_addon(self):
-        manager = ModulesManager()
+        manager = AddonsManager()
         version_control_addon = manager.get("version_control")
         if version_control_addon and version_control_addon.enabled:
             return version_control_addon
