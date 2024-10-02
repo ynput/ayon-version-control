@@ -3,7 +3,7 @@ from ayon_core.pipeline import (
     registered_host,
     get_current_context,
 )
-from ayon_core.modules import ModulesManager
+from ayon_core.addon import AddonsManager
 from version_control.rest.perforce.rest_stub import PerforceRestStub
 
 
@@ -20,7 +20,7 @@ class ChangesViewerController:
         self._current_project = launch_data["project_name"]
         self._current_folder_id = launch_data["folder_entity"]["id"]
 
-        manager = ModulesManager()
+        manager = AddonsManager()
         version_control_addon = manager.get("version_control")
         self._version_control_addon = version_control_addon
         self.enabled = version_control_addon and version_control_addon.enabled
