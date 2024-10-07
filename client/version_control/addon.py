@@ -116,9 +116,6 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
             self.webserver = WebServer()
             self.webserver.start()
 
-    def cli(self, click_group):
-        click_group.add_command(cli_main)
-
     def get_plugin_paths(self):
         return {}
 
