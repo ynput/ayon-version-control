@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
-"""Package declaring version_control addon version."""
-__version__ = "0.0.2"
+"""Package declaring AYON addon 'version_control' version."""
+__version__ = "0.1.0"
