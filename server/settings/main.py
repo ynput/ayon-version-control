@@ -99,4 +99,3 @@ class VersionControlSettings(BaseSettingsModel):
 
 
 DEFAULT_VALUES = {}
-    
