@@ -4,3 +4,8 @@ name = "version_control"
 title = "Version Control"
 version = "0.0.2"
 client_dir = "version_control"
+
+ayon_required_addons = {
+    "core": ">=0.4.0",
+}
+ayon_compatible_addons = {}
