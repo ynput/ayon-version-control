@@ -54,7 +54,7 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
             return
 
         families = instance.data.setdefault("families", [])
-        if not version_control_family in families:
+        if version_control_family not in families:
             instance.data["families"].append(version_control_family)
 
         result_str = "Adding"
