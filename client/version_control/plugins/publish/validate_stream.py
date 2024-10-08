@@ -1,7 +1,7 @@
 import pyblish.api
 
 from ayon_core.pipeline.publish import ValidateContentsOrder
-from ayon_core.pipeline import PublishXmlValidationError
+from ayon_core.pipeline.publish import PublishValidationError
 
 
 class ValidateStream(pyblish.api.InstancePlugin):
@@ -25,4 +25,4 @@ class ValidateStream(pyblish.api.InstancePlugin):
                 "Please let your Perforce admin set up your workspace with "
                 "stream connected."
             )
-            raise PublishXmlValidationError(self, msg)
+            raise PublishValidationError(self, msg)

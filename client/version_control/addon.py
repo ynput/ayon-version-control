@@ -1,4 +1,3 @@
-import click
 import os
 
 from ayon_core.addon import AYONAddon, ITrayService, IPluginPaths
@@ -117,9 +116,6 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
             self.webserver = WebServer()
             self.webserver.start()
 
-    def cli(self, click_group):
-        click_group.add_command(cli_main)
-
     def get_plugin_paths(self):
         return {}
 
@@ -141,8 +137,3 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
         return os.path.join(VERSION_CONTROL_ADDON_DIR, "launch_hooks",
                             self.active_version_control_system)
-
-
-@click.group("version_control", help="Version Control module related commands.")
-def cli_main():
-    pass
