@@ -143,7 +143,7 @@ class GetChanges(PerforceRestApiEndpoint):
     """Returns list of submitted changes."""
     async def post(self, request) -> Response:
         log.debug("GetChanges called")
-        content = await request.json()
+        _content = await request.json()
 
         result = VersionControlPerforce.get_changes()
         return Response(
@@ -157,7 +157,7 @@ class GetLastChangelist(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def post(self, request) -> Response:
         log.debug("GetLatestChangelist called")
-        content = await request.json()
+        _content = await request.json()
 
         result = VersionControlPerforce.get_last_change_list()
         return Response(
