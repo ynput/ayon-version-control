@@ -282,8 +282,8 @@ class WebServerThread(threading.Thread):
 # class MainThreadItem:
 #     """Structure to store information about callback in main thread.
 #
-#     Item should be used to execute callback in main thread which may be needed
-#     for execution of Qt objects.
+#     Item should be used to execute callback in main thread which may
+#     be needed for execution of Qt objects.
 #
 #     Item store callback (callable variable), arguments and keyword arguments
 #     for the callback. Item hold information about it's process.
@@ -303,8 +303,8 @@ class WebServerThread(threading.Thread):
 #         """Execute callback and store it's result.
 #
 #         Method must be called from main thread. Item is marked as `done`
-#         when callback execution finished. Store output of callback of exception
-#         information when callback raise one.
+#         when callback execution finished. Store output of callback of
+#         exception information when callback raise one.
 #         """
 #         log.debug("Executing process in main thread")
 #         if self.done:

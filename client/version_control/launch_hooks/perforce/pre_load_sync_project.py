@@ -78,8 +78,8 @@ class SyncUnrealProject(PreLaunchHook):
 
     def _find_uproject_files(self, start_dir):
         """
-        This function searches for files with the .uproject extension recursively
-        within a starting directory and its subdirectories.
+        This function searches for files with the .uproject extension
+        recursively within a starting directory and its subdirectories.
 
         Args:
             start_dir: The starting directory from where the search begins.

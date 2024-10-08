@@ -36,7 +36,8 @@ class ChangesModel(QtGui.QStandardItemModel):
             date_string = date_time.strftime("%Y%m%dT%H%M%SZ")
 
             number_item = QtGui.QStandardItem(change["change"])
-            number_item.setData(int(change["change"]), CHANGE_ROLE)  # Store number for sorting
+            # Store number for sorting
+            number_item.setData(int(change["change"]), CHANGE_ROLE)
             desc_item = QtGui.QStandardItem(change["desc"])
             author_item = QtGui.QStandardItem(change["user"])
             date_item = QtGui.QStandardItem(date_string)

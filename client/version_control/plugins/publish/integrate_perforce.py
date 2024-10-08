@@ -26,7 +26,9 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
         version_template_key = (
             instance.data.get("version_control", {})["template_name"])
         if not version_template_key:
-            raise RuntimeError("Instance data missing 'version_control[template_name]'")   # noqa
+            raise RuntimeError(
+                "Instance data missing 'version_control[template_name]'"
+            )
 
         if "_" in version_template_key:
             template_area, template_name = version_template_key.split("_")
@@ -34,7 +36,7 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
             template_area = version_template_key
             template_name = "default"
         anatomy = instance.context.data["anatomy"]
-        template = anatomy.templates_obj.templates[template_area][template_name]  # noqa
+        template = anatomy.get_template_item(template_area, template_name)
         if not template:
             raise RuntimeError("Anatomy is missing configuration for '{}'".
                                format(version_template_key))
@@ -60,7 +62,9 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
 
-            is_on_server = PerforceRestStub.exists_on_server(version_control_path)
+            is_on_server = PerforceRestStub.exists_on_server(
+                version_control_path
+            )
             actual_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             comment = os.path.basename(version_control_path) + actual_time
             if is_on_server:
