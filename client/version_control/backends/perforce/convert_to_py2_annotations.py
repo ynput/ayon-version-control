@@ -4,17 +4,16 @@ import importlib.util
 import inspect
 import functools
 import pathlib
+from typing import Optional
 
 from types import ModuleType
 
-_typing = False
-if _typing:
-    from typing import Callable
-    from typing import Union
-del _typing
+from . import api
 
 
-def import_module_from_path(module_name: str, package_path: str) -> Union[None, ModuleType]:
+def import_module_from_path(
+    module_name: str, package_path: str
+) -> Optional[ModuleType]:
     module_name = module_name.split(".")[0]
     spec = importlib.util.spec_from_file_location(module_name, package_path)
     if not spec:
@@ -28,7 +27,6 @@ def import_module_from_path(module_name: str, package_path: str) -> Union[None, 
     return module
 
 
-from . import api
 
 val1 = api.checkout("")
 val1 = api.checkout([""])
@@ -50,45 +48,67 @@ def get_source_code(file: pathlib.Path) -> str:
         # 	# print("----")
 
         # print(attribute)
-        if inspect.isclass(attribute):
-            for attr_name in dir(attribute):
-                class_attribute = getattr(attribute, attr_name)
-                if inspect.isfunction(class_attribute) or isinstance(class_attribute, functools._lru_cache_wrapper):
-                    signature = inspect.signature(class_attribute)
-                    parameters = signature.parameters.values()
-                    args = []
-                    kwargs: list[inspect.Parameter] = []
-                    for arg in parameters:
-                        if arg.default == inspect._empty:
-                            args.append(arg)
-                            continue
+        if not inspect.isclass(attribute):
+            continue
+        for attr_name in dir(attribute):
+            class_attribute = getattr(attribute, attr_name)
+            if (
+                not inspect.isfunction(class_attribute)
+                or isinstance(class_attribute, functools._lru_cache_wrapper)
+            ):
+                continue
+            signature = inspect.signature(class_attribute)
+            parameters = signature.parameters.values()
+            args = []
+            kwargs: list[inspect.Parameter] = []
+            for arg in parameters:
+                if arg.default == inspect._empty:
+                    args.append(arg)
+                    continue
 
-                        kwargs.append(arg)
+                kwargs.append(arg)
 
-                    args_str = ", ".join((arg.name for arg in args))
+            args_str = ", ".join((arg.name for arg in args))
 
-                    def _empty_string():
-                        return '""'
+            def _empty_string():
+                return '""'
 
-                    kwargs_str = "".join(
-                        f", {kwarg.name}={_empty_string() if isinstance(kwarg.default, str) else kwarg.default}"
-                        for kwarg in kwargs
-                    )
-                    function_header = f"def {attr_name}({args_str}{kwargs_str}):"
-                    parameters_wihout_self = [arg for arg in parameters if arg.name != "self"]
-                    annotations = [arg.annotation if arg.annotation != inspect._empty else "Any" for arg in parameters_wihout_self]
-                    return_type = signature.return_annotation
-                    return_type_str = "Any" if return_type == inspect._empty else return_type
-                    type_annotation = f"\t# type: ({', '.join(annotations)}) -> {return_type_str}"
-                    print(function_header)
-                    print(type_annotation)
-                    print("----")
+            kw_items = []
+            for kwarg in kwargs:
+                default = kwarg.default
+                if isinstance(default, str):
+                    default = f'"{default}"'
+                kw_items.append(f"{kwarg.name}={default}")
+            kwargs_str = "".join(kw_items)
+            function_header = f"def {attr_name}({args_str}{kwargs_str}):"
+            parameters_wihout_self = [
+                arg
+                for arg in parameters if arg.name != "self"
+            ]
+            annotations = [
+                arg.annotation
+                if arg.annotation != inspect._empty
+                else "Any" for arg in parameters_wihout_self
+            ]
+            return_type = signature.return_annotation
+            return_type_str = (
+                "Any"
+                if return_type == inspect._empty
+                else return_type
+            )
+            type_annotation = (
+                f"\t# type: ({', '.join(annotations)}) -> {return_type_str}"
+            )
+            print(function_header)
+            print(type_annotation)
             print("----")
+        print("----")
 
 
 if __name__ == "__main__":
     get_source_code(
         pathlib.Path(
-            r"C:\p4ws\sharkmob\Tools\OpenPype\OpenPype-3-14-2\openpype\modules\version_control\backends\perforce\api.py"
+            r"C:\p4ws\sharkmob\Tools\OpenPype\OpenPype-3-14-2\
+            openpype\modules\version_control\backends\perforce\api.py"
         )
     )

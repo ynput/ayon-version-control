@@ -3,12 +3,9 @@ import sys
 from qtpy import QtWidgets, QtCore
 
 from ayon_core import style
-from ayon_core.tools.utils.lib import (
-    iter_model_rows,
-    qt_app_context
-)
-from .control import ChangesViewerController
+from ayon_core.tools.utils.lib import qt_app_context
 
+from .control import ChangesViewerController
 from .widgets import ChangesDetailWidget
 
 

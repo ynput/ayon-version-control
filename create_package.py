@@ -28,7 +28,7 @@ import argparse
 import logging
 import collections
 import zipfile
-from typing import Optional, Any, Pattern
+from typing import Optional, Pattern
 
 import package
 

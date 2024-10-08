@@ -1,20 +1,11 @@
-import os.path
-
-import six
+import os
+import typing
+from typing import Optional, Tuple, Sequence, Dict, Any
+if typing.TYPE_CHECKING:
+    import pathlib
 
 from . import api
 from .. import abstract
-
-if six.PY2:
-    import pathlib2 as pathlib
-else:
-    import pathlib
-
-_typing = False
-if _typing:
-    from typing import Any
-    from typing import Sequence
-del _typing
 
 
 class VersionControlPerforce(abstract.VersionControl):
@@ -100,8 +91,7 @@ class VersionControlPerforce(abstract.VersionControl):
         return api.get_changes()
 
     @staticmethod
-    def get_existing_change_list(comment):
-        # type: (str) -> dict[str, Any] | None
+    def get_existing_change_list(comment: str) -> Optional[Dict[str, Any]]:
         return api.get_existing_change_list(comment)
 
     @staticmethod
@@ -110,8 +100,11 @@ class VersionControlPerforce(abstract.VersionControl):
         return api.get_last_change_list()
 
     @staticmethod
-    def get_files_in_folder_in_date_order(path, name_pattern=None, extensions=None):
-        # type: (pathlib.Path | str, str | None, Sequence[str] | None) -> tuple[pathlib.Path | None]
+    def get_files_in_folder_in_date_order(
+        path: "(pathlib.Path | str)",
+        name_pattern: Optional[str] = None,
+        extensions: Optional[Sequence[str]] = None
+    ) -> Tuple[Optional[pathlib.Path]]:
         return tuple(
             (
                 data.path for data in api.get_files_in_folder_in_date_order(

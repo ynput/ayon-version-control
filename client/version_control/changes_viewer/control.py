@@ -1,7 +1,6 @@
 from ayon_core.lib.events import QueuedEventSystem
 from ayon_core.pipeline import (
     registered_host,
-    get_current_context,
 )
 from ayon_core.addon import AddonsManager
 from version_control.rest.perforce.rest_stub import PerforceRestStub

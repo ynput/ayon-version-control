@@ -11,7 +11,6 @@ import os
 
 from ayon_applications import (
     PreLaunchHook,
-    ApplicationLaunchFailed,
     LaunchTypes,
 )
 

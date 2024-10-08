@@ -1,21 +1,13 @@
-import six
 import os
+import typing
+from typing import Optional
+
 import requests
-
-if six.PY2:
-    import pathlib2 as pathlib
-else:
+if typing.TYPE_CHECKING:
     import pathlib
-
-_typing = False
-if _typing:
-    from typing import Any
-    from typing import Sequence
-del _typing
 
 
 class PerforceRestStub:
-
     @staticmethod
     def _wrap_call(command, **kwargs):
         webserver_url = os.environ.get("PERFORCE_WEBSERVER_URL")
@@ -51,8 +43,7 @@ class PerforceRestStub:
 
 
     @staticmethod
-    def add(path, comment=""):
-        # type: (pathlib.Path | str, str) -> bool
+    def add(path: "pathlib.Path", comment: Optional[str] = "") -> bool:
         response = PerforceRestStub._wrap_call("add",
                                                path=path,
                                                comment=comment)
