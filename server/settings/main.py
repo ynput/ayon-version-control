@@ -70,7 +70,7 @@ class VersionControlSettings(BaseSettingsModel):
     enabled: bool = Field(default=False)
 
     active_version_control_system: str = Field(
-        '',
+        "",
         enum_resolver=backend_enum,
         title="Backend name"
     )
