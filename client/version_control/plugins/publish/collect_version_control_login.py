@@ -9,6 +9,8 @@ Provides:
 import pyblish.api
 
 from ayon_core.addon import AddonsManager
+from ayon_core.pipeline.publish import PublishValidationError
+from ayon_common.utils import get_local_site_id
 
 from version_control.rest.perforce.rest_stub import PerforceRestStub
 
@@ -28,17 +30,17 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             self.log.info("No version control enabled")
             return
 
-        project_name = context.data["projectName"]
-        project_setting = context.data["project_settings"]
-        conn_info = version_control.get_connection_info(project_name,
-                                                        project_setting)
-
+        conn_info = self._get_conn_info(
+            project_name, version_control, project_settings)
         context.data["version_control"] = conn_info
 
-        PerforceRestStub.login(conn_info["host"], conn_info["port"],
-                               conn_info["username"],
-                               conn_info["password"],
-                               conn_info["workspace_dir"])
+        PerforceRestStub.login(
+            conn_info["host"],
+            conn_info["port"],
+            conn_info["username"],
+            conn_info["password"],
+            conn_info["workspace_dir"]
+        )
 
         stream = PerforceRestStub.get_stream(conn_info["workspace_dir"])
         context.data["version_control"]["stream"] = stream
@@ -56,3 +58,39 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         """
         project_enabled = project_settings[version_control.name]["enabled"]
         return version_control and version_control.enabled and project_enabled
+
+    def _get_conn_info(self, project_name, version_control, project_settings):
+        """Gets and check credentials for version-control
+
+        Args:
+            project_name (str)
+            version_control (Union[AYONAddon, Any]): addon from AddonsManager
+            project_settings (Dict[str, Any]): Prepared project settings.
+
+        Returns:
+            (dict)
+
+        Raises:
+            (PublishValidationError): if missing credentials
+        """
+        conn_info = version_control.get_connection_info(
+            project_name, project_settings)
+
+        if not all([
+            conn_info["username"],
+            conn_info["password"],
+            conn_info["workspace_dir"]
+        ]):
+            site_name = get_local_site_id()
+            sett_str = f"ayon+settings://version_control?project= {project_name}&site={site_name}"  # noqa
+            raise PublishValidationError(
+                "Required credentials are missing. "
+                f"Please go to `{sett_str}` to fill it.")
+
+        if not all([conn_info["host"], conn_info["port"]]):
+            sett_str = f"ayon+settings://version_control?project={project_name}"  # noqa
+            raise PublishValidationError(
+                "Required version control settings are missing. "
+                f"Please ask your AYON admin to fill `{sett_str}`.")
+
+        return conn_info
