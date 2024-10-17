@@ -20,10 +20,11 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
     order = pyblish.api.CollectorOrder + 0.4990
     targets = ["local"]
 
-
     def process(self, context):
         version_control = AddonsManager().get("version_control")
-        if not version_control or not version_control.enabled:
+        project_name = context.data["projectName"]
+        project_settings = context.data["project_settings"]
+        if not self._is_addon_enabled(version_control, project_settings):
             self.log.info("No version control enabled")
             return
 
@@ -41,3 +42,17 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
 
         stream = PerforceRestStub.get_stream(conn_info["workspace_dir"])
         context.data["version_control"]["stream"] = stream
+        self.log.debug(f"stream::{stream}")
+
+    def _is_addon_enabled(self, version_control, project_settings):
+        """Check if addon is enabled for this project.
+
+        Args:
+            version_control Union[AYONAddon, Any]: addon returned from manager
+            project_settings (Dict[str, Any]): Prepared project settings.
+
+        Returns
+            (bool)
+        """
+        project_enabled = project_settings[version_control.name]["enabled"]
+        return version_control and version_control.enabled and project_enabled
