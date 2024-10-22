@@ -67,10 +67,10 @@ class LocalSubmodel(BaseSettingsModel):
 class VersionControlSettings(BaseSettingsModel):
     """Version Control Project Settings."""
 
-    enabled: bool = Field(default=True)
+    enabled: bool = Field(default=False)
 
     active_version_control_system: str = Field(
-        '',
+        "",
         enum_resolver=backend_enum,
         title="Backend name"
     )
