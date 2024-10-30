@@ -86,8 +86,8 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         ]):
             site_name = get_local_site_id()
             sett_str = (
-                f"ayon+settings://version_control?project= {project_name}&"
-                f"site={site_name}"
+                "ayon+settings://version_control?project="
+                f"{project_name}&site={site_name}"
             )
             raise PublishError(
                 "Required credentials are missing. "
