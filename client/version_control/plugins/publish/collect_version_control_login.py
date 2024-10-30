@@ -13,6 +13,7 @@ from ayon_core.pipeline.publish import PublishError
 from ayon_common.utils import get_local_site_id
 
 from version_control.rest.perforce.rest_stub import PerforceRestStub
+from version_control import is_version_control_enabled
 
 
 class CollectVersionControlLogin(pyblish.api.ContextPlugin):
@@ -26,7 +27,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         version_control = AddonsManager().get("version_control")
         project_name = context.data["projectName"]
         project_settings = context.data["project_settings"]
-        if not self._is_addon_enabled(version_control, project_settings):
+        if not is_version_control_enabled(project_settings):
             self.log.info(
                 "Version control addon is not enabled"
                 f" for project '{project_name}'"

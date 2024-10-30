@@ -137,3 +137,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
         return os.path.join(VERSION_CONTROL_ADDON_DIR, "launch_hooks",
                             self.active_version_control_system)
+
+
+def is_version_control_enabled(project_settings):
+    return project_settings.get("version_control", {}).get("enabled", False)

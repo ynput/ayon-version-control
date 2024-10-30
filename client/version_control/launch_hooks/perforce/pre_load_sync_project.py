@@ -19,6 +19,7 @@ from ayon_core.tools.utils import qt_app_context
 from ayon_core.addon import AddonsManager
 
 from version_control.changes_viewer import ChangesWindows
+from version_control import is_version_control_enabled
 
 
 class SyncUnrealProject(PreLaunchHook):
@@ -71,12 +72,9 @@ class SyncUnrealProject(PreLaunchHook):
         return project_files[0]
 
     def _get_enabled_version_control_addon(self):
-        manager = AddonsManager()
-        version_control_addon = manager["version_control"]
-        proj_settings = self.data["project_settings"]
-        project_enabled = proj_settings["version_control"]["enabled"]
-        if project_enabled:
-            return version_control_addon
+        if is_version_control_enabled(self.data["project_settings"]):
+            manager = AddonsManager()
+            return manager["version_control"]
         return None
 
     def _find_uproject_files(self, start_dir):
