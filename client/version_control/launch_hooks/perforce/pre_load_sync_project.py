@@ -72,8 +72,10 @@ class SyncUnrealProject(PreLaunchHook):
 
     def _get_enabled_version_control_addon(self):
         manager = AddonsManager()
-        version_control_addon = manager.get("version_control")
-        if version_control_addon and version_control_addon.enabled:
+        version_control_addon = manager["version_control"]
+        proj_settings = self.data["project_settings"]
+        project_enabled = proj_settings["version_control"]["enabled"]
+        if project_enabled:
             return version_control_addon
         return None
 
