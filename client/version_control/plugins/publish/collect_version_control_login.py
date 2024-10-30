@@ -9,7 +9,7 @@ Provides:
 import pyblish.api
 
 from ayon_core.addon import AddonsManager
-from ayon_core.pipeline.publish import PublishValidationError
+from ayon_core.pipeline.publish import PublishError
 from ayon_common.utils import get_local_site_id
 
 from version_control.rest.perforce.rest_stub import PerforceRestStub
@@ -71,7 +71,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             (dict)
 
         Raises:
-            (PublishValidationError): if missing credentials
+            (PublishError): When credentials are missing.
         """
         conn_info = version_control.get_connection_info(
             project_name, project_settings)
@@ -82,14 +82,19 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             conn_info["workspace_dir"]
         ]):
             site_name = get_local_site_id()
-            sett_str = f"ayon+settings://version_control?project= {project_name}&site={site_name}"  # noqa
-            raise PublishValidationError(
+            sett_str = (
+                f"ayon+settings://version_control?project= {project_name}&"
+                f"site={site_name}"
+            )
+            raise PublishError(
                 "Required credentials are missing. "
                 f"Please go to `{sett_str}` to fill it.")
 
         if not all([conn_info["host"], conn_info["port"]]):
-            sett_str = f"ayon+settings://version_control?project={project_name}"  # noqa
-            raise PublishValidationError(
+            sett_str = (
+                f"ayon+settings://version_control?project={project_name}"
+            )
+            raise PublishError(
                 "Required version control settings are missing. "
                 f"Please ask your AYON admin to fill `{sett_str}`.")
 
