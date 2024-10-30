@@ -60,7 +60,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             bool: Addon is enabled or not.
         """
         project_enabled = project_settings[version_control.name]["enabled"]
-        return version_control and version_control.enabled and project_enabled
+        return version_control and project_enabled
 
     def _get_conn_info(self, project_name, version_control, project_settings):
         """Gets and check credentials for version-control
