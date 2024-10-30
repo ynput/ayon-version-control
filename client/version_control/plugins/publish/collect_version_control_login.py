@@ -27,7 +27,10 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         project_name = context.data["projectName"]
         project_settings = context.data["project_settings"]
         if not self._is_addon_enabled(version_control, project_settings):
-            self.log.info("No version control enabled")
+            self.log.info(
+                "Version control addon is not enabled"
+                f" for project '{project_name}'"
+            )
             return
 
         conn_info = self._get_conn_info(
@@ -50,11 +53,11 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         """Check if addon is enabled for this project.
 
         Args:
-            version_control Union[AYONAddon, Any]: addon returned from manager
+            version_control (AYONAddon): Version control addon from manager.
             project_settings (Dict[str, Any]): Prepared project settings.
 
         Returns
-            (bool)
+            bool: Addon is enabled or not.
         """
         project_enabled = project_settings[version_control.name]["enabled"]
         return version_control and version_control.enabled and project_enabled
@@ -68,7 +71,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             project_settings (Dict[str, Any]): Prepared project settings.
 
         Returns:
-            (dict)
+            dict[str, str]: Connection info.
 
         Raises:
             (PublishError): When credentials are missing.
