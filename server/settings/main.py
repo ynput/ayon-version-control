@@ -53,15 +53,21 @@ class PublishPluginsModel(BaseSettingsModel):
 
 class LocalSubmodel(BaseSettingsModel):
     """Select your local and remote site"""
-    username: str = Field("",
-                          title="Username",
-                          scope=["site"])
-    password: str = Field("",
-                        title="Password",
-                        scope=["site"])
-    workspace_dir: str = Field("",
-                               title="My Workspace Directory",
-                               scope=["site"])
+    username: str = Field(
+        "",
+        title="Username",
+        scope=["site"]
+    )
+    password: str = Field(
+        "",
+        title="Password",
+        scope=["site"]
+    )
+    workspace_dir: str = Field(
+        "",
+        title="My Workspace Directory",
+        scope=["site"]
+    )
 
 
 class VersionControlSettings(BaseSettingsModel):
