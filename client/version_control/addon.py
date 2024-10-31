@@ -44,15 +44,10 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
             "{} not found in settings - make sure they are defined in the defaults".format(self.name)
         )
         vc_settings = settings[self.name]  # type: dict[str, Any]
-        enabled = vc_settings["enabled"]  # type: bool
         active_version_control_system = vc_settings["active_version_control_system"]  # type: str
         self.active_version_control_system = active_version_control_system
+        enabled = vc_settings["enabled"]  # type: bool
         self.set_service_running_icon() if enabled else self.set_service_failed_icon()
-        self.enabled = enabled
-
-        # if enabled:
-        #     from .backends.perforce.communication_server import WebServer
-        #     self.webserver = WebServer()
 
     def get_global_environments(self):
         # return {"ACTIVE_VERSION_CONTROL_SYSTEM": self.active_version_control_system}
