@@ -72,18 +72,6 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
             "workspace_dir": workspace_dir
         }
 
-    def sync_to_latest(self, conn_info):
-        from version_control.rest.perforce.rest_stub import \
-            PerforceRestStub
-
-        PerforceRestStub.login(host=conn_info["host"],
-                               port=conn_info["port"],
-                               username=conn_info["username"],
-                               password=conn_info["password"],
-                               workspace=conn_info["workspace_dir"])
-        PerforceRestStub.sync_latest_version(conn_info["workspace_dir"])
-        return
-
     def sync_to_version(self, conn_info, change_id):
         from version_control.rest.perforce.rest_stub import \
             PerforceRestStub
