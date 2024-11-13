@@ -2,6 +2,7 @@ import os
 
 from ayon_core.addon import AYONAddon, ITrayService, IPluginPaths
 from ayon_core.settings import get_project_settings
+from ayon_core.lib import filter_profiles
 
 
 _typing = False
@@ -10,6 +11,7 @@ if _typing:
 del _typing
 
 from .version import __version__
+from .lib import WorkspaceProfileContext
 
 
 VERSION_CONTROL_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -53,23 +55,42 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         # return {"ACTIVE_VERSION_CONTROL_SYSTEM": self.active_version_control_system}
         return {}
 
-    def get_connection_info(self, project_name, project_settings=None):
+    def get_connection_info(
+        self,
+        project_name: str,
+        project_settings: dict = None,
+        context: WorkspaceProfileContext = None
+    ):
         if not project_settings:
             project_settings = get_project_settings(project_name)
 
         version_settings = project_settings["version_control"]
         local_setting = version_settings["local_setting"]
 
-        workspace_dir = local_setting["workspace_dir"]
-        if workspace_dir:
-            workspace_dir = os.path.normpath(workspace_dir)
+        workspace_name = None
+        filtering_criteria = {
+            "task_names": None,
+            "task_types": None
+        }
+        if context:
+            filtering_criteria = {
+                "task_names": context.task_names,
+                "task_types": context.task_types
+            }
+        profile = filter_profiles(
+            local_setting["workspace_profiles"],
+            filtering_criteria,
+            logger=self.log
+        )
+        if profile:
+            workspace_name = profile["workspace_name"]
 
         return {
             "host": version_settings["host_name"],
             "port": version_settings["port"],
             "username": local_setting["username"],
             "password": local_setting["password"],
-            "workspace_dir": workspace_dir
+            "workspace_name": workspace_name
         }
 
     def sync_to_version(self, conn_info, change_id):
