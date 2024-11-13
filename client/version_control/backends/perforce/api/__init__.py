@@ -943,8 +943,14 @@ class P4ConnectionManager:
 
         return results
 
-    def login(self, host: str, port: int,
-              username: str, password: str, workspace: str):
+    def login(
+        self,
+        host: str,
+        port: int,
+        username: str,
+        password: str,
+        workspace_name: str
+    ):
         """Connects from values in Settings
 
         Override P4CONFIG values.
@@ -956,7 +962,7 @@ class P4ConnectionManager:
             conn_manager.p4.port = f"{host}:{port}"
         conn_manager.p4.connect()
         conn_manager.p4.run_login(password=password)
-        conn_manager.p4.client = os.path.basename(workspace)
+        conn_manager.p4.client = workspace_name
         conn_manager.__workspace_cache__ = self._connect_get_workspaces()
 
     # Connect Methods:
