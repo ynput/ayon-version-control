@@ -1,5 +1,9 @@
 from pydantic import Field
-from ayon_server.settings import BaseSettingsModel
+from ayon_server.settings import (
+    BaseSettingsModel,
+    SettingsField,
+    task_types_enum
+)
 
 
 def backend_enum():
@@ -31,8 +35,8 @@ class CollectVersionControlProfileModel(BaseSettingsModel):
         title="Add Version Control to representations",
     )
     template_name: str = Field("", title="Template name",
-        description="Name from Anatomy to provide path and name of "
-                    "committed file")
+                               description="Name from Anatomy to provide path and name of "
+                                           "committed file")
 
 
 class CollectVersionControlModel(BaseSettingsModel):
@@ -44,15 +48,37 @@ class CollectVersionControlModel(BaseSettingsModel):
     )
 
 
+class WorkspaceProfileModel(BaseSettingsModel):
+    _layout = "expanded"
+    task_types: list[str] = SettingsField(
+        default_factory=list,
+        title="Task types",
+        enum_resolver=task_types_enum,
+        scope=["site"]
+    )
+    task_names: list[str] = SettingsField(
+        default_factory=list,
+        title="Task names",
+        scope=["site"]
+    )
+    workspace_name: str = Field(
+        "",
+        title="My Workspace Name",
+        scope=["site"]
+    )
+
+
 class PublishPluginsModel(BaseSettingsModel):
     CollectVersionControl: CollectVersionControlModel = Field(
         default_factory=CollectVersionControlModel,
         title="Collect Version Control",
-        description="Configure which products should be version controlled externally.")  # noqa
+        description="Configure which products should be version "
+                    "controlled externally.")  # noqa
 
 
 class LocalSubmodel(BaseSettingsModel):
-    """Select your local and remote site"""
+    """Provide artist based values"""
+
     username: str = Field(
         "",
         title="Username",
@@ -63,9 +89,8 @@ class LocalSubmodel(BaseSettingsModel):
         title="Password",
         scope=["site"]
     )
-    workspace_dir: str = Field(
-        "",
-        title="My Workspace Directory",
+    workspace_profiles: list[WorkspaceProfileModel] = SettingsField(
+        default_factory=list,
         scope=["site"]
     )
 
@@ -105,4 +130,3 @@ class VersionControlSettings(BaseSettingsModel):
 
 
 DEFAULT_VALUES = {}
-    
