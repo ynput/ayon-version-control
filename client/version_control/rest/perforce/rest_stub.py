@@ -39,16 +39,16 @@ class PerforceRestStub:
         return response
 
     @staticmethod
-    def login(host, port, username, password, workspace):
-        # type: (None | str, str, str, str) -> dict
-        response = PerforceRestStub._wrap_call("login",
-                                               host=host,
-                                               port=port,
-                                               username=username,
-                                               password=password,
-                                               workspace=workspace)
+    def login(host, port, username, password, workspace_name):
+        # type: (None | str, int, str, str, str) -> dict
+        response = PerforceRestStub._wrap_call(
+            "login",
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            workspace_name=workspace_name)
         return response
-
 
     @staticmethod
     def add(path, comment=""):
@@ -96,13 +96,11 @@ class PerforceRestStub:
         response = PerforceRestStub._wrap_call("get_changes")
         return response
 
-
     @staticmethod
     def submit_change_list(comment):
         response = PerforceRestStub._wrap_call("submit_change_list",
                                                comment=comment)
         return response
-
 
     @staticmethod
     def exists_on_server(path):
