@@ -50,19 +50,6 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         context.data["version_control"]["stream"] = stream
         self.log.debug(f"stream::{stream}")
 
-    def _is_addon_enabled(self, version_control, project_settings):
-        """Check if addon is enabled for this project.
-
-        Args:
-            version_control (AYONAddon): Version control addon from manager.
-            project_settings (Dict[str, Any]): Prepared project settings.
-
-        Returns
-            bool: Addon is enabled or not.
-        """
-        project_enabled = project_settings[version_control.name]["enabled"]
-        return version_control and project_enabled
-
     def _get_conn_info(self, project_name, version_control, project_settings):
         """Gets and check credentials for version-control
 
