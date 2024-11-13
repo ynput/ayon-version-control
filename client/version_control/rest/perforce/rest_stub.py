@@ -110,8 +110,8 @@ class PerforceRestStub:
 
     @staticmethod
     def get_stream(workspace_name):
-        response = PerforceRestStub._wrap_call("get_stream",
-                                               workspace_dir=workspace_name)
+        response = PerforceRestStub._wrap_call(
+            "get_stream", workspace_name=workspace_name)
         return response
 
     @staticmethod
