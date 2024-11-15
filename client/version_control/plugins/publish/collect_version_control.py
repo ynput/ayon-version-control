@@ -8,6 +8,8 @@ Provides:
 import pyblish.api
 from ayon_core.lib import filter_profiles
 
+from version_control.rest.perforce.rest_stub import PerforceRestStub
+
 
 class CollectVersionControl(pyblish.api.InstancePlugin):
     """Mark instance to be submitted."""
@@ -60,7 +62,9 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         result_str = "Adding"
         username = conn_info["username"]
         password = conn_info["password"]
-        workspace_dir = conn_info["workspace_dir"]
+
+        workspace_dir = PerforceRestStub.get_workspace_dir(
+            conn_info["workspace_name"])
 
         instance.data["version_control"] = {}
         instance.data["version_control"]["roots"] = {"work": workspace_dir}
