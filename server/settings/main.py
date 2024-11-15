@@ -50,6 +50,11 @@ class CollectVersionControlModel(BaseSettingsModel):
 
 class WorkspaceProfileModel(BaseSettingsModel):
     _layout = "expanded"
+    folder_paths: list[str] = SettingsField(
+        default_factory=list,
+        title="Folder paths",
+        scope=["site"]
+    )
     task_types: list[str] = SettingsField(
         default_factory=list,
         title="Task types",

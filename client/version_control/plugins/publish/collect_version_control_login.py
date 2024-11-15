@@ -8,7 +8,6 @@ Provides:
 
 import pyblish.api
 
-from ayon_core.addon import AddonsManager
 from ayon_common.utils import get_local_site_id
 
 from version_control.rest.perforce.rest_stub import PerforceRestStub
@@ -80,6 +79,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         """
         task_entity = context.data["taskEntity"]
         workspace_context = WorkspaceProfileContext(
+            folder_paths=context.data["folderPath"],
             task_names=task_entity["name"],
             task_types=task_entity["taskType"]
         )

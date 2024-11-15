@@ -69,11 +69,13 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
         workspace_name = None
         filtering_criteria = {
+            "folder_paths": None,
             "task_names": None,
             "task_types": None
         }
         if context:
             filtering_criteria = {
+                "folder_paths": context.folder_paths,
                 "task_names": context.task_names,
                 "task_types": context.task_types
             }

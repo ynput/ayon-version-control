@@ -29,6 +29,7 @@ class ChangesViewerController:
 
         task_entity = launch_data["task_entity"]
         workspace_profile_context = WorkspaceProfileContext(
+            folder_paths=launch_data["folder_path"],
             task_names=task_entity["name"],
             task_types=task_entity["taskType"],
         )
