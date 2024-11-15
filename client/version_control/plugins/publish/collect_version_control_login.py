@@ -86,6 +86,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         conn_info = version_control.get_connection_info(
             project_name, project_settings, workspace_context)
 
+        missing_creds = False
         if not all([
             conn_info["username"],
             conn_info["password"],
@@ -99,7 +100,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             self.log.warning(
                 "Required credentials are missing. "
                 f"Please go to `{sett_str}` to fill it.")
-            conn_info = None
+            missing_creds = True
 
         if not all([conn_info["host"], conn_info["port"]]):
             sett_str = (
@@ -108,6 +109,9 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             self.log.warning(
                 "Required version control settings are missing. "
                 f"Please ask your AYON admin to fill `{sett_str}`.")
-            conn_info = None
+            missing_creds = True
+
+        if missing_creds:
+            return None
 
         return conn_info
