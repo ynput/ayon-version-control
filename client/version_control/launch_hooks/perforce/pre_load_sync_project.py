@@ -70,6 +70,9 @@ class SyncUnrealProject(PreLaunchHook):
             context=workspace_profile_context
         )
 
+        if not conn_info or not conn_info["workspace_name"]:
+            raise RuntimeError(f"Cannot find workspace for this context.")
+
         PerforceRestStub.login(
             host=conn_info["host"],
             port=conn_info["port"],
