@@ -41,7 +41,7 @@ class CollectVersionControlProfileModel(BaseSettingsModel):
 
 class CollectVersionControlModel(BaseSettingsModel):
     _isGroup = True
-    enabled: bool = True
+    enabled: bool = False
     profiles: list[CollectVersionControlProfileModel] = Field(
         default_factory=list,
         title="Profiles to add version control",
@@ -77,8 +77,12 @@ class PublishPluginsModel(BaseSettingsModel):
     CollectVersionControl: CollectVersionControlModel = Field(
         default_factory=CollectVersionControlModel,
         title="Collect Version Control",
-        description="Configure which products should be version "
-                    "controlled externally.")  # noqa
+        description=(
+            "Configure which published products should be committed to P4. "
+            "Keep disabled if published files should be versioned only in AYON"
+        )
+    )
+
 
 
 class LocalSubmodel(BaseSettingsModel):
