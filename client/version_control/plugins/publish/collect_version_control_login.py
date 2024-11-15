@@ -29,7 +29,6 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
     targets = ["local"]
 
     def process(self, context):
-        version_control = AddonsManager().get("version_control")
         project_name = context.data["projectName"]
         project_settings = context.data["project_settings"]
         if not is_version_control_enabled(project_settings):
@@ -39,6 +38,8 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             )
             return
 
+        version_control = (
+            context.data.get("ayonAddonsManager", {}).get("version_control"))
         conn_info = self._get_conn_info(
             project_name, version_control, project_settings, context)
 
