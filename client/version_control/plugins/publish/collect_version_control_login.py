@@ -60,6 +60,10 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         context.data["version_control"]["stream"] = stream
         self.log.debug(f"stream::{stream}")
 
+        workspace_dir = PerforceRestStub.get_workspace_dir(
+            workspace_name=conn_info["workspace_name"])
+        context.data["version_control"]["workspace_dir"] = workspace_dir
+
     def _get_conn_info(
         self,
         project_name,
