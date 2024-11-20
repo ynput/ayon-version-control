@@ -81,11 +81,16 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         Returns:
             dict[str, str]: Connection info or None if validation failed
         """
-        task_entity = context.data["taskEntity"]
+        task_entity = context.data.get("taskEntity")
+        task_name = task_type = None
+        if task_entity:
+            task_name = task_entity["name"]
+            task_type = task_entity["taskType"]
+
         workspace_context = WorkspaceProfileContext(
             folder_paths=context.data["folderPath"],
-            task_names=task_entity["name"],
-            task_types=task_entity["taskType"]
+            task_names=task_name,
+            task_types=task_type
         )
         conn_info = version_control.get_connection_info(
             project_name, project_settings, workspace_context)
