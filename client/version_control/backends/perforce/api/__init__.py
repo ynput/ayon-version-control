@@ -489,15 +489,11 @@ class P4ConnectionManager:
     def _get_valid_path_objects(_paths: P4PathType) -> list[pathlib.Path]:
         def _is_valid_path(_path: Union[str, pathlib.Path]) -> bool:
             if isinstance(_path, str):
-                _path = pathlib.Path(_path)
+                _path = pathlib.Path(_path).anchor.lower()
 
-            # TODO: Make this more robust for people with bonkers folder setups.
-            # The best we can do to determine if _potential_path is in
-            # fact a path, is to see if it starts with "c:/":
-            # This may fall over with people who have bonkers folder setups
-            # But we can't solve for everything!
             _path_anchor_lower = _path.anchor.lower()
-            if (not _path_anchor_lower.startswith("c:\\")) and (
+            if (
+                not _path_anchor_lower[1:].startswith(":\\") and
                 not _path_anchor_lower.startswith("\\\\")
             ):
                 print(f"Path is invalid: {_path}")
@@ -943,8 +939,14 @@ class P4ConnectionManager:
 
         return results
 
-    def login(self, host: str, port: int,
-              username: str, password: str, workspace: str):
+    def login(
+        self,
+        host: str,
+        port: int,
+        username: str,
+        password: str,
+        workspace_name: str
+    ):
         """Connects from values in Settings
 
         Override P4CONFIG values.
@@ -956,7 +958,7 @@ class P4ConnectionManager:
             conn_manager.p4.port = f"{host}:{port}"
         conn_manager.p4.connect()
         conn_manager.p4.run_login(password=password)
-        conn_manager.p4.client = os.path.basename(workspace)
+        conn_manager.p4.client = workspace_name
         conn_manager.__workspace_cache__ = self._connect_get_workspaces()
 
     # Connect Methods:

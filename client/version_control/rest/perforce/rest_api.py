@@ -104,3 +104,10 @@ class PerforceModuleRestAPI:
             self.prefix + "/get_stream",
             get_stream.dispatch
         )
+
+        get_workspace_dir = rest_routes.GetWorkspaceDirEndpoint()
+        self.server_manager.add_route(
+            "POST",
+            self.prefix + "/get_workspace_dir",
+            get_workspace_dir.dispatch
+        )

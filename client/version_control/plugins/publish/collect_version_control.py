@@ -8,6 +8,8 @@ Provides:
 import pyblish.api
 from ayon_core.lib import filter_profiles
 
+from version_control.rest.perforce.rest_stub import PerforceRestStub
+
 
 class CollectVersionControl(pyblish.api.InstancePlugin):
     """Mark instance to be submitted."""
@@ -31,12 +33,12 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         version_control_family = "version_control"
 
         host_name = instance.context.data["hostName"]
-        family = instance.data["family"]
+        product_type = instance.data["productType"]
         task_name = instance.data.get("task")
 
         filtering_criteria = {
             "hosts": host_name,
-            "product_types": family,
+            "product_types": product_type,
             "tasks": task_name
         }
         profile = filter_profiles(
@@ -60,7 +62,9 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         result_str = "Adding"
         username = conn_info["username"]
         password = conn_info["password"]
-        workspace_dir = conn_info["workspace_dir"]
+
+        workspace_dir = PerforceRestStub.get_workspace_dir(
+            conn_info["workspace_name"])
 
         instance.data["version_control"] = {}
         instance.data["version_control"]["roots"] = {"work": workspace_dir}
@@ -69,6 +73,5 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         instance.data["version_control"]["template_name"] = \
             profile["template_name"]
 
-        self.log.debug("{} 'version_control' family for instance with '{}'".format(  # noqa
-            result_str, family
-        ))
+        self.log.debug(f"{result_str} 'version_control' product_type "
+                       f"for instance with '{product_type}' product type.")

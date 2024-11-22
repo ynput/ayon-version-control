@@ -40,9 +40,13 @@ class LoginEndpoint(PerforceRestApiEndpoint):
     """Returns list of workspaces."""
     async def post(self, request) -> Response:
         content = await request.json()
-        result = api.login(content["host"], content["port"],
-                           content["username"], content["password"],
-                           content["workspace"])
+        result = api.login(
+            content["host"],
+            content["port"],
+            content["username"],
+            content["password"],
+            content["workspace_name"]
+        )
         return Response(
             status=200,
             body=self.encode(result),
@@ -211,7 +215,22 @@ class GetStreamEndpoint(PerforceRestApiEndpoint):
     async def post(self, request) -> Response:
         content = await request.json()
 
-        result = VersionControlPerforce.get_stream(content["workspace_dir"])
+        result = VersionControlPerforce.get_stream(content["workspace_name"])
+        return Response(
+            status=200,
+            body=self.encode(result),
+            content_type="application/json"
+        )
+
+
+class GetWorkspaceDirEndpoint(PerforceRestApiEndpoint):
+    """Returns stream attached to workspace."""
+    async def post(self, request) -> Response:
+        content = await request.json()
+
+        result = VersionControlPerforce.get_workspace_dir(
+            content["workspace_name"]
+        )
         return Response(
             status=200,
             body=self.encode(result),

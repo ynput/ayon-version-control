@@ -4,7 +4,9 @@ from ayon_core.pipeline import (
     get_current_context,
 )
 from ayon_core.addon import AddonsManager
+
 from version_control.rest.perforce.rest_stub import PerforceRestStub
+from version_control.lib import WorkspaceProfileContext
 
 
 class ChangesViewerController:
@@ -25,6 +27,19 @@ class ChangesViewerController:
         self._version_control_addon = version_control_addon
         self.enabled = version_control_addon and version_control_addon.enabled
 
+        task_entity = launch_data["task_entity"]
+        workspace_profile_context = WorkspaceProfileContext(
+            folder_paths=launch_data["folder_path"],
+            task_names=task_entity["name"],
+            task_types=task_entity["taskType"],
+        )
+
+        conn_info = self._version_control_addon.get_connection_info(
+            project_name=launch_data["project_name"],
+            context=workspace_profile_context
+        )
+        self._conn_info = conn_info
+
         self._event_system = self._create_event_system()
 
     def emit_event(self, topic, data=None, source=None):
@@ -39,17 +54,17 @@ class ChangesViewerController:
         if not self.enabled:
             return
 
-        conn_info = self._version_control_addon.get_connection_info(
-            project_name=self.get_current_project_name()
-        )
+        if not self._conn_info:
+            raise RuntimeError("Not collected conn_info")
 
-        if conn_info:
-            self._conn_info = conn_info
-            PerforceRestStub.login(host=conn_info["host"],
-                                   port=conn_info["port"],
-                                   username=conn_info["username"],
-                                   password=conn_info["password"],
-                                   workspace=conn_info["workspace_dir"])
+        conn_info = self._conn_info
+        PerforceRestStub.login(
+            host=conn_info["host"],
+            port=conn_info["port"],
+            username=conn_info["username"],
+            password=conn_info["password"],
+            workspace_name=conn_info["workspace_name"]
+        )
 
     def get_changes(self):
         return PerforceRestStub.get_changes()
@@ -58,12 +73,22 @@ class ChangesViewerController:
         if not self.enabled:
             return
 
-        conn_info = self._version_control_addon.get_connection_info(
-            project_name=self.get_current_project_name()
+        if not self._conn_info:
+            raise RuntimeError("Not collected conn_info")
+        conn_info = self._conn_info
+        self.login()
+        PerforceRestStub.login(
+            host=conn_info["host"],
+            port=conn_info["port"],
+            username=conn_info["username"],
+            password=conn_info["password"],
+            workspace_name=conn_info["workspace_name"]
         )
-        if conn_info:
-            self._conn_info = conn_info
-            self._version_control_addon.sync_to_version(conn_info, change_id)
+        workspace_dir = PerforceRestStub.get_workspace_dir(
+            conn_info["workspace_name"])
+        PerforceRestStub.sync_to_version(
+            f"{workspace_dir}/...", change_id)
+
 
     def get_current_project_name(self):
         return self._current_project

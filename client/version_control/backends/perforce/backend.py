@@ -142,8 +142,13 @@ class VersionControlPerforce(abstract.VersionControl):
         return api.update_change_list_description(comment, new_comment)
 
     @staticmethod
-    def get_stream(workspace_dir):
-        # type: (None) -> (list(dict)) | None
-        workspace_name = os.path.basename(workspace_dir)
+    def get_stream(workspace_name):
+        # type: (str) -> str
         result = api.run_command("client", ["-o", workspace_name])
         return result.get("Stream")
+
+    @staticmethod
+    def get_workspace_dir(workspace_name):
+        # type: (str) -> str
+        result = api.run_command("client", ["-o", workspace_name])
+        return result.get("Root")

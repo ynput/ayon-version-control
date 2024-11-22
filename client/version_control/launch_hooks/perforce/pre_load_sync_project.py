@@ -11,7 +11,6 @@ import os
 
 from ayon_applications import (
     PreLaunchHook,
-    ApplicationLaunchFailed,
     LaunchTypes,
 )
 
@@ -20,6 +19,8 @@ from ayon_core.addon import AddonsManager
 
 from version_control.changes_viewer import ChangesWindows
 from version_control import is_version_control_enabled
+from version_control.lib import WorkspaceProfileContext
+from version_control.rest.perforce.rest_stub import PerforceRestStub
 
 
 class SyncUnrealProject(PreLaunchHook):
@@ -45,7 +46,7 @@ class SyncUnrealProject(PreLaunchHook):
             return
 
         self.data["last_workfile_path"] = self._get_unreal_project_path(
-            version_control_addon)
+            version_control_addon, self.data)
 
         with qt_app_context():
             changes_tool = ChangesWindows(launch_data=self.data)
@@ -56,15 +57,35 @@ class SyncUnrealProject(PreLaunchHook):
 
             changes_tool.exec_()
 
-    def _get_unreal_project_path(self, version_control_addon):
-        conn_info = version_control_addon.get_connection_info(
-            project_name=self.data["project_name"]
+    def _get_unreal_project_path(self, version_control_addon, launch_data):
+        task_entity = launch_data["task_entity"]
+        workspace_profile_context = WorkspaceProfileContext(
+            folder_paths=launch_data["folder_path"],
+            task_names=task_entity["name"],
+            task_types=task_entity["taskType"],
         )
-        workdir = conn_info["workspace_dir"]
-        if not os.path.exists(workdir):
-            raise RuntimeError(f"{workdir} must exists for using version "
-                               "control")
-        project_files = self._find_uproject_files(workdir)
+        conn_info = version_control_addon.get_connection_info(
+            project_name=self.data["project_name"],
+            project_settings=launch_data["project_settings"],
+            context=workspace_profile_context
+        )
+
+        if not conn_info or not conn_info["workspace_name"]:
+            raise RuntimeError(f"Cannot find workspace for this context.")
+
+        PerforceRestStub.login(
+            host=conn_info["host"],
+            port=conn_info["port"],
+            username=conn_info["username"],
+            password=conn_info["password"],
+            workspace_name=conn_info["workspace_name"])
+
+        workspace_dir = PerforceRestStub.get_workspace_dir(
+            workspace_name=conn_info["workspace_name"])
+        if not os.path.exists(workspace_dir):
+            raise RuntimeError(f"{workspace_dir} must exists for using version"
+                               " control")
+        project_files = self._find_uproject_files(workspace_dir)
         if len(project_files) != 1:
             raise RuntimeError("Found unexpected number of projects "
                                f"'{project_files}.\n"

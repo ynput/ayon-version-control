@@ -34,54 +34,51 @@ class PerforceRestStub:
 
     @staticmethod
     def is_in_any_workspace(path):
-        response = PerforceRestStub._wrap_call("is_in_any_workspace",
-                                               path=path)
+        response = PerforceRestStub._wrap_call(
+            "is_in_any_workspace", path=path)
         return response
 
     @staticmethod
-    def login(host, port, username, password, workspace):
-        # type: (None | str, str, str, str) -> dict
-        response = PerforceRestStub._wrap_call("login",
-                                               host=host,
-                                               port=port,
-                                               username=username,
-                                               password=password,
-                                               workspace=workspace)
+    def login(host, port, username, password, workspace_name):
+        # type: (None | str, int, str, str, str) -> dict
+        response = PerforceRestStub._wrap_call(
+            "login",
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            workspace_name=workspace_name)
         return response
-
 
     @staticmethod
     def add(path, comment=""):
         # type: (pathlib.Path | str, str) -> bool
-        response = PerforceRestStub._wrap_call("add",
-                                               path=path,
-                                               comment=comment)
+        response = PerforceRestStub._wrap_call(
+            "add", path=path, comment=comment)
         return response
 
     @staticmethod
     def sync_latest_version(path):
-        response = PerforceRestStub._wrap_call("sync_latest_version",
-                                               path=path)
+        response = PerforceRestStub._wrap_call(
+            "sync_latest_version", path=path)
         return response
 
     @staticmethod
     def sync_to_version(path, version):
-        response = PerforceRestStub._wrap_call("sync_to_version",
-                                               path=path,
-                                               version=version)
+        response = PerforceRestStub._wrap_call(
+            "sync_to_version", path=path, version=version)
         return response
 
     @staticmethod
     def checkout(path, comment=""):
-        response = PerforceRestStub._wrap_call("checkout",
-                                               path=path,
-                                               comment=comment)
+        response = PerforceRestStub._wrap_call(
+            "checkout", path=path, comment=comment)
         return response
 
     @staticmethod
     def is_checkouted(path):
-        response = PerforceRestStub._wrap_call("is_checkouted",
-                                               path=path)
+        response = PerforceRestStub._wrap_call(
+            "is_checkouted", path=path)
         return response
 
     @staticmethod
@@ -96,22 +93,26 @@ class PerforceRestStub:
         response = PerforceRestStub._wrap_call("get_changes")
         return response
 
-
     @staticmethod
     def submit_change_list(comment):
-        response = PerforceRestStub._wrap_call("submit_change_list",
-                                               comment=comment)
+        response = PerforceRestStub._wrap_call(
+            "submit_change_list", comment=comment)
         return response
-
 
     @staticmethod
     def exists_on_server(path):
-        response = PerforceRestStub._wrap_call("exists_on_server",
-                                               path=path)
+        response = PerforceRestStub._wrap_call(
+            "exists_on_server", path=path)
         return response
 
     @staticmethod
-    def get_stream(workspace_dir):
-        response = PerforceRestStub._wrap_call("get_stream",
-                                               workspace_dir=workspace_dir)
+    def get_stream(workspace_name):
+        response = PerforceRestStub._wrap_call(
+            "get_stream", workspace_name=workspace_name)
+        return response
+
+    @staticmethod
+    def get_workspace_dir(workspace_name):
+        response = PerforceRestStub._wrap_call(
+            "get_workspace_dir", workspace_name=workspace_name)
         return response
