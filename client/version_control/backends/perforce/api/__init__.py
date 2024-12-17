@@ -1201,9 +1201,10 @@ class P4ConnectionManager:
         return change_list
 
     def _connect_get_last_change_list(self):
-        change_list = self._connect_run_command("changes",
-                                                "-s", "submitted",
-                                                "-m", 1)
+        client_info = self.p4.run("client", "-o")[0]
+        client = client_info["Client"]
+        cmd = ["changes", "-s", "submitted", "-m", 1, "-c", client]
+        change_list = self._connect_run_command(*cmd)
         if not change_list:
             return
 
@@ -1223,6 +1224,13 @@ class P4ConnectionManager:
         client["Root"] = root
         client["Stream"] = stream
         return self.p4.save_client(client)
+
+    # def _connect_get_client_spec(self, client: str = None):
+    #     cmd = ["client", "-o"]
+    #     if client:
+    #         cmd.append(client)
+    #     client_spec = self._connect_run_command(*cmd)
+    #     return client_spec
 
     def _connect_delete(
         self,
