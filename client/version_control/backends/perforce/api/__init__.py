@@ -1225,13 +1225,6 @@ class P4ConnectionManager:
         client["Stream"] = stream
         return self.p4.save_client(client)
 
-    # def _connect_get_client_spec(self, client: str = None):
-    #     cmd = ["client", "-o"]
-    #     if client:
-    #         cmd.append(client)
-    #     client_spec = self._connect_run_command(*cmd)
-    #     return client_spec
-
     def _connect_delete(
         self,
         path: T_PthStrLst,
