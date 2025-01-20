@@ -7,6 +7,9 @@ AYON_API_KEY = ""  # SET HERE!
 
 ADDON_NAME = "version_control"
 
+TRIGGER_SCRIPT_VERSION = "0.1.0"
+PAYLOAD_SCHEMA_VERSION = "0.1.0"
+
 headers = {
     'x-api-key': AYON_API_KEY,
     'Content-Type': 'application/json',
@@ -54,9 +57,11 @@ def get_addon_version():
 
 def call_change_submit_endpoint(
         addon_name, addon_version, user, changelist, client):
+    """Calls endpoint on AYON server to spawn event per submit"""
     url = f"{AYON_SERVER_URL}/api/addons/{addon_name}/{addon_version}/change_submit"
 
     payload = {
+        "payload_schema_version": PAYLOAD_SCHEMA_VERSION,
         "user": user,
         "changelist": changelist,
         "client": client
