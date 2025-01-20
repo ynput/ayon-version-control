@@ -34,25 +34,19 @@ def get_json_response_data(url, headers):
 
 
 def get_addon_version():
-    url = f"{AYON_SERVER_URL}/api/bundles"
-    bundle_data = get_json_response_data(url, headers)
+    """Looks for latest version of ADDON_NAME"""
+    url = f"{AYON_SERVER_URL}/api/addons?details=1"
+    data = get_json_response_data(url, headers)
 
-    production_bundle_name = bundle_data["productionBundle"]
-    bundle_addons = None
-    for bundle in bundle_data["bundles"]:
-        if bundle["name"] == production_bundle_name:
-            bundle_addons = bundle["addons"]
+    found_addon = None
+    for addon in data["addons"]:
+        if addon["name"] == ADDON_NAME:
+            found_addon = addon
             break
-    if not bundle_addons:
-        print(f"Cannot find {production_bundle_name}")
-        return 1
 
-    bundle_version = bundle_addons.get(ADDON_NAME)
-    if not bundle_version:
-        print(
-            f"{ADDON_NAME} not installed in {production_bundle_name}")
+    if not found_addon:
+        print(f"'{ADDON_NAME} is not installed on the server.")
         return 1
-    return bundle_version
 
 
 def call_change_submit_endpoint(
