@@ -48,6 +48,8 @@ def get_addon_version():
         print(f"'{ADDON_NAME} is not installed on the server.")
         return 1
 
+    return list(found_addon["versions"].keys())[-1]
+
 
 def call_change_submit_endpoint(
         addon_name, addon_version, user, changelist, client, stream):
