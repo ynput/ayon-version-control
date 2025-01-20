@@ -50,7 +50,7 @@ def get_addon_version():
 
 
 def call_change_submit_endpoint(
-        addon_name, addon_version, user, changelist, client):
+        addon_name, addon_version, user, changelist, client, stream):
     """Calls endpoint on AYON server to spawn event per submit"""
     url = f"{AYON_SERVER_URL}/api/addons/{addon_name}/{addon_version}/change_submit"
 
@@ -58,7 +58,8 @@ def call_change_submit_endpoint(
         "payload_schema_version": PAYLOAD_SCHEMA_VERSION,
         "user": user,
         "changelist": changelist,
-        "client": client
+        "client": client,
+        "stream": stream
     }
     json_data = json.dumps(payload).encode('utf-8')
 
@@ -72,26 +73,27 @@ def call_change_submit_endpoint(
 
 
 def main():
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 5:
         print("Error: Not enough arguments provided. "
-                    "Expected arguments %change% %user% %client%")
+              "Expected arguments %change% %user% %client% %stream%")
         return 1
 
     if not all([AYON_SERVER_URL, AYON_API_KEY]):
         print("Both AYON_SERVER_URL and AYON_API_KEY constants "
-                    "must be set")
+              "must be set")
         return 1
 
     changelist_id = sys.argv[1]  # %change%
     user = sys.argv[2]   # %user%
     client = sys.argv[3]  # %client%
+    stream = sys.argv[4]  # %stream%
 
     # Log the changelist submission details
-    print(f"Changelist {changelist_id} submitted by {user}")
+    print(f"Changelist {changelist_id} submitted by {user} in {stream}")
 
     addon_version = get_addon_version()
     call_change_submit_endpoint(
-        ADDON_NAME, addon_version, user, changelist_id, client)
+        ADDON_NAME, addon_version, user, changelist_id, client, stream)
 
     return 0  # Return 0 to indicate success
 

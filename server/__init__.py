@@ -8,9 +8,11 @@ from .settings import VersionControlSettings, DEFAULT_VALUES
 from ayon_server.types import Field, OPModel
 
 class ChangeSubmitModel(OPModel):
+    payload_schema_version: str
     user: str
     changelist: int
     client: str
+    stream: str
 
 
 class VersionControlAddon(BaseServerAddon):
@@ -38,13 +40,15 @@ class VersionControlAddon(BaseServerAddon):
         payload = {
             "perforce_user": post_data.user,
             "changelist": post_data.changelist,
-            "client": post_data.client
+            "client": post_data.client,
+            "stream": post_data.stream
         }
         try:
             await dispatch_event(
                 topic,
                 description=f"{post_data.user} "
-                            f"commited {post_data.changelist}",
+                            f"commited {post_data.changelist} in "
+                            f"{post_data.stream}",
                 payload=payload,
             )
         except Exception:
