@@ -1,47 +1,36 @@
 import urllib.request
 import json
-import os
 import sys
-import datetime
 
-AYON_SERVER_URL = os.environ.get("AYON_SERVER_URL")
-AYON_API_KEY = os.environ.get("AYON_API_KEY")
-
-if not all(AYON_SERVER_URL, AYON_API_KEY):
-    raise ValueError("Both AYON_SERVER_URL and AYON_API_KEY env vars "
-                     "must be set")
+AYON_SERVER_URL = ""   # SET HERE!
+AYON_API_KEY = ""  # SET HERE!
 
 ADDON_NAME = "version_control"
 
 headers = {
     'x-api-key': AYON_API_KEY,
-    'Content-Type': 'application/json',  # Optional: Specify content type if needed
+    'Content-Type': 'application/json',
 }
 
 
 def get_json_response_data(url, headers):
-    global data
-
     req = urllib.request.Request(url, headers=headers)
-    # Make a GET request
     with urllib.request.urlopen(req) as response:
-        # Read and decode the response data
         data = response.read().decode()
 
         ret_code = response.getcode()
         if ret_code != 200:
-            raise ValueError(f"Call failed:{ret_code}")
-
-        # Optionally, parse JSON data if applicable
+            print(f"Call failed:{ret_code}")
+            return 1
         try:
             return json.loads(data)
 
         except json.JSONDecodeError:
             print("Response is not in JSON format.")
+            return 1
 
 
 def get_addon_version():
-    # Define the URL
     url = f"{AYON_SERVER_URL}/api/bundles"
     bundle_data = get_json_response_data(url, headers)
 
@@ -52,12 +41,14 @@ def get_addon_version():
             bundle_addons = bundle["addons"]
             break
     if not bundle_addons:
-        raise ValueError(f"Cannot find {production_bundle_name}")
+        print(f"Cannot find {production_bundle_name}")
+        return 1
 
     bundle_version = bundle_addons.get(ADDON_NAME)
     if not bundle_version:
-        raise ValueError(
+        print(
             f"{ADDON_NAME} not installed in {production_bundle_name}")
+        return 1
     return bundle_version
 
 
@@ -81,14 +72,15 @@ def call_change_submit_endpoint(
         print(response_body)
 
 
-def log_to_file(message):
-    with open("/tmp/trigger.log", "a") as log_file:
-        log_file.write(f"{datetime.datetime.now()}: {message}\n")
-
-
 def main():
     if len(sys.argv) < 4:
-        log_to_file("Error: Not enough arguments provided.")
+        print("Error: Not enough arguments provided. "
+                    "Expected arguments %change% %user% %client%")
+        return 1
+
+    if not all([AYON_SERVER_URL, AYON_API_KEY]):
+        print("Both AYON_SERVER_URL and AYON_API_KEY constants "
+                    "must be set")
         return 1
 
     changelist_id = sys.argv[1]  # %change%
@@ -96,7 +88,7 @@ def main():
     client = sys.argv[3]  # %client%
 
     # Log the changelist submission details
-    log_to_file(f"Changelist {changelist_id} submitted by {user}")
+    print(f"Changelist {changelist_id} submitted by {user}")
 
     addon_version = get_addon_version()
     call_change_submit_endpoint(
