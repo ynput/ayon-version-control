@@ -14,7 +14,6 @@ class ChangeSubmitModel(OPModel):
 
 
 class VersionControlAddon(BaseServerAddon):
-    #settings_model: Type[VersionControlSettings] = VersionControlSettings
     settings_model = VersionControlSettings
 
     def initialize(self) -> None:
