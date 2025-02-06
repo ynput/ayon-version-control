@@ -144,5 +144,5 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
         return os.path.join(PERFORCE_ADDON_DIR, "launch_hooks")
 
 
-def is_version_control_enabled(project_settings):
-    return project_settings.get("version_control", {}).get("enabled", False)
+def is_perforce_enabled(project_settings):
+    return project_settings.get("perforce", {}).get("enabled", False)
