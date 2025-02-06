@@ -1,53 +1,20 @@
-import abc
-import functools
-import os
-import pathlib
+import os.path
+
 import six
 
-# @sharkmob-shea.richardson:
-# This need to be evaluated at runtime to provide
-# the correct type annotations for @class_property
-# from typing import Generic
-# from typing import TypeVar
+from . import api
+from .. import abstract
 
-# T1 = TypeVar("T1")
-# T2 = TypeVar("T2")
+if six.PY2:
+    import pathlib2 as pathlib
+else:
+    import pathlib
+
 _typing = False
 if _typing:
-    import datetime
-
-    from typing import Callable
+    from typing import Any
     from typing import Sequence
-    from typing import Union
-
-    T_P4PATH = Union[pathlib.Path, str, Sequence[Union[pathlib.Path, str]]]
 del _typing
-
-
-
-
-class ChangeListNotFoundError(Exception):
-    pass
-
-
-class ChangeListStillExistsError(Exception):
-    def __init__(self, message):
-        # type: (str) -> None
-
-        message = "Change list still exists: {0} - this should be submitted first!".format(message)
-        super().__init__(message)
-
-
-# class class_property(Generic[T1, T2]):
-#     """
-#     A read only class property for use with < py39
-#     """
-
-#     def __init__(self, wrapped_function: Callable[..., T2]):
-#         self.wrapped_function = wrapped_function
-
-#     def __get__(self, _, owner_cls):
-#         return self.wrapped_function(owner_cls)
 
 
 def _save_file_decorator(function):
@@ -79,19 +46,7 @@ def _open_file_decorator(function):
     return open_file_wrapper
 
 
-@six.add_metaclass(abc.ABCMeta)
-class VersionControl(object):
-    """
-    Base class for defining a version control interface.
-    """
-
-    _default_change_list_description = "Pyblish auto generated change list"
-
-    def __init__(self):
-        super(VersionControl, self).__init__()
-
-        self._change_list_description = ""
-        self._settings = None
+class PerforceBackend(abstract.VersionControl):
 
     # Public Properties:
     @property
@@ -137,13 +92,17 @@ class VersionControl(object):
         asset_name = legacy_io.Session["AVALON_ASSET"]  # type: str
         task_name = legacy_io.Session["AVALON_TASK"]  # type: str
 
-        project_entity = legacy_io.find_one({"type": "project", "name": project_name})
-        assert project_entity, ("Project '{0}' was not found.").format(project_name)
+        project_entity = legacy_io.find_one(
+            {"type": "project", "name": project_name})
+        assert project_entity, ("Project '{0}' was not found.").format(
+            project_name)
 
         asset_entity = legacy_io.find_one(
-            {"type": "asset", "name": asset_name, "parent": project_entity["_id"]}
+            {"type": "asset", "name": asset_name,
+             "parent": project_entity["_id"]}
         )
-        assert asset_entity, ("No asset found by the name '{0}' in project '{1}'").format(
+        assert asset_entity, (
+            "No asset found by the name '{0}' in project '{1}'").format(
             asset_name, project_name
         )
 
@@ -243,148 +202,154 @@ class VersionControl(object):
         ), "change_list_description must be an instance of {0}. Got: {1} of type: {type(value)}".format(
             str, value
         )
+        d
         if value == self._change_list_description:
             return
 
         if not value.startswith("["):
             value = value[1:] if value.startswith(" ") else value
-            value = "{0} {1}".format(self.change_list_description_prefix, value)
+            value = "{0} {1}".format(self.change_list_description_prefix,
+                                     value)
 
         self.cached_change_list_description = value
         self._change_list_description = value
 
-    # Public Abstract Static Methods:
+
+
     @staticmethod
-    @abc.abstractmethod
     def get_server_version(path):
-        # type: (T_P4PATH) -> int
-        raise NotImplementedError()
+        # type: (str | pathlib.Path) -> int | None | dict[str, int | None]
+        result = api.get_current_server_revision(path)
+        return result
 
     @staticmethod
-    @abc.abstractmethod
     def get_local_version(path):
-        # type: (T_P4PATH) -> int
-        raise NotImplementedError()
+        # type: (pathlib.Path | str) -> int | None
+        result = api.get_current_client_revision(path)
+        return result
 
     @staticmethod
-    @abc.abstractmethod
     def get_version_info(path):
-        # type: (T_P4PATH) -> tuple[int | None, int | None]
-        raise NotImplementedError()
+        # type: (pathlib.Path | str) -> tuple[int | None, int | None]
+        result = api.get_version_info(path)
+        return result
 
     @staticmethod
-    @abc.abstractmethod
-    def get_files_in_folder_in_date_order(path, name_pattern=None, extensions=None):
-        # type: (T_P4PATH, str | None, Sequence[str] | None) -> list[tuple[pathlib.Path, datetime.datetime]]
-        raise NotImplementedError()
-
-    @staticmethod
-    @abc.abstractmethod
-    def get_newest_file_in_folder(path, name_pattern=None, extensions=None):
-        # type: (T_P4PATH, str | None, Sequence[str] | None) -> pathlib.Path | None
-        raise NotImplementedError()
-
-    @staticmethod
-    @abc.abstractmethod
     def is_latest_version(path):
-        # type: (T_P4PATH) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str) -> bool | None
+        return api.is_latest(path)
 
     @staticmethod
-    @abc.abstractmethod
     def is_checkedout(path):
-        # type: (T_P4PATH) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str) -> bool
+        return api.is_checked_out(path)
 
     @staticmethod
-    @abc.abstractmethod
     def checked_out_by(path, other_users_only=False):
-        # type: (T_P4PATH, bool) -> list[str] | None
-        raise NotImplementedError()
+        # type: (pathlib.Path | str, bool) -> list[str] | None
+        return api.checked_out_by(path, other_users_only=other_users_only)
 
     @staticmethod
-    @abc.abstractmethod
     def exists_on_server(path):
-        # type: (T_P4PATH) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str) -> bool
+        if not api.get_stat(path, ["-m 1"]):
+            return False
+
+        return True
 
     @staticmethod
-    @abc.abstractmethod
     def sync_latest_version(path):
-        # type: (T_P4PATH) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str) -> bool | None
+        return api.get_latest(path)
 
     @staticmethod
-    @abc.abstractmethod
     def sync_to_version(path, version):
-        # type: (T_P4PATH, int) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str, int) -> bool | None
+        return api.get_revision(path, version)
 
     @staticmethod
-    @abc.abstractmethod
     def add(path, comment=""):
-        # type: (T_P4PATH, str) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str, str) -> bool
+        return api.add(path, change_description=comment)
 
     @staticmethod
-    @abc.abstractmethod
     def add_to_change_list(path, comment):
-        # type: (T_P4PATH, str) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str, str) -> bool
+        return api.add_to_change_list(path, comment)
 
     @staticmethod
-    @abc.abstractmethod
     def checkout(path, comment=""):
-        # type: (T_P4PATH, str) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str, str) -> bool
+        return api.checkout(path, change_description=comment)
 
     @staticmethod
-    @abc.abstractmethod
     def revert(path):
-        # type: (T_P4PATH) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str) -> bool
+        return api.revert(path)
 
     @staticmethod
-    @abc.abstractmethod
     def move(path, new_path, change_description=None):
-        # type: (T_P4PATH, T_P4PATH, str | None) -> bool
-        raise NotImplementedError()
+        # type: (pathlib.Path | str, pathlib.Path | str, str | None) -> bool | None
+        return api.move(path, new_path, change_description=change_description)
 
     @staticmethod
-    @abc.abstractmethod
+    def get_changes():
+        # type: (None) -> (list(dict)) | None
+        return api.get_changes()
+
+    @staticmethod
     def get_existing_change_list(comment):
-        # type: (str) -> dict | None
-        """
-        Get an existing change list with the given comment.
-        """
-
-        raise NotImplementedError()
+        # type: (str) -> dict[str, Any] | None
+        return api.get_existing_change_list(comment)
 
     @staticmethod
-    @abc.abstractmethod
+    def get_last_change_list():
+        # type: (str) -> (list(dict)) | None
+        return api.get_last_change_list()
+
+    @staticmethod
+    def get_files_in_folder_in_date_order(path, name_pattern=None, extensions=None):
+        # type: (pathlib.Path | str, str | None, Sequence[str] | None) -> tuple[pathlib.Path | None]
+        return tuple(
+            (
+                data.path for data in api.get_files_in_folder_in_date_order(
+                    path, name_pattern=name_pattern, extensions=extensions
+                ) or []
+            )
+        )
+
+    @staticmethod
+    def get_newest_file_in_folder(path, name_pattern=None, extensions=None):
+        # type: (pathlib.Path | str, str | None, Sequence[str] | None) -> pathlib.Path | None
+        result = api.get_newest_file_in_folder(
+            path, name_pattern=name_pattern, extensions=extensions
+        )
+        if result is None:
+            return
+
+        return result.path
+
+    @staticmethod
     def submit_change_list(comment):
         # type: (str) -> int | None
-        """
-        Submit an existing change list with the given comment.
-        If no changelist exists with the given comment then
-        raise `ChangeListNotFoundError`
-        """
-
-        raise NotImplementedError()
+        return api.submit_change_list(comment)
 
     @staticmethod
-    @abc.abstractmethod
     def update_change_list_description(comment, new_comment):
         # type: (str, str) -> bool
-        """
-        Update the current change list's description to the given one.
+        return api.update_change_list_description(comment, new_comment)
 
-        If the change list is not found it should raise: `ChangeListNotFoundError`.
+    @staticmethod
+    def get_stream(workspace_name):
+        # type: (str) -> str
+        result = api.run_command("client", ["-o", workspace_name])
+        return result.get("Stream")
 
-        The implementation should also set `self.change_list_description = new_comment`
-        """
-
-        raise NotImplementedError()
+    @staticmethod
+    def get_workspace_dir(workspace_name):
+        # type: (str) -> str
+        result = api.run_command("client", ["-o", workspace_name])
+        return result.get("Root")
 
     # Public Methods:
     def is_prefix_auto_generated(self, comment=""):
