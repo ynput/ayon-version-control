@@ -10,9 +10,9 @@ import pyblish.api
 
 from ayon_common.utils import get_local_site_id
 
-from version_control.rest.perforce.rest_stub import PerforceRestStub
+from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 from version_control import is_version_control_enabled
-from version_control.lib import WorkspaceProfileContext
+from ayon_perforce.lib import WorkspaceProfileContext
 
 
 class CollectVersionControlLogin(pyblish.api.ContextPlugin):
@@ -92,7 +92,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             task_names=task_name,
             task_types=task_type
         )
-        conn_info = version_control.get_connection_info(
+        conn_info = ayon_perforce.get_connection_info(
             project_name, project_settings, workspace_context)
 
         missing_creds = False

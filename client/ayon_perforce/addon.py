@@ -14,13 +14,13 @@ from .version import __version__
 from .lib import WorkspaceProfileContext
 
 
-VERSION_CONTROL_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
+PERFORCE_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
+class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     
-    label = "Version Control"
-    name = "version_control"
+    label = "Perforce"
+    name = "ayon_perforce"
     version = __version__
     
     # _icon_name = "mdi.jira"
@@ -32,7 +32,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
     @property
     def name(self):
         # type: () -> str
-        return "version_control"
+        return "ayon_perforce"
 
     @property
     def label(self):
@@ -96,7 +96,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
         }
 
     def sync_to_version(self, conn_info, change_id):
-        from version_control.rest.perforce.rest_stub import \
+        from ayon_perforce.rest.perforce.rest_stub import \
             PerforceRestStub
 
         PerforceRestStub.login(host=conn_info["host"],
@@ -118,7 +118,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_start(self):
         if self.enabled:
-            from version_control.rest.communication_server import WebServer
+            from ayon_perforce.rest.communication_server import WebServer
             self.webserver = WebServer()
             self.webserver.start()
 
@@ -128,10 +128,10 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
     def get_create_plugin_paths(self, host_name):
         if host_name != "unreal":
             return []
-        return ["{}/plugins/create/unreal".format(VERSION_CONTROL_ADDON_DIR)]
+        return ["{}/plugins/create/unreal".format(PERFORCE_ADDON_DIR)]
 
     def get_publish_plugin_paths(self, host_name):
-        return [os.path.join(VERSION_CONTROL_ADDON_DIR,
+        return [os.path.join(PERFORCE_ADDON_DIR,
                              "plugins", "publish")]
 
     def get_launch_hook_paths(self, _app):
@@ -141,7 +141,7 @@ class VersionControlAddon(AYONAddon, ITrayService, IPluginPaths):
             (str): full absolute path to directory with hooks for the module
         """
 
-        return os.path.join(VERSION_CONTROL_ADDON_DIR, "launch_hooks",
+        return os.path.join(PERFORCE_ADDON_DIR, "launch_hooks",
                             self.active_version_control_system)
 
 

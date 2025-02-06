@@ -7,7 +7,7 @@ import pyblish.api
 
 from ayon_core.lib import StringTemplate
 
-from version_control.rest.perforce.rest_stub import (
+from ayon_perforce.rest.perforce.rest_stub import (
     PerforceRestStub
 )
 

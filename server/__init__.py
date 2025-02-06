@@ -5,7 +5,7 @@ from ayon_server.addons import BaseServerAddon
 from .settings import VersionControlSettings, DEFAULT_VALUES
 
 
-class VersionControlAddon(BaseServerAddon):
+class PerforceAddon(BaseServerAddon):
     #settings_model: Type[VersionControlSettings] = VersionControlSettings
     settings_model = VersionControlSettings
 

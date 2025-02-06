@@ -14,7 +14,7 @@ if six.PY3:
 
     # ```
     # import version_control
-    # version_control.backends.perforce.sync
+    # ayon_perforce.backends.perforce.sync
     # ```
 
     import importlib

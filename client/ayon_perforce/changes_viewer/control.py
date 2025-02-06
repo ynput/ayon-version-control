@@ -5,8 +5,8 @@ from ayon_core.pipeline import (
 )
 from ayon_core.addon import AddonsManager
 
-from version_control.rest.perforce.rest_stub import PerforceRestStub
-from version_control.lib import WorkspaceProfileContext
+from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
+from ayon_perforce.lib import WorkspaceProfileContext
 
 
 class ChangesViewerController:

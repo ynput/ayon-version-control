@@ -8,7 +8,7 @@ Provides:
 import pyblish.api
 from ayon_core.lib import filter_profiles
 
-from version_control.rest.perforce.rest_stub import PerforceRestStub
+from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 
 
 class CollectVersionControl(pyblish.api.InstancePlugin):

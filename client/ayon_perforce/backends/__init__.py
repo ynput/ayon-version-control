@@ -14,7 +14,7 @@ if six.PY3:
 
     # ```
     # import version_control
-    # version_control.backends.perforce.sync
+    # ayon_perforce.backends.perforce.sync
     # ```
 
     import importlib
@@ -33,8 +33,8 @@ if six.PY3:
     # this avoids having to import every sub-package to find where
     # the object should be imported from:
     _object_import_map = {
-        "VERSION_CONTROL_ADDON_DIR": "addon",
-        "VersionControlAddon": "addon"
+        "PERFORCE_ADDON_DIR": "addon",
+        "PerforceAddon": "addon"
     }
 
     def __getattr__(name):

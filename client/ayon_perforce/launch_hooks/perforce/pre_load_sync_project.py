@@ -17,10 +17,10 @@ from ayon_applications import (
 from ayon_core.tools.utils import qt_app_context
 from ayon_core.addon import AddonsManager
 
-from version_control.changes_viewer import ChangesWindows
+from ayon_perforce.changes_viewer import ChangesWindows
 from version_control import is_version_control_enabled
-from version_control.lib import WorkspaceProfileContext
-from version_control.rest.perforce.rest_stub import PerforceRestStub
+from ayon_perforce.lib import WorkspaceProfileContext
+from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 
 
 class SyncUnrealProject(PreLaunchHook):
