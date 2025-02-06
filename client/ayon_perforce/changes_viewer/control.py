@@ -23,9 +23,9 @@ class ChangesViewerController:
         self._current_folder_id = launch_data["folder_entity"]["id"]
 
         manager = AddonsManager()
-        version_control_addon = manager.get("version_control")
-        self._version_control_addon = version_control_addon
-        self.enabled = version_control_addon and version_control_addon.enabled
+        perforce_addon = manager.get("perforce")
+        self._perforce_addon = perforce_addon
+        self.enabled = perforce_addon and perforce_addon.enabled
 
         task_entity = launch_data["task_entity"]
         workspace_profile_context = WorkspaceProfileContext(
@@ -34,7 +34,7 @@ class ChangesViewerController:
             task_types=task_entity["taskType"],
         )
 
-        conn_info = self._version_control_addon.get_connection_info(
+        conn_info = self._perforce_addon.get_connection_info(
             project_name=launch_data["project_name"],
             context=workspace_profile_context
         )
