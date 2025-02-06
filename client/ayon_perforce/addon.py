@@ -141,8 +141,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             (str): full absolute path to directory with hooks for the module
         """
 
-        return os.path.join(PERFORCE_ADDON_DIR, "launch_hooks",
-                            self.active_version_control_system)
+        return os.path.join(PERFORCE_ADDON_DIR, "launch_hooks")
 
 
 def is_version_control_enabled(project_settings):
