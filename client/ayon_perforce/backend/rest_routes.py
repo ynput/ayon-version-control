@@ -6,8 +6,8 @@ from aiohttp.web_response import Response
 from ayon_core.lib import Logger
 from ayon_core.tools.tray.webserver.base_routes import RestApiEndpoint
 
-from ayon_perforce.backends.perforce.backend import (
-    VersionControlPerforce
+from ayon_perforce.backend import (
+    PerforceBackend
 )
 from ayon_perforce.backends.perforce import api
 
@@ -72,7 +72,7 @@ class AddEndpoint(PerforceRestApiEndpoint):
         log.debug("AddEndpoint called")
         content = await request.json()
 
-        result = VersionControlPerforce.add(content["path"],
+        result = PerforceBackend.add(content["path"],
                                             content["comment"])
         return Response(
             status=200,
@@ -87,7 +87,7 @@ class SyncLatestEndpoint(PerforceRestApiEndpoint):
         log.debug("SyncLatestEndpoint called")
         content = await request.json()
 
-        result = VersionControlPerforce.sync_latest_version(content["path"])
+        result = PerforceBackend.sync_latest_version(content["path"])
         return Response(
             status=200,
             body=self.encode(result),
@@ -102,7 +102,7 @@ class SyncVersionEndpoint(PerforceRestApiEndpoint):
         content = await request.json()
 
         log.debug(f"Syncing '{content['path']}' to {content['version']}")
-        result = VersionControlPerforce.sync_to_version(content["path"],
+        result = PerforceBackend.sync_to_version(content["path"],
                                                         content["version"])
         log.debug("Synced")
         return Response(
@@ -119,7 +119,7 @@ class CheckoutEndpoint(PerforceRestApiEndpoint):
 
         content = await request.json()
 
-        result = VersionControlPerforce.checkout(content["path"],
+        result = PerforceBackend.checkout(content["path"],
                                                  content["comment"])
         return Response(
             status=200,
@@ -135,7 +135,7 @@ class IsCheckoutedEndpoint(PerforceRestApiEndpoint):
 
         content = await request.json()
 
-        result = VersionControlPerforce.is_checkedout(content["path"])
+        result = PerforceBackend.is_checkedout(content["path"])
         return Response(
             status=200,
             body=self.encode(result),
@@ -149,7 +149,7 @@ class GetChanges(PerforceRestApiEndpoint):
         log.debug("GetChanges called")
         content = await request.json()
 
-        result = VersionControlPerforce.get_changes()
+        result = PerforceBackend.get_changes()
         return Response(
             status=200,
             body=self.encode(result),
@@ -163,7 +163,7 @@ class GetLastChangelist(PerforceRestApiEndpoint):
         log.debug("GetLatestChangelist called")
         content = await request.json()
 
-        result = VersionControlPerforce.get_last_change_list()
+        result = PerforceBackend.get_last_change_list()
         return Response(
             status=200,
             body=self.encode(result),
@@ -177,7 +177,7 @@ class SubmitChangelist(PerforceRestApiEndpoint):
         log.debug("SubmitChangelist called")
         content = await request.json()
 
-        result = VersionControlPerforce.submit_change_list(content["comment"])
+        result = PerforceBackend.submit_change_list(content["comment"])
         return Response(
             status=200,
             body=self.encode(result),
@@ -191,7 +191,7 @@ class ExistsOnServer(PerforceRestApiEndpoint):
         log.debug("exists_on_server called")
         content = await request.json()
 
-        result = VersionControlPerforce.exists_on_server(content["path"])
+        result = PerforceBackend.exists_on_server(content["path"])
         return Response(
             status=200,
             body=self.encode(result),
@@ -202,7 +202,7 @@ class ExistsOnServer(PerforceRestApiEndpoint):
 class GetServerVersionEndpoint(PerforceRestApiEndpoint):
     """Returns list of dict with project info (id, name)."""
     async def get(self) -> Response:
-        result = VersionControlPerforce.get_server_version()
+        result = PerforceBackend.get_server_version()
         return Response(
             status=200,
             body=self.encode(result),
@@ -215,7 +215,7 @@ class GetStreamEndpoint(PerforceRestApiEndpoint):
     async def post(self, request) -> Response:
         content = await request.json()
 
-        result = VersionControlPerforce.get_stream(content["workspace_name"])
+        result = PerforceBackend.get_stream(content["workspace_name"])
         return Response(
             status=200,
             body=self.encode(result),
@@ -228,7 +228,7 @@ class GetWorkspaceDirEndpoint(PerforceRestApiEndpoint):
     async def post(self, request) -> Response:
         content = await request.json()
 
-        result = VersionControlPerforce.get_workspace_dir(
+        result = PerforceBackend.get_workspace_dir(
             content["workspace_name"]
         )
         return Response(
