@@ -11,7 +11,7 @@ import pyblish.api
 from ayon_common.utils import get_local_site_id
 
 from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
-from version_control import is_version_control_enabled
+from ayon_perforce import is_perforce_enabled
 from ayon_perforce.lib import WorkspaceProfileContext
 
 
@@ -30,7 +30,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
     def process(self, context):
         project_name = context.data["projectName"]
         project_settings = context.data["project_settings"]
-        if not is_version_control_enabled(project_settings):
+        if not is_perforce_enabled(project_settings):
             self.log.info(
                 "Version control addon is not enabled"
                 f" for project '{project_name}'"

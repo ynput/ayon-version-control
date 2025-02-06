@@ -18,7 +18,7 @@ from ayon_core.tools.utils import qt_app_context
 from ayon_core.addon import AddonsManager
 
 from ayon_perforce.changes_viewer import ChangesWindows
-from version_control import is_version_control_enabled
+from ayon_perforce import is_perforce_enabled
 from ayon_perforce.lib import WorkspaceProfileContext
 from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 
@@ -93,9 +93,9 @@ class SyncUnrealProject(PreLaunchHook):
         return project_files[0]
 
     def _get_enabled_version_control_addon(self):
-        if is_version_control_enabled(self.data["project_settings"]):
+        if is_perforce_enabled(self.data["project_settings"]):
             manager = AddonsManager()
-            return manager["version_control"]
+            return manager["perforce"]
         return None
 
     def _find_uproject_files(self, start_dir):
