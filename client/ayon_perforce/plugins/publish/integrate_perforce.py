@@ -20,11 +20,11 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
     order = pyblish.api.IntegratorOrder + 0.499
     targets = ["local"]
 
-    families = ["version_control"]
+    families = ["perforce"]
 
     def process(self, instance):
         version_template_key = (
-            instance.data.get("version_control", {})["template_name"])
+            instance.data.get("perforce", {})["template_name"])
         if not version_template_key:
             raise RuntimeError("Instance data missing 'version_control[template_name]'")   # noqa
 
@@ -42,7 +42,7 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
         template_file_path = os.path.join(template["directory"],
                                           template["file"])
         anatomy_data = copy.deepcopy(instance.data["anatomyData"])
-        anatomy_data["root"] = instance.data["version_control"]["roots"]
+        anatomy_data["root"] = instance.data["perforce"]["roots"]
         # anatomy_data["output"] = ''
         # anatomy_data["frame"] = ''
         # anatomy_data["udim"] = ''

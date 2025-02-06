@@ -3,7 +3,7 @@ Requires:
     none
 
 Provides:
-    context.data     -> "version_control" ({})
+    context.data     -> "perforce" ({})
 """
 
 import pyblish.api
@@ -38,14 +38,14 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             return
 
         version_control = (
-            context.data.get("ayonAddonsManager", {}).get("version_control"))
+            context.data.get("ayonAddonsManager", {}).get("perforce"))
         conn_info = self._get_conn_info(
             project_name, version_control, project_settings, context)
 
         if not conn_info:
             return
 
-        context.data["version_control"] = conn_info
+        context.data["perforce"] = conn_info
 
         PerforceRestStub.login(
             conn_info["host"],
@@ -57,12 +57,12 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
 
         stream = PerforceRestStub.get_stream(
             workspace_name=conn_info["workspace_name"])
-        context.data["version_control"]["stream"] = stream
+        context.data["perforce"]["stream"] = stream
         self.log.debug(f"stream::{stream}")
 
         workspace_dir = PerforceRestStub.get_workspace_dir(
             workspace_name=conn_info["workspace_name"])
-        context.data["version_control"]["workspace_dir"] = workspace_dir
+        context.data["perforce"]["workspace_dir"] = workspace_dir
 
     def _get_conn_info(
         self,

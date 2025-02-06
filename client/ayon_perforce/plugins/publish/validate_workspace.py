@@ -13,13 +13,13 @@ class ValidateWorkspaceDir(pyblish.api.InstancePlugin):
 
     order = ValidateContentsOrder
     label = "Validate P4 workspace dir"
-    families = ["version_control"]
+    families = ["perforce"]
     targets = ["local"]
 
 
     def process(self, instance):
         # TODO implement multiple roots
-        workspace_dir = instance.data["version_control"]["roots"]["work"]
+        workspace_dir = instance.data["perforce"]["roots"]["work"]
 
         if not workspace_dir or not os.path.exists(workspace_dir):
             project_name = instance.context.data.get("projectName")

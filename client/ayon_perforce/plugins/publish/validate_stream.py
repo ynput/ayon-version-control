@@ -17,7 +17,7 @@ class ValidateStream(pyblish.api.InstancePlugin):
     targets = ["local"]
 
     def process(self, instance):
-        stream = instance.context.data["version_control"]["stream"]
+        stream = instance.context.data["perforce"]["stream"]
 
         if not stream:
             msg = (

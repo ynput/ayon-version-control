@@ -1,6 +1,6 @@
 """
 Requires:
-    instance.context.data["version_control"] - connection info for VC
+    instance.context.data["perforce"] - connection info for VC
 
 Provides:
     instance     -> families ([])
@@ -21,7 +21,7 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
     profiles = None
 
     def process(self, instance):
-        conn_info = instance.context.data.get("version_control")
+        conn_info = instance.context.data.get("perforce")
         if not conn_info:
             self.log.info("No Version control set and enabled")
 
@@ -30,7 +30,7 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
                              "version_control family")
             return
 
-        version_control_family = "version_control"
+        version_control_family = "perforce"
 
         host_name = instance.context.data["hostName"]
         product_type = instance.data["productType"]
@@ -66,11 +66,11 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         workspace_dir = PerforceRestStub.get_workspace_dir(
             conn_info["workspace_name"])
 
-        instance.data["version_control"] = {}
-        instance.data["version_control"]["roots"] = {"work": workspace_dir}
-        instance.data["version_control"]["username"] = username
-        instance.data["version_control"]["password"] = password
-        instance.data["version_control"]["template_name"] = \
+        instance.data["perforce"] = {}
+        instance.data["perforce"]["roots"] = {"work": workspace_dir}
+        instance.data["perforce"]["username"] = username
+        instance.data["perforce"]["password"] = password
+        instance.data["perforce"]["template_name"] = \
             profile["template_name"]
 
         self.log.debug(f"{result_str} 'version_control' product_type "

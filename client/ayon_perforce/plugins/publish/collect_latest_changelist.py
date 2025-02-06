@@ -1,10 +1,10 @@
 """
 Requires:
-    instance.context.data["version_control"] - credentials
-    instance.data["version_control"] - instance based data for extractions
+    instance.context.data["perforce"] - credentials
+    instance.data["perforce"] - instance based data for extractions
 
 Provides:
-    instance.data["version_control"]["change_info"]["user"] - author of submit
+    instance.data["perforce"]["change_info"]["user"] - author of submit
                                                    ["change"] - id of submit
                                                    ["desc"] - description
                                                    ["time"] - when created
@@ -26,7 +26,7 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
     families = ["changelist_metadata"]
 
     def process(self, instance):
-        if not instance.context.data.get("version_control"):
+        if not instance.context.data.get("perforce"):
             self.log.info("No version control collected, skipping.")
             return
 
@@ -35,8 +35,8 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
             self.log.info("No changelist was found, "
                           "extraction of it not possible.")
 
-        if not instance.data.get("version_control"):
-            instance.data["version_control"] = {}
+        if not instance.data.get("perforce"):
+            instance.data["perforce"] = {}
 
         usable_info = {}
         usable_info["change"] = change_info["change"]
@@ -44,6 +44,6 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
         usable_info["desc"] = change_info["desc"]
         usable_info["time"] = change_info["time"]
 
-        instance.data["version_control"]["change_info"] = usable_info
+        instance.data["perforce"]["change_info"] = usable_info
 
         self.log.debug(f"Latest changelist info: {usable_info}")

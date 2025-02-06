@@ -1,6 +1,6 @@
 """
 Requires:
-    instance.context.data["version_control"]["change_info"] - info about
+    instance.context.data["perforce"]["change_info"] - info about
         change list
 
 Provides:
@@ -24,7 +24,7 @@ class ExtractChangeListInfo(publish.Extractor):
 
 
     def process(self, instance):
-        change_info = instance.data.get("version_control", {}).get("change_info")  # noqa
+        change_info = instance.data.get("perforce", {}).get("change_info")  # noqa
         if not change_info:
             self.log.warning("No change_list info collected, skipping.")
 
