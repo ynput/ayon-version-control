@@ -1,20 +1,9 @@
 import os.path
-
-import six
+import pathlib
 
 from . import api
-from .. import abstract
 
-if six.PY2:
-    import pathlib2 as pathlib
-else:
-    import pathlib
-
-_typing = False
-if _typing:
-    from typing import Any
-    from typing import Sequence
-del _typing
+from typing import Union, Optional, Tuple
 
 
 class PerforceBackend:
@@ -32,8 +21,7 @@ class PerforceBackend:
             return {}
 
     @property
-    def host_app_name(self):
-        # type: () -> str
+    def host_app_name(self) -> str:
         """
         # Property:
         Get the name of the registerd host application
@@ -42,99 +30,105 @@ class PerforceBackend:
         return os.environ["AVALON_APP"]
 
     @staticmethod
-    def get_server_version(path):
-        # type: (str | pathlib.Path) -> int | None | dict[str, int | None]
+    def get_server_version(
+        path: Union[str, pathlib.Path]
+    ) -> Union[int,None,dict[str,int]]:
         result = api.get_current_server_revision(path)
         return result
 
     @staticmethod
-    def get_local_version(path):
-        # type: (pathlib.Path | str) -> int | None
+    def get_local_version(path: Union[str, pathlib.Path]) -> Optional[int]:
         result = api.get_current_client_revision(path)
         return result
 
     @staticmethod
-    def get_version_info(path):
-        # type: (pathlib.Path | str) -> tuple[int | None, int | None]
+    def get_version_info(
+        path: Union[str, pathlib.Path]
+    ) -> Tuple[Union[int, None], Union[int, None]]:
         result = api.get_version_info(path)
         return result
 
     @staticmethod
-    def is_latest_version(path):
-        # type: (pathlib.Path | str) -> bool | None
+    def is_latest_version(path: Union[str, pathlib.Path]) -> bool:
         return api.is_latest(path)
 
     @staticmethod
-    def is_checkedout(path):
-        # type: (pathlib.Path | str) -> bool
+    def is_checkedout(path: Union[str, pathlib.Path]) -> bool:
         return api.is_checked_out(path)
 
     @staticmethod
-    def checked_out_by(path, other_users_only=False):
-        # type: (pathlib.Path | str, bool) -> list[str] | None
+    def checked_out_by(
+        path: Union[str, pathlib.Path],
+        other_users_only: bool=False
+    ) -> Optional[list[str]]:
         return api.checked_out_by(path, other_users_only=other_users_only)
 
     @staticmethod
-    def exists_on_server(path):
-        # type: (pathlib.Path | str) -> bool
+    def exists_on_server(path: Union[str, pathlib.Path]) -> bool:
         if not api.get_stat(path, ["-m 1"]):
             return False
 
         return True
 
     @staticmethod
-    def sync_latest_version(path):
-        # type: (pathlib.Path | str) -> bool | None
+    def sync_latest_version(path: Union[str, pathlib.Path]) -> bool:
         return api.get_latest(path)
 
     @staticmethod
-    def sync_to_version(path, version):
-        # type: (pathlib.Path | str, int) -> bool | None
+    def sync_to_version(
+        path: Union[str, pathlib.Path],
+        version: int
+    ) -> bool:
         return api.get_revision(path, version)
 
     @staticmethod
-    def add(path, comment=""):
-        # type: (pathlib.Path | str, str) -> bool
+    def add(path: Union[str, pathlib.Path], comment:str ="") -> bool:
         return api.add(path, change_description=comment)
 
     @staticmethod
-    def add_to_change_list(path, comment):
-        # type: (pathlib.Path | str, str) -> bool
+    def add_to_change_list(
+        path: Union[str, pathlib.Path],
+        comment: str
+    ) -> bool:
         return api.add_to_change_list(path, comment)
 
     @staticmethod
-    def checkout(path, comment=""):
-        # type: (pathlib.Path | str, str) -> bool
+    def checkout(
+        path: Union[str, pathlib.Path],
+        comment: str
+    ) -> bool:
         return api.checkout(path, change_description=comment)
 
     @staticmethod
-    def revert(path):
-        # type: (pathlib.Path | str) -> bool
+    def revert(path: Union[str, pathlib.Path]) -> bool:
         return api.revert(path)
 
     @staticmethod
-    def move(path, new_path, change_description=None):
-        # type: (pathlib.Path | str, pathlib.Path | str, str | None) -> bool | None
+    def move(
+        path: Union[str, pathlib.Path],
+        new_path: Union[str, pathlib.Path],
+        change_description: Optional[str]=None
+    ) -> bool:
         return api.move(path, new_path, change_description=change_description)
 
     @staticmethod
-    def get_changes():
-        # type: (None) -> (list(dict)) | None
+    def get_changes() -> Optional[list[dict]]:
         return api.get_changes()
 
     @staticmethod
-    def get_existing_change_list(comment):
-        # type: (str) -> dict[str, Any] | None
+    def get_existing_change_list(comment: str) -> Optional[dict]:
         return api.get_existing_change_list(comment)
 
     @staticmethod
-    def get_last_change_list():
-        # type: (str) -> (list(dict)) | None
+    def get_last_change_list() -> Optional[list[dict]]:
         return api.get_last_change_list()
 
     @staticmethod
-    def get_files_in_folder_in_date_order(path, name_pattern=None, extensions=None):
-        # type: (pathlib.Path | str, str | None, Sequence[str] | None) -> tuple[pathlib.Path | None]
+    def get_files_in_folder_in_date_order(
+        path: Union[str, pathlib.Path],
+        name_pattern: Optional[str]=None,
+        extensions: Optional[list[str]]=None
+    ) -> tuple:
         return tuple(
             (
                 data.path for data in api.get_files_in_folder_in_date_order(
@@ -144,8 +138,11 @@ class PerforceBackend:
         )
 
     @staticmethod
-    def get_newest_file_in_folder(path, name_pattern=None, extensions=None):
-        # type: (pathlib.Path | str, str | None, Sequence[str] | None) -> pathlib.Path | None
+    def get_newest_file_in_folder(
+        path: Union[str, pathlib.Path],
+        name_pattern: Optional[str] = None,
+        extensions: Optional[list[str]] = None
+    ) -> Optional[pathlib.Path]:
         result = api.get_newest_file_in_folder(
             path, name_pattern=name_pattern, extensions=extensions
         )
@@ -155,35 +152,19 @@ class PerforceBackend:
         return result.path
 
     @staticmethod
-    def submit_change_list(comment):
-        # type: (str) -> int | None
+    def submit_change_list(comment: str) -> int:
         return api.submit_change_list(comment)
 
     @staticmethod
-    def update_change_list_description(comment, new_comment):
-        # type: (str, str) -> bool
+    def update_change_list_description(comment: str, new_comment: str) -> bool:
         return api.update_change_list_description(comment, new_comment)
 
     @staticmethod
-    def get_stream(workspace_name):
-        # type: (str) -> str
+    def get_stream(workspace_name: str) -> str:
         result = api.run_command("client", ["-o", workspace_name])
         return result.get("Stream")
 
     @staticmethod
-    def get_workspace_dir(workspace_name):
-        # type: (str) -> str
+    def get_workspace_dir(workspace_name: str) -> str:
         result = api.run_command("client", ["-o", workspace_name])
         return result.get("Root")
-
-    # Public Methods:
-    def is_prefix_auto_generated(self, comment=""):
-        # type: (str) -> bool
-        comment = comment or self.change_list_description
-        if not comment.startswith("["):
-            return False
-
-        description = comment.split("]")[-1]
-        current_prefix = comment.replace(description, "")
-        auto_prefix = self.change_list_description_prefix
-        return current_prefix == auto_prefix
