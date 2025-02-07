@@ -59,76 +59,11 @@ def make_tuple_if_not(value: Any) -> tuple[Any]:
         return (value,)
     else:
         return value
-    # return openpype.lib.make_tuple_if_not(value)
 
 
 class E_RunOutput(enum.Enum):
     success = 0
     fail = 1
-
-
-class P4ProgressSignaller(QtCore.QObject):
-    started = QtCore.Signal(str, int)
-    total_set = QtCore.Signal(int)
-    updated = QtCore.Signal(int)
-    completed = QtCore.Signal(str, int)
-
-
-class P4ProgressHandler(P4.Progress):
-    TYPES = ["Unknown", "Submit", "Sync", "Clone"]
-
-    def __init__(
-        self,
-        started_fn: Callable[[str, int], None] | None = None,
-        total_set_fn: Callable[[int], None] | None = None,
-        updated_fn: Callable[[int], None] | None = None,
-        completed_fn: Callable[[str, int], None] | None = None,
-    ):
-        super().__init__()
-
-        self._signaller = None
-        self._current_file = ""
-
-        signaller = self.signaller
-        if signaller:
-            signaller.started.connect(started_fn) if started_fn else None
-            signaller.total_set.connect(total_set_fn) if total_set_fn else None
-            signaller.updated.connect(updated_fn) if updated_fn else None
-            signaller.completed.connect(completed_fn) if completed_fn else None
-
-    @property
-    def signaller(self) -> P4ProgressSignaller:
-        if self._signaller is None:
-            self._signaller = self._get_signaller()
-        return self._signaller
-
-    def init(self, type):
-        super().init(type)
-
-    def setDescription(self, description: str, units: int):
-        super().setDescription(description, units)
-        self._current_file = description
-        self.signaller.started.emit(description, units)
-
-    def setTotal(self, total: int):
-        super().setTotal(total)
-        self.signaller.total_set.emit(total)
-
-    def update(self, position: int):
-        super().update(position)
-        self.signaller.updated.emit(position)
-
-    def done(self, fail: int):
-        super().done(fail)
-        self.signaller.completed.emit(self._current_file, fail)
-
-    def _get_signaller(self) -> P4ProgressSignaller:
-        return P4ProgressSignaller()
-
-
-class P4ConnectionManagerSignaller(QtCore.QObject):
-    connected = QtCore.Signal()
-    disconnected = QtCore.Signal()
 
 
 @dataclasses.dataclass(frozen=False)
@@ -218,18 +153,6 @@ class P4ConnectionManager:
         self.__clients_cache__: dict[str, dict[str, Any]] | None = None
         self._workspace_errors: set[str] = set()
 
-        self._signaller = P4ConnectionManagerSignaller()
-
-        if not use_progress_hander:
-            return
-
-        self._progress_handler = P4ProgressHandler(
-            started_fn=started_fn,
-            total_set_fn=total_set_fn,
-            updated_fn=updated_fn,
-            completed_fn=completed_fn,
-        )
-        self.p4.progress = self._progress_handler
 
     def __getattribute__(self, attribute_name) -> Any:
         """
@@ -343,9 +266,6 @@ class P4ConnectionManager:
         if not self.p4.connected():
             try:
                 self.p4.connect()
-                if self._is_offline:
-                    self._signaller.connected.emit()
-                    self._is_offline = False
             except Exception as error:
                 if not self._is_p4_exception(error):
                     raise
@@ -353,8 +273,6 @@ class P4ConnectionManager:
                 if "[P4.connect()] Connect to server failed; check $P4PORT" not in str(error):
                     raise
 
-                self._is_offline = True
-                self._signaller.disconnected.emit()
                 self._start_retry_p4_connection_timer()
                 yield
                 return
@@ -1862,20 +1780,12 @@ class P4ConnectionManager:
     def test_connection(self) -> bool:
         try:
             with self.p4.connect():
-                if self._is_offline:
-                    self._signaller.connected.emit()
-                    self._is_offline = False
-
                 self._start_retry_p4_connection_timer(interval=60)
                 return True
 
         except Exception as error:
             if not self._is_p4_exception(error):
                 raise
-
-            if not self._is_offline:
-                self._is_offline = True
-                self._signaller.disconnected.emit()
 
             self._start_retry_p4_connection_timer()
             return False
