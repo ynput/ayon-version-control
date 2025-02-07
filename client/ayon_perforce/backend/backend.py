@@ -9,26 +9,6 @@ from typing import Union, Optional, Tuple
 class PerforceBackend:
 
     # Public Properties:
-    @property
-    def settings(self):
-        return self._settings
-
-    @property
-    def saved_change_list_descriptions(self):
-        try:
-            return self.settings.get_item("change_list_descriptions")
-        except ValueError:
-            return {}
-
-    @property
-    def host_app_name(self) -> str:
-        """
-        # Property:
-        Get the name of the registerd host application
-        """
-
-        return os.environ["AVALON_APP"]
-
     @staticmethod
     def get_server_version(
         path: Union[str, pathlib.Path]
