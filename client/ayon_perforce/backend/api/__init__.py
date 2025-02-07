@@ -28,30 +28,28 @@ from contextlib import contextmanager
 from functools import lru_cache
 from types import MethodType
 
-_typing = False
-if _typing:
-    from typing import Any
-    from typing import Callable
-    from typing import Generator
-    from typing import Iterable
-    from typing import Iterator
-    from typing import Optional
-    from typing import Sequence
-    from typing import Union
-    from typing_extensions import Literal
+from typing import Any
+from typing import Callable
+from typing import Generator
+from typing import Iterable
+from typing import Iterator
+from typing import Optional
+from typing import Sequence
+from typing import Union
+from typing_extensions import Literal
 
-    P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]  # type: ignore
-    T_PthStrLst = Union[list[str], tuple[str]]  # type: ignore
-    P4ArgsType = Optional[Iterable[str]]  # type: ignore
-    P4ReturnType = list[dict[str, str]]  # type: ignore
-    P4ReturnWithNoneType = list[Optional[dict[str, str]]]  # type: ignore
-    P4ReturnBoolType = Optional[Union[bool, list[bool]]]  # type: ignore
+P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]  # type: ignore
+T_PthStrLst = Union[list[str], tuple[str]]  # type: ignore
+P4ArgsType = Optional[Iterable[str]]  # type: ignore
+P4ReturnType = list[dict[str, str]]  # type: ignore
+P4ReturnWithNoneType = list[Optional[dict[str, str]]]  # type: ignore
+P4ReturnBoolType = Optional[Union[bool, list[bool]]]  # type: ignore
 
-    T_Result = Union["Sequence[dict[str, str]]", "Iterable[dict[str, str]]", "Sequence[str]"]
-    T_Keys = Union["str", "Sequence[str]"]
-    T_Actions = Union["str", "Sequence[str]"]
-    T_NoneKeys = Union["str", "Sequence[str]", None]
-    T_NoneActions = Union["str", "Sequence[str]", None]
+T_Result = Union["Sequence[dict[str, str]]", "Iterable[dict[str, str]]", "Sequence[str]"]
+T_Keys = Union["str", "Sequence[str]"]
+T_Actions = Union["str", "Sequence[str]"]
+T_NoneKeys = Union["str", "Sequence[str]", None]
+T_NoneActions = Union["str", "Sequence[str]", None]
 
 T_StrTuple = typing.NewType("T_StrTuple", "tuple[str]")
 
