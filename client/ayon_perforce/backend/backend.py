@@ -46,7 +46,7 @@ def _open_file_decorator(function):
     return open_file_wrapper
 
 
-class PerforceBackend(abstract.VersionControl):
+class PerforceBackend:
 
     # Public Properties:
     @property
