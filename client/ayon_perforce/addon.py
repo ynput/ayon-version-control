@@ -89,14 +89,15 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
         }
 
     def sync_to_version(self, conn_info, change_id):
-        from ayon_perforce.rest.perforce.rest_stub import \
-            PerforceRestStub
+        from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 
-        PerforceRestStub.login(host=conn_info["host"],
-                               port=conn_info["port"],
-                               username=conn_info["username"],
-                               password=conn_info["password"],
-                               workspace=conn_info["workspace_dir"])
+        PerforceRestStub.login(
+            host=conn_info["host"],
+            port=conn_info["port"],
+            username=conn_info["username"],
+            password=conn_info["password"],
+            workspace=conn_info["workspace_dir"]
+        )
         PerforceRestStub.sync_to_version(
             f"{conn_info['workspace_dir']}/...", change_id)
         return
@@ -124,8 +125,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
         return ["{}/plugins/create/unreal".format(PERFORCE_ADDON_DIR)]
 
     def get_publish_plugin_paths(self, host_name):
-        return [os.path.join(PERFORCE_ADDON_DIR,
-                             "plugins", "publish")]
+        return [os.path.join(PERFORCE_ADDON_DIR, "plugins", "publish")]
 
     def get_launch_hook_paths(self, _app):
         """Implementation for applications launch hooks.
