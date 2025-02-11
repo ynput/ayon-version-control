@@ -6,10 +6,9 @@ from aiohttp.web_response import Response
 from ayon_core.lib import Logger
 from ayon_core.tools.tray.webserver.base_routes import RestApiEndpoint
 
-from ayon_perforce.backend import (
-    PerforceBackend
-)
-from ayon_perforce.backends.perforce import api
+from ayon_perforce.backend.backend import PerforceBackend
+
+from ayon_perforce.backend import api
 
 
 log = Logger.get_logger("P4routes")

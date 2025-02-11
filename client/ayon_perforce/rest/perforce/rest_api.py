@@ -1,7 +1,6 @@
-from aiohttp.web_response import Response
 from ayon_core.lib import Logger
 
-from ayon_perforce.backends.perforce import rest_routes
+from ayon_perforce.backend import rest_routes
 
 
 class PerforceModuleRestAPI:
