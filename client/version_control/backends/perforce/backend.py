@@ -1,14 +1,8 @@
-import os.path
-
-import six
+import os
+import pathlib
 
 from . import api
 from .. import abstract
-
-if six.PY2:
-    import pathlib2 as pathlib
-else:
-    import pathlib
 
 _typing = False
 if _typing:

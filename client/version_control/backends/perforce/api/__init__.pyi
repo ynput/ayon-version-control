@@ -1,24 +1,13 @@
-
-import Qt.QtCore as QtCore
 import dataclasses
 import datetime
 import pathlib
-import six
-
-from . import p4_errors
-
 from contextlib import contextmanager
-from typing import Any
-from typing import Iterator
-from typing import Iterable
-from typing import Union
-from typing import overload
+from typing import Any, Iterator, Iterable, Union, overload
 from typing_extensions import Literal
 
-if six.PY2:
-    import pathlib2 as pathlib
-else:
-    import pathlib
+import qtpy import QtCore
+
+from . import p4_errors
 
 
 class P4ConnectionManagerSignaller(QtCore.QObject):

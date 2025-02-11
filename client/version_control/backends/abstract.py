@@ -1,8 +1,7 @@
-import abc
 import functools
 import os
 import pathlib
-import six
+from abc import ABC, abstractmethod
 
 # @sharkmob-shea.richardson:
 # This need to be evaluated at runtime to provide
@@ -22,8 +21,6 @@ if _typing:
 
     T_P4PATH = Union[pathlib.Path, str, Sequence[Union[pathlib.Path, str]]]
 del _typing
-
-
 
 
 class ChangeListNotFoundError(Exception):
@@ -79,8 +76,7 @@ def _open_file_decorator(function):
     return open_file_wrapper
 
 
-@six.add_metaclass(abc.ABCMeta)
-class VersionControl(object):
+class VersionControl(ABC):
     """
     Base class for defining a version control interface.
     """
@@ -255,103 +251,103 @@ class VersionControl(object):
 
     # Public Abstract Static Methods:
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def get_server_version(path):
         # type: (T_P4PATH) -> int
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def get_local_version(path):
         # type: (T_P4PATH) -> int
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def get_version_info(path):
         # type: (T_P4PATH) -> tuple[int | None, int | None]
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def get_files_in_folder_in_date_order(path, name_pattern=None, extensions=None):
         # type: (T_P4PATH, str | None, Sequence[str] | None) -> list[tuple[pathlib.Path, datetime.datetime]]
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def get_newest_file_in_folder(path, name_pattern=None, extensions=None):
         # type: (T_P4PATH, str | None, Sequence[str] | None) -> pathlib.Path | None
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def is_latest_version(path):
         # type: (T_P4PATH) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def is_checkedout(path):
         # type: (T_P4PATH) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def checked_out_by(path, other_users_only=False):
         # type: (T_P4PATH, bool) -> list[str] | None
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def exists_on_server(path):
         # type: (T_P4PATH) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def sync_latest_version(path):
         # type: (T_P4PATH) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def sync_to_version(path, version):
         # type: (T_P4PATH, int) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def add(path, comment=""):
         # type: (T_P4PATH, str) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def add_to_change_list(path, comment):
         # type: (T_P4PATH, str) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def checkout(path, comment=""):
         # type: (T_P4PATH, str) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def revert(path):
         # type: (T_P4PATH) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def move(path, new_path, change_description=None):
         # type: (T_P4PATH, T_P4PATH, str | None) -> bool
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def get_existing_change_list(comment):
         # type: (str) -> dict | None
         """
@@ -361,7 +357,7 @@ class VersionControl(object):
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def submit_change_list(comment):
         # type: (str) -> int | None
         """
@@ -373,7 +369,7 @@ class VersionControl(object):
         raise NotImplementedError()
 
     @staticmethod
-    @abc.abstractmethod
+    @abstractmethod
     def update_change_list_description(comment, new_comment):
         # type: (str, str) -> bool
         """
