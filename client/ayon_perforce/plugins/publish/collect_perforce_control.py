@@ -40,12 +40,17 @@ class CollectPerforceControl(pyblish.api.InstancePlugin):
 
         host_name = instance.context.data["hostName"]
         product_type = instance.data["productType"]
-        task_name = instance.data.get("task")
+        task_entity = instance.data["taskEntity"]
+        task_name = task_type = None
+        if task_entity:
+            task_name = task_entity["name"]
+            task_type = task_entity["taskType"]
 
         filtering_criteria = {
-            "hosts": host_name,
+            "host_names": host_name,
             "product_types": product_type,
-            "tasks": task_name
+            "task_names": task_name,
+            "task_types": task_type
         }
         profile = filter_profiles(
             self.profiles,
