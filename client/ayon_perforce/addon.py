@@ -57,8 +57,8 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
         if not project_settings:
             project_settings = get_project_settings(project_name)
 
-        version_settings = project_settings["version_control"]
-        local_setting = version_settings["local_setting"]
+        settings = project_settings["perforce"]
+        local_setting = settings["local_setting"]
 
         workspace_name = None
         filtering_criteria = {
@@ -81,8 +81,8 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             workspace_name = profile["workspace_name"]
 
         return {
-            "host": version_settings["host_name"],
-            "port": version_settings["port"],
+            "host": settings["host_name"],
+            "port": settings["port"],
             "username": local_setting["username"],
             "password": local_setting["password"],
             "workspace_name": workspace_name
