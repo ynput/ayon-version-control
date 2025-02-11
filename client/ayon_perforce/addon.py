@@ -31,7 +31,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     @property
     def name(self):
         # type: () -> str
-        return "ayon_perforce"
+        return "perforce"
 
     @property
     def label(self):
@@ -41,9 +41,6 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     # Public Methods:
     def initialize(self, settings):
         # type: (dict[str, Any]) -> None
-        assert self.name in settings, (
-            "{} not found in settings - make sure they are defined in the defaults".format(self.name)
-        )
         vc_settings = settings[self.name]  # type: dict[str, Any]
         enabled = vc_settings["enabled"]  # type: bool
         self.set_service_running_icon() if enabled else self.set_service_failed_icon()
