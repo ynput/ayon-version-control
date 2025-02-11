@@ -1,17 +1,7 @@
-import six
 import os
 import requests
-
-if six.PY2:
-    import pathlib2 as pathlib
-else:
-    import pathlib
-
-_typing = False
-if _typing:
-    from typing import Any
-    from typing import Sequence
-del _typing
+import pathlib
+from typing import Union
 
 
 class PerforceRestStub:
@@ -33,14 +23,19 @@ class PerforceRestStub:
         return response.json()
 
     @staticmethod
-    def is_in_any_workspace(path):
+    def is_in_any_workspace(path: Union[str, pathlib.Path]):
         response = PerforceRestStub._wrap_call(
             "is_in_any_workspace", path=path)
         return response
 
     @staticmethod
-    def login(host, port, username, password, workspace_name):
-        # type: (None | str, int, str, str, str) -> dict
+    def login(
+        host: str,
+        port: int,
+        username: str,
+        password: str,
+        workspace_name: str
+    ):
         response = PerforceRestStub._wrap_call(
             "login",
             host=host,
@@ -51,32 +46,31 @@ class PerforceRestStub:
         return response
 
     @staticmethod
-    def add(path, comment=""):
-        # type: (pathlib.Path | str, str) -> bool
+    def add(path: Union[str, pathlib.Path], comment: str=""):
         response = PerforceRestStub._wrap_call(
             "add", path=path, comment=comment)
         return response
 
     @staticmethod
-    def sync_latest_version(path):
+    def sync_latest_version(path: Union[str, pathlib.Path]):
         response = PerforceRestStub._wrap_call(
             "sync_latest_version", path=path)
         return response
 
     @staticmethod
-    def sync_to_version(path, version):
+    def sync_to_version(path: Union[str, pathlib.Path], version: int):
         response = PerforceRestStub._wrap_call(
             "sync_to_version", path=path, version=version)
         return response
 
     @staticmethod
-    def checkout(path, comment=""):
+    def checkout(path: Union[str, pathlib.Path], comment: str=""):
         response = PerforceRestStub._wrap_call(
             "checkout", path=path, comment=comment)
         return response
 
     @staticmethod
-    def is_checkouted(path):
+    def is_checkouted(path: Union[str, pathlib.Path]):
         response = PerforceRestStub._wrap_call(
             "is_checkouted", path=path)
         return response
@@ -94,25 +88,25 @@ class PerforceRestStub:
         return response
 
     @staticmethod
-    def submit_change_list(comment):
+    def submit_change_list(comment: str):
         response = PerforceRestStub._wrap_call(
             "submit_change_list", comment=comment)
         return response
 
     @staticmethod
-    def exists_on_server(path):
+    def exists_on_server(path: Union[str, pathlib.Path]):
         response = PerforceRestStub._wrap_call(
             "exists_on_server", path=path)
         return response
 
     @staticmethod
-    def get_stream(workspace_name):
+    def get_stream(workspace_name: str):
         response = PerforceRestStub._wrap_call(
             "get_stream", workspace_name=workspace_name)
         return response
 
     @staticmethod
-    def get_workspace_dir(workspace_name):
+    def get_workspace_dir(workspace_name: str):
         response = PerforceRestStub._wrap_call(
             "get_workspace_dir", workspace_name=workspace_name)
         return response
