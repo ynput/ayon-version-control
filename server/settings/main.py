@@ -12,7 +12,7 @@ def backend_enum():
     ]
 
 
-class CollectVersionControlProfileModel(BaseSettingsModel):
+class CollectPerforceProfileModel(BaseSettingsModel):
     _layout = "expanded"
     host_names: list[str] = Field(
         default_factory=list,
@@ -39,12 +39,14 @@ class CollectVersionControlProfileModel(BaseSettingsModel):
                                            "committed file")
 
 
-class CollectVersionControlModel(BaseSettingsModel):
+class CollectPerforceControlModel(BaseSettingsModel):
     _isGroup = True
     enabled: bool = False
-    profiles: list[CollectVersionControlProfileModel] = Field(
+    profiles: list[CollectPerforceProfileModel] = Field(
         default_factory=list,
-        title="Profiles to add version control",
+        title="Profiles to trigger Perforce commit",
+        description="Provide profile in which context representation should be"
+         " tracked outside of AYON with Perforce commit"
     )
 
 
@@ -74,9 +76,9 @@ class WorkspaceProfileModel(BaseSettingsModel):
 
 
 class PublishPluginsModel(BaseSettingsModel):
-    CollectVersionControl: CollectVersionControlModel = Field(
-        default_factory=CollectVersionControlModel,
-        title="Collect Version Control",
+    CollectPerforceControl: CollectPerforceControlModel = Field(
+        default_factory=CollectPerforceControlModel,
+        title="Collect Perforce Control",
         description=(
             "Configure which published products should be committed to P4. "
             "Keep disabled if published files should be versioned only in AYON"

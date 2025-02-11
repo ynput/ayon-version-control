@@ -11,10 +11,14 @@ from ayon_core.lib import filter_profiles
 from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 
 
-class CollectVersionControl(pyblish.api.InstancePlugin):
-    """Mark instance to be submitted."""
+class CollectPerforceControl(pyblish.api.InstancePlugin):
+    """Mark instance to be submitted to Perforce.
 
-    label = "Collect Version Control Submission Info"
+    AYON provides version control itself, this plugin duplicates and commits
+    selected published files directly to Perforce as a changelist.
+    """
+
+    label = "Collect Perforce Submission Info"
     order = pyblish.api.CollectorOrder + 0.4992
     targets = ["local"]
 
@@ -23,11 +27,11 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
     def process(self, instance):
         conn_info = instance.context.data.get("perforce")
         if not conn_info:
-            self.log.info("No Version control set and enabled")
+            self.log.info("No Perforce control set and enabled")
 
         if not self.profiles:
-            self.log.warning("No profiles present for adding "
-                             "version_control family")
+            self.log.warning(
+                "No profiles present for adding perforce family")
             return
 
         version_control_family = "perforce"
@@ -47,12 +51,12 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
             logger=self.log
         )
 
-        add_version_control = False
+        add_perforce_control = False
 
         if profile:
-            add_version_control = profile["add_version_control"]
+            add_perforce_control = profile["add_perforce_control"]
 
-        if not add_version_control:
+        if not add_perforce_control:
             return
 
         families = instance.data.setdefault("families", [])
@@ -73,5 +77,7 @@ class CollectVersionControl(pyblish.api.InstancePlugin):
         instance.data["perforce"]["template_name"] = \
             profile["template_name"]
 
-        self.log.debug(f"{result_str} 'version_control' product_type "
-                       f"for instance with '{product_type}' product type.")
+        self.log.debug(
+            f"{result_str} 'perforce' product_type "
+            f"for instance with '{product_type}' product type."
+        )
