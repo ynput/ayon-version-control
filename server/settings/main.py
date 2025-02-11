@@ -24,13 +24,15 @@ class CollectPerforceProfileModel(BaseSettingsModel):
         default_factory=list,
         title="Task names",
     )
-    add_version_control: bool = Field(
+    add_perforce_control: bool = Field(
         True,
-        title="Add Version Control to representations",
+        title="Commit representations to Perforce",
     )
-    template_name: str = Field("", title="Template name",
-                               description="Name from Anatomy to provide path and name of "
-                                           "committed file")
+    template_name: str = Field(
+        "",
+        title="Template name",
+        description="Name from Anatomy to provide path and name of "
+                    "committed file")
 
 
 class CollectPerforceControlModel(BaseSettingsModel):

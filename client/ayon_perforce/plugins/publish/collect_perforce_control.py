@@ -22,6 +22,8 @@ class CollectPerforceControl(pyblish.api.InstancePlugin):
     order = pyblish.api.CollectorOrder + 0.4992
     targets = ["local"]
 
+    settings_category = "perforce"
+
     profiles = None
 
     def process(self, instance):
