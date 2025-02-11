@@ -40,13 +40,13 @@ class SyncUnrealProject(PreLaunchHook):
     launch_types = {LaunchTypes.local}
 
     def execute(self):
-        version_control_addon = self._get_enabled_version_control_addon()
-        if not version_control_addon:
+        perforce_addon = self._get_enabled_perforce_addon()
+        if not perforce_addon:
             self.log.info("Version control is not enabled, skipping")
             return
 
         self.data["last_workfile_path"] = self._get_unreal_project_path(
-            version_control_addon, self.data)
+            perforce_addon, self.data)
 
         with qt_app_context():
             changes_tool = ChangesWindows(launch_data=self.data)
@@ -57,14 +57,14 @@ class SyncUnrealProject(PreLaunchHook):
 
             changes_tool.exec_()
 
-    def _get_unreal_project_path(self, version_control_addon, launch_data):
+    def _get_unreal_project_path(self, perforce_addon, launch_data):
         task_entity = launch_data["task_entity"]
         workspace_profile_context = WorkspaceProfileContext(
             folder_paths=launch_data["folder_path"],
             task_names=task_entity["name"],
             task_types=task_entity["taskType"],
         )
-        conn_info = version_control_addon.get_connection_info(
+        conn_info = perforce_addon.get_connection_info(
             project_name=self.data["project_name"],
             project_settings=launch_data["project_settings"],
             context=workspace_profile_context
@@ -87,12 +87,12 @@ class SyncUnrealProject(PreLaunchHook):
                                " control")
         project_files = self._find_uproject_files(workspace_dir)
         if len(project_files) != 1:
-            raise RuntimeError("Found unexpected number of projects "
-                               f"'{project_files}.\n"
-                               "Expected only single Unreal project.")
+            raise RuntimeError(
+                f"Found unexpected number of projects '{project_files}.\n"
+                "Expected only single Unreal project.")
         return project_files[0]
 
-    def _get_enabled_version_control_addon(self):
+    def _get_enabled_perforce_addon(self):
         if is_perforce_enabled(self.data["project_settings"]):
             manager = AddonsManager()
             return manager["perforce"]
