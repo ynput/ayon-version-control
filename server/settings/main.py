@@ -6,12 +6,6 @@ from ayon_server.settings import (
 )
 
 
-def backend_enum():
-    return [
-        {"label": "Perforce", "value": "perforce"}
-    ]
-
-
 class CollectPerforceProfileModel(BaseSettingsModel):
     _layout = "expanded"
     host_names: list[str] = Field(
@@ -110,12 +104,6 @@ class VersionControlSettings(BaseSettingsModel):
     """Version Control Project Settings."""
 
     enabled: bool = Field(default=False)
-
-    active_version_control_system: str = Field(
-        "",
-        enum_resolver=backend_enum,
-        title="Backend name"
-    )
 
     host_name: str = Field(
         "perforce",

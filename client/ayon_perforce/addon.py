@@ -26,7 +26,6 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     # _icon_name = "mdi.jira"
     # _icon_scale = 1.3
     webserver = None
-    active_version_control_system = None
 
     # Properties:
     @property
@@ -37,7 +36,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     @property
     def label(self):
         # type: () -> str
-        return f"Version Control: {self.active_version_control_system.title()}"
+        return f"Perforce Version Control"
 
     # Public Methods:
     def initialize(self, settings):
@@ -46,13 +45,10 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             "{} not found in settings - make sure they are defined in the defaults".format(self.name)
         )
         vc_settings = settings[self.name]  # type: dict[str, Any]
-        active_version_control_system = vc_settings["active_version_control_system"]  # type: str
-        self.active_version_control_system = active_version_control_system
         enabled = vc_settings["enabled"]  # type: bool
         self.set_service_running_icon() if enabled else self.set_service_failed_icon()
 
     def get_global_environments(self):
-        # return {"ACTIVE_VERSION_CONTROL_SYSTEM": self.active_version_control_system}
         return {}
 
     def get_connection_info(
