@@ -15,7 +15,7 @@ from ayon_perforce import is_perforce_enabled
 from ayon_perforce.lib import WorkspaceProfileContext
 
 
-class CollectVersionControlLogin(pyblish.api.ContextPlugin):
+class CollectPerforceLogin(pyblish.api.ContextPlugin):
     """Collect connection info and login with it.
 
     Do not fail explicitly if version control connection info is missing.
@@ -23,7 +23,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
     version control.
     """
 
-    label = "Collect Version Control Connection Info"
+    label = "Collect Perforce Connection Info"
     order = pyblish.api.CollectorOrder + 0.4990
     targets = ["local"]
 
@@ -32,15 +32,15 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         project_settings = context.data["project_settings"]
         if not is_perforce_enabled(project_settings):
             self.log.info(
-                "Version control addon is not enabled"
+                "Perforce addon is not enabled"
                 f" for project '{project_name}'"
             )
             return
 
-        version_control = (
+        perforce_addon = (
             context.data.get("ayonAddonsManager", {}).get("perforce"))
         conn_info = self._get_conn_info(
-            project_name, version_control, project_settings, context)
+            project_name, perforce_addon, project_settings, context)
 
         if not conn_info:
             return
@@ -67,7 +67,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
     def _get_conn_info(
         self,
         project_name,
-        version_control,
+        perforce_addon,
         project_settings,
         context
     ):
@@ -75,7 +75,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
 
         Args:
             project_name (str)
-            version_control (Union[AYONAddon, Any]): addon from AddonsManager
+            perforce_addon (Union[AYONAddon, Any]): addon from AddonsManager
             project_settings (Dict[str, Any]): Prepared project settings.
 
         Returns:
@@ -92,7 +92,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
             task_names=task_name,
             task_types=task_type
         )
-        conn_info = ayon_perforce.get_connection_info(
+        conn_info = perforce_addon.get_connection_info(
             project_name, project_settings, workspace_context)
 
         missing_creds = False
@@ -103,7 +103,7 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
         ]):
             site_name = get_local_site_id()
             sett_str = (
-                "ayon+settings://version_control?project="
+                "ayon+settings://perforce?project="
                 f"{project_name}&site={site_name}"
             )
             self.log.warning(
@@ -113,10 +113,10 @@ class CollectVersionControlLogin(pyblish.api.ContextPlugin):
 
         if not all([conn_info["host"], conn_info["port"]]):
             sett_str = (
-                f"ayon+settings://version_control?project={project_name}"
+                f"ayon+settings://perforce?project={project_name}"
             )
             self.log.warning(
-                "Required version control settings are missing. "
+                "Required Perforce settings are missing. "
                 f"Please ask your AYON admin to fill `{sett_str}`.")
             missing_creds = True
 
