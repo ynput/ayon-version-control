@@ -1,17 +1,6 @@
-import six
 import os
 import requests
-
-if six.PY2:
-    import pathlib2 as pathlib
-else:
-    import pathlib
-
-_typing = False
-if _typing:
-    from typing import Any
-    from typing import Sequence
-del _typing
+import pathlib
 
 
 class PerforceRestStub:
