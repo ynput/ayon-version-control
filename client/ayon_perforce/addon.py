@@ -29,20 +29,17 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
 
     # Properties:
     @property
-    def name(self):
-        # type: () -> str
+    def name(self) -> str:
         return "perforce"
 
     @property
-    def label(self):
-        # type: () -> str
+    def label(self) -> str:
         return f"Perforce Version Control"
 
     # Public Methods:
-    def initialize(self, settings):
-        # type: (dict[str, Any]) -> None
-        vc_settings = settings[self.name]  # type: dict[str, Any]
-        enabled = vc_settings["enabled"]  # type: bool
+    def initialize(self, settings: dict[str, Any]):
+        vc_settings = settings.get(self.name)  # type: dict[str, Any]
+        enabled = vc_settings and vc_settings["enabled"]  # type: bool
         self.set_service_running_icon() if enabled else self.set_service_failed_icon()
 
     def get_global_environments(self):
