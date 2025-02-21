@@ -1,14 +1,9 @@
 import os
+from typing import Any
 
 from ayon_core.addon import AYONAddon, ITrayService, IPluginPaths
 from ayon_core.settings import get_project_settings
 from ayon_core.lib import filter_profiles
-
-
-_typing = False
-if _typing:
-    from typing import Any
-del _typing
 
 from .version import __version__
 from .lib import WorkspaceProfileContext
