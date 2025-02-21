@@ -42,12 +42,12 @@ from typing import (
 )
 from typing_extensions import Literal
 
-P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]  # type: ignore
-T_PthStrLst = Union[list[str], tuple[str]]  # type: ignore
-P4ArgsType = Optional[Iterable[str]]  # type: ignore
-P4ReturnType = list[dict[str, str]]  # type: ignore
-P4ReturnWithNoneType = list[Optional[dict[str, str]]]  # type: ignore
-P4ReturnBoolType = Optional[Union[bool, list[bool]]]  # type: ignore
+P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]
+T_PthStrLst = Union[list[str], tuple[str]]
+P4ArgsType = Optional[Iterable[str]]
+P4ReturnType = list[dict[str, str]]
+P4ReturnWithNoneType = list[Optional[dict[str, str]]]
+P4ReturnBoolType = Optional[Union[bool, list[bool]]]
 
 T_Result = Union["Sequence[dict[str, str]]", "Iterable[dict[str, str]]", "Sequence[str]"]
 T_Keys = Union["str", "Sequence[str]"]
@@ -1982,54 +1982,54 @@ __all__ = (
     "_get_connection_manager",
     "P4ConnectionManager",
     "P4PathDateData",
-    "exceptions",  # type: ignore
-    "login",  # type: ignore
-    "add",  # type: ignore
-    "checkout",  # type: ignore
-    "create_change_list",  # type: ignore
-    "create_workspace",  # type: ignore
-    "delete",  # type: ignore
-    "delete_change_list",  # type: ignore
-    "exceptions",  # type: ignore
-    "get_attribute",  # type: ignore
-    "checked_out_by",  # type: ignore
-    "get_changes",  # type: ignore
-    "get_last_change_list",  # type: ignore
-    "get_change_list_number",  # type: ignore
-    "get_client_root",  # type: ignore
-    "get_current_client_revision",  # type: ignore
-    "get_current_revision_info",  # type: ignore
-    "get_current_server_revision",  # type: ignore
-    "get_existing_change_list",  # type: ignore
-    "get_files",  # type: ignore
-    "get_info",  # type: ignore
-    "get_latest",  # type: ignore
-    "get_local_path",  # type: ignore
-    "get_newest_file_in_folder",  # type: ignore
-    "get_path_info",  # type: ignore
-    "get_revision",  # type: ignore
-    "get_revision_history",  # type: ignore
-    "get_server_path",  # type: ignore
-    "get_stat",  # type: ignore
-    "get_streams",  # type: ignore
-    "get_user_name",  # type: ignore
-    "get_workspaces",  # type: ignore
-    "host_name",  # type: ignore
-    "is_checked_out_by_user",  # type: ignore
-    "is_checked_out",  # type: ignore
-    "is_latest",  # type: ignore
-    "is_offline",  # type: ignore
-    "is_stream_valid",  # type: ignore
-    "move",  # type: ignore
-    "revert",  # type: ignore
-    "run_command",  # type: ignore
-    "set_attribute",  # type: ignore
-    "submit_change_list",  # type: ignore
-    "sync",  # type: ignore
-    "test_connection",  # type: ignore
-    "unsync",  # type: ignore
-    "update_change_list_description",  # type: ignore
-    "workspace_as",  # type: ignore
+    "exceptions",
+    "login",
+    "add",
+    "checkout",
+    "create_change_list",
+    "create_workspace",
+    "delete",
+    "delete_change_list",
+    "exceptions",
+    "get_attribute",
+    "checked_out_by",
+    "get_changes",
+    "get_last_change_list",
+    "get_change_list_number",
+    "get_client_root",
+    "get_current_client_revision",
+    "get_current_revision_info",
+    "get_current_server_revision",
+    "get_existing_change_list",
+    "get_files",
+    "get_info",
+    "get_latest",
+    "get_local_path",
+    "get_newest_file_in_folder",
+    "get_path_info",
+    "get_revision",
+    "get_revision_history",
+    "get_server_path",
+    "get_stat",
+    "get_streams",
+    "get_user_name",
+    "get_workspaces",
+    "host_name",
+    "is_checked_out_by_user",
+    "is_checked_out",
+    "is_latest",
+    "is_offline",
+    "is_stream_valid",
+    "move",
+    "revert",
+    "run_command",
+    "set_attribute",
+    "submit_change_list",
+    "sync",
+    "test_connection",
+    "unsync",
+    "update_change_list_description",
+    "workspace_as",
 )
 
 
