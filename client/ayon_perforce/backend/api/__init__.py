@@ -28,14 +28,18 @@ from contextlib import contextmanager
 from functools import lru_cache
 from types import MethodType
 
-from typing import Any
-from typing import Callable
-from typing import Generator
-from typing import Iterable
-from typing import Iterator
-from typing import Optional
-from typing import Sequence
-from typing import Union
+from typing import (
+    Any,
+    Dict,
+    List,
+    Tuple,
+    Union,
+    Iterable,
+    Callable,
+    Optional,
+    Sequence,
+    Generator,
+)
 from typing_extensions import Literal
 
 P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]  # type: ignore
