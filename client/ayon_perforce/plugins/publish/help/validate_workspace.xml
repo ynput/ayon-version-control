@@ -16,7 +16,7 @@ To use external version control, you must provide local workspace dir on your ma
 
 ### How to repair?
 
-   Connect to Ayon server and set your local workspace folder in `ayon+settings://version_control:0.0.1/local_setting/workspace_dir`
+   Connect to Ayon server and set your local workspace folder in `ayon+settings://perforce:0.0.1/local_setting/workspace_dir`
 </detail>
 </error>
 </root>
