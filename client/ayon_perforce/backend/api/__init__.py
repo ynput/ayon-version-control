@@ -815,7 +815,6 @@ class P4ConnectionManager:
         false_pattern: str=...,
         set_none: Literal[False]=False
     ) -> list[bool]:
-
         ...
 
     @typing.overload
