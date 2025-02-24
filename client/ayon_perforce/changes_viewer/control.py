@@ -1,12 +1,19 @@
-from ayon_core.lib.events import QueuedEventSystem
-from ayon_core.pipeline import (
-    registered_host,
-    get_current_context,
-)
-from ayon_core.addon import AddonsManager
+from __future__ import annotations
 
-from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
+from dataclasses import asdict
+from typing import TYPE_CHECKING, Optional
+
+from ayon_core.addon import AddonsManager
+from ayon_core.lib.events import QueuedEventSystem
+from ayon_core.pipeline import registered_host
+
 from ayon_perforce.lib import WorkspaceProfileContext
+from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
+
+if TYPE_CHECKING:
+    from ayon_core.host import HostBase
+
+    from ayon_perforce.addon import ConnectionInfo, LaunchData, PerforceAddon
 
 
 class ChangesViewerController:
@@ -15,30 +22,31 @@ class ChangesViewerController:
     Goal of this controller is to provide a way to get current context.
     """
 
-    def __init__(self, launch_data, host=None):
+    def __init__(
+            self, launch_data: LaunchData, host: Optional[HostBase] = None):
         if host is None:
             host = registered_host()
         self._host = host
-        self._current_project = launch_data["project_name"]
-        self._current_folder_id = launch_data["folder_entity"]["id"]
+        self._current_project = launch_data.project_name
+        self._current_folder_id = launch_data.folder_entity["id"]
 
         manager = AddonsManager()
         perforce_addon = manager.get("perforce")
-        self._perforce_addon = perforce_addon
+        self._perforce_addon: PerforceAddon = perforce_addon
         self.enabled = perforce_addon and perforce_addon.enabled
 
-        task_entity = launch_data["task_entity"]
+        task_entity = launch_data.task_entity
         workspace_profile_context = WorkspaceProfileContext(
-            folder_paths=launch_data["folder_path"],
+            folder_paths=launch_data.folder_path,
             task_names=task_entity["name"],
             task_types=task_entity["taskType"],
         )
 
-        conn_info = self._perforce_addon.get_connection_info(
-            project_name=launch_data["project_name"],
-            context=workspace_profile_context
-        )
-        self._conn_info = conn_info
+        self._conn_info: ConnectionInfo = (
+            self._perforce_addon.get_connection_info(
+                project_name=launch_data.project_name,
+                context=workspace_profile_context
+            ))
 
         self._event_system = self._create_event_system()
 
@@ -50,42 +58,43 @@ class ChangesViewerController:
     def register_event_callback(self, topic, callback):
         self._event_system.add_callback(topic, callback)
 
-    def login(self):
+    def login(self) -> None:
+        """Login to Perforce.
+
+        Raises:
+            RuntimeError: If Perforce connection information is not collected.
+        """
         if not self.enabled:
             return
 
         if not self._conn_info:
-            raise RuntimeError("Not collected conn_info")
+            msg = "Missing Perforce connection information."
+            raise RuntimeError(msg)
 
-        conn_info = self._conn_info
-        PerforceRestStub.login(
-            host=conn_info["host"],
-            port=conn_info["port"],
-            username=conn_info["username"],
-            password=conn_info["password"],
-            workspace_name=conn_info["workspace_name"]
+        PerforceRestStub.login(**asdict(self._conn_info)
         )
 
-    def get_changes(self):
+    @staticmethod
+    def get_changes() -> dict:
+        """Get changes from Perforce.
+
+        Returns:
+            dict: Changes from Perforce
+        """
         return PerforceRestStub.get_changes()
 
-    def sync_to(self, change_id):
+    def sync_to(self, change_id: int):
         if not self.enabled:
             return
 
         if not self._conn_info:
-            raise RuntimeError("Not collected conn_info")
-        conn_info = self._conn_info
+            msg = "Missing Perforce connection information."
+            raise RuntimeError(msg)
+
         self.login()
-        PerforceRestStub.login(
-            host=conn_info["host"],
-            port=conn_info["port"],
-            username=conn_info["username"],
-            password=conn_info["password"],
-            workspace_name=conn_info["workspace_name"]
-        )
+        PerforceRestStub.login(**asdict(self._conn_info))
         workspace_dir = PerforceRestStub.get_workspace_dir(
-            conn_info["workspace_name"])
+            self._conn_info.workspace_name)
         PerforceRestStub.sync_to_version(
             f"{workspace_dir}/...", change_id)
 
@@ -98,4 +107,3 @@ class ChangesViewerController:
 
     def _create_event_system(self):
         return QueuedEventSystem()
-

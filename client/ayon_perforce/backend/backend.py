@@ -1,39 +1,47 @@
-import os.path
-import pathlib
+"""Perforce backend."""
+from __future__ import annotations
+from pathlib import Path
 
 from . import api
 
 from typing import Union, Optional, Tuple
 
 
-class PerforceBackend:
-
+class PerforceBackend:  # noqa: PLR0904
+    """Perforce backend."""
     # Public Properties:
     @staticmethod
     def get_server_version(
-        path: Union[str, pathlib.Path]
-    ) -> Union[int,None,dict[str,int]]:
-        result = api.get_current_server_revision(path)
-        return result
+        path: Union[str, Path]
+    ) -> Union[int, dict[str, int], None]:
+        """Get the revision from the server of the given path.
+
+        Args:
+            path (Union[str, Path]): Path to the file or folder.
+
+        Returns:
+            Union[int, dict[str, int], None]: Revision number or None 
+                if the file or folder does not exist.
+
+        """
+        return api.get_current_server_revision(path)
 
     @staticmethod
-    def get_local_version(path: Union[str, pathlib.Path]) -> Optional[int]:
-        result = api.get_current_client_revision(path)
-        return result
+    def get_local_version(path: Union[str, Path]) -> Optional[int]:
+        return api.get_current_client_revision(path)
 
     @staticmethod
     def get_version_info(
-        path: Union[str, pathlib.Path]
+        path: Union[str, Path]
     ) -> Tuple[Union[int, None], Union[int, None]]:
-        result = api.get_version_info(path)
-        return result
+        return api.get_version_info(path)
 
     @staticmethod
-    def is_latest_version(path: Union[str, pathlib.Path]) -> bool:
+    def is_latest_version(path: Union[str, Path]) -> bool:
         return api.is_latest(path)
 
     @staticmethod
-    def is_checkedout(path: Union[str, pathlib.Path]) -> bool:
+    def is_checkedout(path: Union[str, Path]) -> bool:
         return api.is_checked_out(path)
 
     @staticmethod

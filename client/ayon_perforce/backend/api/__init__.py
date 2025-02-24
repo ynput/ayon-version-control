@@ -1,12 +1,12 @@
-"""
-An easier, more pythonic inteface for working with P4, built on P4Python.
-    Objects, methods and functions in this module handle connection
-    and errors automatically, managing the verbose approach required
-    in P4Python.
+"""Wrapper for P4Python.
+
+An easier, more pythonic interface for working with P4, built on P4Python.
+Objects, methods and functions in this module handle connection
+and errors automatically, managing the verbose approach required
+in P4Python.
 """
 from __future__ import annotations
 
-import os
 import collections.abc as col_abc
 import dataclasses
 import datetime
@@ -14,33 +14,31 @@ import enum
 import functools
 import inspect
 import pathlib
-from qtpy import QtCore
 import socket
 import sys
 import threading
-import typing
-
-from . import p4_errors
-#from . import p4_offline
-import P4
-
 from contextlib import contextmanager
 from functools import lru_cache
 from types import MethodType
-
 from typing import (
     Any,
-    Dict,
-    List,
-    Tuple,
-    Union,
-    Iterable,
     Callable,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    NewType,
     Optional,
     Sequence,
-    Generator,
+    Tuple,
+    Union,
 )
+
+import P4
+from qtpy import QtCore
 from typing_extensions import Literal
+
+from . import p4_errors
 
 P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]
 T_PthStrLst = Union[list[str], tuple[str]]
@@ -49,20 +47,21 @@ P4ReturnType = list[dict[str, str]]
 P4ReturnWithNoneType = list[Optional[dict[str, str]]]
 P4ReturnBoolType = Optional[Union[bool, list[bool]]]
 
-T_Result = Union["Sequence[dict[str, str]]", "Iterable[dict[str, str]]", "Sequence[str]"]
+T_Result = Union[
+    "Sequence[dict[str, str]]",
+    "Iterable[dict[str, str]]",
+    "Sequence[str]"
+]
 T_Keys = Union["str", "Sequence[str]"]
 T_Actions = Union["str", "Sequence[str]"]
 T_NoneKeys = Union["str", "Sequence[str]", None]
 T_NoneActions = Union["str", "Sequence[str]", None]
 
-T_StrTuple = typing.NewType("T_StrTuple", "tuple[str]")
+T_StrTuple = NewType("T_StrTuple", "tuple[str]")
 
 
-def make_tuple_if_not(value: Any) -> tuple[Any]:
-    if not isinstance(value, (tuple, list)):
-        return (value,)
-    else:
-        return value
+def make_tuple_if_not(value: Any) -> tuple[Any]:  # noqa: ANN401
+    return value if isinstance(value, (tuple, list)) else (value, )
 
 
 class E_RunOutput(enum.Enum):
@@ -84,7 +83,8 @@ class P4PathDateData:
 
 
 class P4ConnectionManager:
-    """
+    """Connection Manager.
+
     This class is the core of this module.
 
     It manages the connection and error handling
@@ -159,7 +159,6 @@ class P4ConnectionManager:
         self.__workspace_cache__: list[str] = []
         self.__clients_cache__: dict[str, dict[str, Any]] | None = None
         self._workspace_errors: set[str] = set()
-
 
     def __getattribute__(self, attribute_name) -> Any:
         """
