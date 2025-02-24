@@ -24,5 +24,5 @@ class ValidateWorkspaceDir(pyblish.api.InstancePlugin):
         if not workspace_dir or not os.path.exists(workspace_dir):
             project_name = instance.context.data.get("projectName")
             msg = ("Please provide your local folder for workspace in "
-                   "`ayon+settings://version_control/local_setting/workspace_dir?project={}`".format(project_name))  # noqa
+                   "`ayon+settings://perforce/local_setting/workspace_dir?project={}`".format(project_name))  # noqa
             raise PublishXmlValidationError(self, msg)

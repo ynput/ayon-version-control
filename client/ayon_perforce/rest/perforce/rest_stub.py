@@ -1,7 +1,7 @@
 import os
 import requests
 import pathlib
-from typing import Union
+from typing import Union, Dict
 
 
 class PerforceRestStub:
@@ -23,7 +23,7 @@ class PerforceRestStub:
         return response.json()
 
     @staticmethod
-    def is_in_any_workspace(path: Union[str, pathlib.Path]):
+    def is_in_any_workspace(path: Union[str, pathlib.Path]) -> Dict:
         response = PerforceRestStub._wrap_call(
             "is_in_any_workspace", path=path)
         return response
@@ -46,67 +46,65 @@ class PerforceRestStub:
         return response
 
     @staticmethod
-    def add(path: Union[str, pathlib.Path], comment: str=""):
+    def add(path: Union[str, pathlib.Path], comment: str="") -> Dict:
         response = PerforceRestStub._wrap_call(
             "add", path=path, comment=comment)
         return response
 
     @staticmethod
-    def sync_latest_version(path: Union[str, pathlib.Path]):
+    def sync_latest_version(path: Union[str, pathlib.Path]) -> Dict:
         response = PerforceRestStub._wrap_call(
             "sync_latest_version", path=path)
         return response
 
     @staticmethod
-    def sync_to_version(path: Union[str, pathlib.Path], version: int):
+    def sync_to_version(path: Union[str, pathlib.Path], version: int) -> Dict:
         response = PerforceRestStub._wrap_call(
             "sync_to_version", path=path, version=version)
         return response
 
     @staticmethod
-    def checkout(path: Union[str, pathlib.Path], comment: str=""):
+    def checkout(path: Union[str, pathlib.Path], comment: str="") -> Dict:
         response = PerforceRestStub._wrap_call(
             "checkout", path=path, comment=comment)
         return response
 
     @staticmethod
-    def is_checkouted(path: Union[str, pathlib.Path]):
+    def is_checkouted(path: Union[str, pathlib.Path]) -> Dict:
         response = PerforceRestStub._wrap_call(
             "is_checkouted", path=path)
         return response
 
     @staticmethod
-    def get_last_change_list():
-        # type: (None) -> dict
+    def get_last_change_list() -> Dict:
         response = PerforceRestStub._wrap_call("get_last_change_list")
         return response
 
     @staticmethod
-    def get_changes():
-        # type: (None) -> dict
+    def get_changes() -> Dict:
         response = PerforceRestStub._wrap_call("get_changes")
         return response
 
     @staticmethod
-    def submit_change_list(comment: str):
+    def submit_change_list(comment: str) -> Dict:
         response = PerforceRestStub._wrap_call(
             "submit_change_list", comment=comment)
         return response
 
     @staticmethod
-    def exists_on_server(path: Union[str, pathlib.Path]):
+    def exists_on_server(path: Union[str, pathlib.Path]) -> Dict:
         response = PerforceRestStub._wrap_call(
             "exists_on_server", path=path)
         return response
 
     @staticmethod
-    def get_stream(workspace_name: str):
+    def get_stream(workspace_name: str) -> Dict:
         response = PerforceRestStub._wrap_call(
             "get_stream", workspace_name=workspace_name)
         return response
 
     @staticmethod
-    def get_workspace_dir(workspace_name: str):
+    def get_workspace_dir(workspace_name: str) -> Dict:
         response = PerforceRestStub._wrap_call(
             "get_workspace_dir", workspace_name=workspace_name)
         return response

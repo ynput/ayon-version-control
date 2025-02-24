@@ -28,22 +28,26 @@ from contextlib import contextmanager
 from functools import lru_cache
 from types import MethodType
 
-from typing import Any
-from typing import Callable
-from typing import Generator
-from typing import Iterable
-from typing import Iterator
-from typing import Optional
-from typing import Sequence
-from typing import Union
+from typing import (
+    Any,
+    Dict,
+    List,
+    Tuple,
+    Union,
+    Iterable,
+    Callable,
+    Optional,
+    Sequence,
+    Generator,
+)
 from typing_extensions import Literal
 
-P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]  # type: ignore
-T_PthStrLst = Union[list[str], tuple[str]]  # type: ignore
-P4ArgsType = Optional[Iterable[str]]  # type: ignore
-P4ReturnType = list[dict[str, str]]  # type: ignore
-P4ReturnWithNoneType = list[Optional[dict[str, str]]]  # type: ignore
-P4ReturnBoolType = Optional[Union[bool, list[bool]]]  # type: ignore
+P4PathType = Union[Iterable[str], Iterable[pathlib.Path], str, pathlib.Path]
+T_PthStrLst = Union[list[str], tuple[str]]
+P4ArgsType = Optional[Iterable[str]]
+P4ReturnType = list[dict[str, str]]
+P4ReturnWithNoneType = list[Optional[dict[str, str]]]
+P4ReturnBoolType = Optional[Union[bool, list[bool]]]
 
 T_Result = Union["Sequence[dict[str, str]]", "Iterable[dict[str, str]]", "Sequence[str]"]
 T_Keys = Union["str", "Sequence[str]"]
@@ -299,8 +303,7 @@ class P4ConnectionManager:
             self.p4.disconnect()
             self._clear_errors()
 
-    def __run_connect__(self, function):
-        # type: (Callable[..., Any]) -> Callable[..., Any]
+    def __run_connect__(self, function) -> Callable[..., Any]:
         """
         Decorator that connects to p4 before running a function.
 
@@ -319,8 +322,7 @@ class P4ConnectionManager:
         """
 
         @functools.wraps(function)
-        def _connect(*args, **kwargs):
-            # type: (Any, Any) -> Any
+        def _connect(*args, **kwargs) -> Any:
             workspace_override = None
             args_info = (
                 self._get_path_arg_info(function, args)
@@ -509,8 +511,7 @@ class P4ConnectionManager:
         return False
 
     @staticmethod
-    def _compile_result(compile_result, paths, result):
-        # type: (bool, tuple[str] | None, Any | None) -> Any
+    def _compile_result(compile_result: bool, paths: Optional[Tuple[str]], result: Optional[Any]):
         if compile_result and paths and isinstance(result, col_abc.Iterable):
             result = {path.replace("\\...", ""): data
                       for path, data in zip(paths, result)}
@@ -544,8 +545,7 @@ class P4ConnectionManager:
 
         return paths, args, kwargs, workspace
 
-    def _are_paths_valid(self, paths, workspace):
-        # type: (tuple[Any, ...], str) -> bool
+    def _are_paths_valid(self, paths: Tuple[Any, ...], workspace: str) -> bool:
         paths = make_tuple_if_not(paths)
         if self._are_paths_under_root(workspace, paths):
             return True
@@ -622,8 +622,7 @@ class P4ConnectionManager:
         return False
 
     @functools.lru_cache(maxsize=64)
-    def _args_has_path_or_workspace(self, signature):
-        # type: (inspect.Signature) -> bool
+    def _args_has_path_or_workspace(self, signature: inspect.Signature) -> bool:
         """
         Test if the function to be wrapped has an argument
         called `path`, returning True if so and False if not.
@@ -640,8 +639,7 @@ class P4ConnectionManager:
         return True
 
     @functools.lru_cache(maxsize=64)
-    def _get_path_index_from_args(self, signature):
-        # type: (inspect.Signature) -> int | None
+    def _get_path_index_from_args(self, signature: inspect.Signature) -> Optional[int]:
         arg_names = tuple(signature.parameters)
         path_index = None
         if "path" in arg_names:
@@ -695,8 +693,7 @@ class P4ConnectionManager:
 
         return path, compile_result
 
-    def _is_p4_exception(self, error):
-        # type: (Exception) -> bool
+    def _is_p4_exception(self, error: Exception) -> bool:
         """
         Query the exception type by `__name__` as it seems
         that P4 can get confused if there are multiple P4
@@ -818,7 +815,6 @@ class P4ConnectionManager:
         false_pattern: str=...,
         set_none: Literal[False]=False
     ) -> list[bool]:
-
         ...
 
     @typing.overload
@@ -963,15 +959,14 @@ class P4ConnectionManager:
         result = self.p4.run_add(path)
         if change_description:
 
-            def _get_path_to_reopen(data):
-                # type: (str) -> str | None
+            def _get_path_to_reopen(data: str) -> Optional[str]:
                 if "already opened for edit" in data:
                     return data.split(" - ")[0]
 
                 if "currently opened for add" in data:
                     return data.split("#")[0]
 
-            files_to_reopen = []  # type: list[str]
+            files_to_reopen: List[str] = []
             for _result in result:
                 if isinstance(_result, dict):
                     continue
@@ -1014,7 +1009,7 @@ class P4ConnectionManager:
 
         self._connect_checkout(path)
         _depot_paths = set((path for path in depot_paths if path))
-        paths_to_reopen = []  # type: list[str]
+        paths_to_reopen: List[str] = []
         changes = self.p4.run_describe(
             [change["change"] for change in changes]
         )
@@ -1039,11 +1034,11 @@ class P4ConnectionManager:
             )
 
         files = [info["depotFile"] for info in self.p4.run_where(path)]
-        change_files = (
+        change_files: List[str] = (
             change_dict["Files"]
             if "Files" in change_dict
             else []
-        )  # type: list[str]
+        )
         change_files.extend(files)
         change_files = list(set(change_files))
         change_dict["Files"] = change_files
@@ -1160,11 +1155,11 @@ class P4ConnectionManager:
             _files = [info["depotFile"] for info in self.p4.run_where(files)]
 
         if change_dict:
-            change_files = (
+            change_files: List[str] = (
                 change_dict["Files"]
                 if "Files" in change_dict
                 else []
-            )  # type: list[str]
+            )
             change_files.extend(_files)
             change_files = list(set(change_files))
             change_dict["Files"] = change_files
@@ -1647,11 +1642,11 @@ class P4ConnectionManager:
             path = typing.cast(T_StrTuple, path)
             warnings = tuple(reversed(self.p4.warnings))
             warnings_count = len(warnings) - 1
-            excluded_paths = (
+            excluded_paths: Generator[str, None, None] = (
                 _cull_no_such_file_warnings(index, warning, warnings_count)
                 for index, warning in enumerate(warnings)
                 if "no such file(s)." in warning
-            )  # type: Generator[str, None, None]
+            )
             exclude_data = {
                 path.index(excluded_path): excluded_path
                 for excluded_path in excluded_paths
@@ -1746,11 +1741,10 @@ class P4ConnectionManager:
 
         return result
 
-    def _connect_is_latest(self, path):
-        # type: (Sequence[str]) -> tuple[bool | None]
-        result = dict.fromkeys(path, False)  # type: dict[str, bool | None]
-        files = []  # type: list[str]
-        folders = []  # type: list[str]
+    def _connect_is_latest(self, path: Sequence[str]) -> Optional[Tuple[bool]]:
+        result: Optional[Dict[str, bool]] = dict.fromkeys(path, False)  # type: dict[str, bool | None]
+        files: List[str] = []
+        folders: List[str] = []
         for _path in path:
             if _path.endswith("..."):
                 folders.append(_path)
@@ -1758,8 +1752,7 @@ class P4ConnectionManager:
             files.append(_path)
 
         if folders:
-            def _is_folder_latest(folder):
-                # type: (str) -> bool | None
+            def _is_folder_latest(folder: str) -> Optional[bool]:
                 # @sharkmob-shea.richardson
                 # We have to test each folder individually else P4
                 # condenses all the returned statistics into one.
@@ -1773,7 +1766,7 @@ class P4ConnectionManager:
 
                     return None
 
-                change_count_str = sync_result.split("=")[1]  # type: str
+                change_count_str: str = sync_result.split("=")[1]
                 change_count_str = change_count_str.split(",")[0]
                 change_counts = (
                     bool(int(value))
@@ -1786,8 +1779,7 @@ class P4ConnectionManager:
 
         stat = self._connect_get_stat(files)
         valid_states = {"add", "move/add", "edit"}
-        def _is_file_latest(data):
-            # type: (dict) -> bool | None
+        def _is_file_latest(data: Dict) -> Optional[bool]:
             if not data:
                 return
             if "action" in data and data["action"] in valid_states:
@@ -1990,54 +1982,54 @@ __all__ = (
     "_get_connection_manager",
     "P4ConnectionManager",
     "P4PathDateData",
-    "exceptions",  # type: ignore
-    "login",  # type: ignore
-    "add",  # type: ignore
-    "checkout",  # type: ignore
-    "create_change_list",  # type: ignore
-    "create_workspace",  # type: ignore
-    "delete",  # type: ignore
-    "delete_change_list",  # type: ignore
-    "exceptions",  # type: ignore
-    "get_attribute",  # type: ignore
-    "checked_out_by",  # type: ignore
-    "get_changes",  # type: ignore
-    "get_last_change_list",  # type: ignore
-    "get_change_list_number",  # type: ignore
-    "get_client_root",  # type: ignore
-    "get_current_client_revision",  # type: ignore
-    "get_current_revision_info",  # type: ignore
-    "get_current_server_revision",  # type: ignore
-    "get_existing_change_list",  # type: ignore
-    "get_files",  # type: ignore
-    "get_info",  # type: ignore
-    "get_latest",  # type: ignore
-    "get_local_path",  # type: ignore
-    "get_newest_file_in_folder",  # type: ignore
-    "get_path_info",  # type: ignore
-    "get_revision",  # type: ignore
-    "get_revision_history",  # type: ignore
-    "get_server_path",  # type: ignore
-    "get_stat",  # type: ignore
-    "get_streams",  # type: ignore
-    "get_user_name",  # type: ignore
-    "get_workspaces",  # type: ignore
-    "host_name",  # type: ignore
-    "is_checked_out_by_user",  # type: ignore
-    "is_checked_out",  # type: ignore
-    "is_latest",  # type: ignore
-    "is_offline",  # type: ignore
-    "is_stream_valid",  # type: ignore
-    "move",  # type: ignore
-    "revert",  # type: ignore
-    "run_command",  # type: ignore
-    "set_attribute",  # type: ignore
-    "submit_change_list",  # type: ignore
-    "sync",  # type: ignore
-    "test_connection",  # type: ignore
-    "unsync",  # type: ignore
-    "update_change_list_description",  # type: ignore
-    "workspace_as",  # type: ignore
+    "exceptions",
+    "login",
+    "add",
+    "checkout",
+    "create_change_list",
+    "create_workspace",
+    "delete",
+    "delete_change_list",
+    "exceptions",
+    "get_attribute",
+    "checked_out_by",
+    "get_changes",
+    "get_last_change_list",
+    "get_change_list_number",
+    "get_client_root",
+    "get_current_client_revision",
+    "get_current_revision_info",
+    "get_current_server_revision",
+    "get_existing_change_list",
+    "get_files",
+    "get_info",
+    "get_latest",
+    "get_local_path",
+    "get_newest_file_in_folder",
+    "get_path_info",
+    "get_revision",
+    "get_revision_history",
+    "get_server_path",
+    "get_stat",
+    "get_streams",
+    "get_user_name",
+    "get_workspaces",
+    "host_name",
+    "is_checked_out_by_user",
+    "is_checked_out",
+    "is_latest",
+    "is_offline",
+    "is_stream_valid",
+    "move",
+    "revert",
+    "run_command",
+    "set_attribute",
+    "submit_change_list",
+    "sync",
+    "test_connection",
+    "unsync",
+    "update_change_list_description",
+    "workspace_as",
 )
 
 

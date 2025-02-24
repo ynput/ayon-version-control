@@ -1,14 +1,9 @@
 import os
+from typing import Any
 
 from ayon_core.addon import AYONAddon, ITrayService, IPluginPaths
 from ayon_core.settings import get_project_settings
 from ayon_core.lib import filter_profiles
-
-
-_typing = False
-if _typing:
-    from typing import Any
-del _typing
 
 from .version import __version__
 from .lib import WorkspaceProfileContext
@@ -38,8 +33,8 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
 
     # Public Methods:
     def initialize(self, settings: dict[str, Any]):
-        vc_settings = settings.get(self.name)  # type: dict[str, Any]
-        enabled = vc_settings and vc_settings["enabled"]  # type: bool
+        vc_settings: dict[str, Any] = settings.get(self.name)
+        enabled: bool = vc_settings and vc_settings["enabled"]
         self.set_service_running_icon() if enabled else self.set_service_failed_icon()
 
     def get_global_environments(self):
