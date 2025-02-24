@@ -35,6 +35,8 @@ dev = [
 ]
 
 [tool.ruff]
+preview = true
+
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
