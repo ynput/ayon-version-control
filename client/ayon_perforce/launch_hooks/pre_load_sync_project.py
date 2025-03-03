@@ -23,7 +23,7 @@ from ayon_perforce import is_perforce_enabled
 from ayon_perforce.addon import LaunchData
 from ayon_perforce.changes_viewer import ChangesWindows
 from ayon_perforce.lib import WorkspaceProfileContext
-from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
+from ayon_perforce.rest.rest_stub import PerforceRestStub
 
 if TYPE_CHECKING:
     from ayon_perforce.addon import ConnectionInfo, PerforceAddon

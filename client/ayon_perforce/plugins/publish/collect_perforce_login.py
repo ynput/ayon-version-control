@@ -13,6 +13,8 @@ from typing import TYPE_CHECKING, Any, ClassVar, Optional
 
 import pyblish.api
 from ayon_common.utils import get_local_site_id
+
+from ayon_perforce.rest.rest_stub import PerforceRestStub
 from ayon_perforce import is_perforce_enabled
 from ayon_perforce.lib import WorkspaceProfileContext
 from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub

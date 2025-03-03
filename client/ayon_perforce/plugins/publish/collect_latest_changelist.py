@@ -11,9 +11,7 @@ Provides:
 """
 import pyblish.api
 
-from ayon_perforce.rest.perforce.rest_stub import (
-    PerforceRestStub
-)
+from ayon_perforce.rest.rest_stub import PerforceRestStub
 
 
 class CollectLatestChangeList(pyblish.api.InstancePlugin):

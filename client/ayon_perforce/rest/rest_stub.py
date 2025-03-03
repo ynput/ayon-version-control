@@ -1,7 +1,9 @@
+"""Controller for the changes viewer."""
 import os
-import requests
 import pathlib
-from typing import Union, Dict
+from typing import Dict, Union
+
+import requests
 
 
 class PerforceRestStub:

@@ -7,7 +7,7 @@ from contextlib import closing
 
 from aiohttp import web
 
-from ayon_perforce.rest.perforce.rest_api import PerforceModuleRestAPI
+from ayon_perforce.rest.rest_api import PerforceModuleRestAPI
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)

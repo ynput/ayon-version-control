@@ -100,6 +100,14 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             workspace_name=workspace_name
         )
 
+        return {
+            "host": settings["host_name"],
+            "port": settings["port"],
+            "username": local_setting["username"],
+            "password": local_setting["password"],
+            "workspace_name": workspace_name
+        }
+
     @staticmethod
     def sync_to_version(
             conn_info: ConnectionInfo, change_id: int) -> None:
@@ -112,6 +120,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
         """
         from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 
+        PerforceRestStub.login(
         PerforceRestStub.login(**asdict(conn_info))
 
         workspace_dir = PerforceRestStub.get_workspace_dir(

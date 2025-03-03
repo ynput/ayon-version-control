@@ -612,7 +612,7 @@ class P4ConnectionManager:
         return True
 
     @lru_cache(maxsize=64)
-    def _is_path_under_any_root(self, path: Union[str, pathlib.Path]):
+    def is_path_under_any_root(self, path: Union[str, pathlib.Path]):
         for workspace in self._workspace_cache:
             with self.workspace_as(workspace):
                 client_root, server_root = self._get_workspace_roots(workspace)
@@ -719,7 +719,7 @@ class P4ConnectionManager:
                 error_text = "The paths do not exist under a valid workspace root:"
                 invalid_paths_found = False
                 for path in self._workspace_errors:
-                    if not self._is_path_under_any_root(path):
+                    if not self.is_path_under_any_root(path):
                         error_text = f"{error_text}\n - {path}"
                         invalid_paths_found = True
 
