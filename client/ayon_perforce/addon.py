@@ -81,7 +81,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
         }
 
     def sync_to_version(self, conn_info, change_id):
-        from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
+        from ayon_perforce.rest.rest_stub import PerforceRestStub
 
         PerforceRestStub.login(
             host=conn_info["host"],

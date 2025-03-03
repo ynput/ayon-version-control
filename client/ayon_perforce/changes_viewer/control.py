@@ -5,7 +5,7 @@ from ayon_core.pipeline import (
 )
 from ayon_core.addon import AddonsManager
 
-from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
+from ayon_perforce.rest.rest_stub import PerforceRestStub
 from ayon_perforce.lib import WorkspaceProfileContext
 
 

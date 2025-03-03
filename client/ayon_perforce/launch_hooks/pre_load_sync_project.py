@@ -20,7 +20,7 @@ from ayon_core.addon import AddonsManager
 from ayon_perforce.changes_viewer import ChangesWindows
 from ayon_perforce import is_perforce_enabled
 from ayon_perforce.lib import WorkspaceProfileContext
-from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
+from ayon_perforce.rest.rest_stub import PerforceRestStub
 
 
 class SyncUnrealProject(PreLaunchHook):
