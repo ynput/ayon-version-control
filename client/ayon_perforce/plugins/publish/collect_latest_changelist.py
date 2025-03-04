@@ -1,17 +1,24 @@
-"""
+"""Collects latest changelist from Perforce.
+
 Requires:
     instance.context.data["perforce"] - credentials
-    instance.data["perforce"] - instance based data for extractions
+    instance.data["perforce"] - instance based data for extractions.
 
 Provides:
     instance.data["perforce"]["change_info"]["user"] - author of submit
-                                                   ["change"] - id of submit
-                                                   ["desc"] - description
-                                                   ["time"] - when created
+                                            ["change"] - id of submit
+                                            ["desc"] - description
+                                            ["time"] - when created
 """
-import pyblish.api
+from __future__ import annotations
 
+from typing import TYPE_CHECKING, ClassVar
+
+import pyblish.api
 from ayon_perforce.rest.rest_stub import PerforceRestStub
+
+if TYPE_CHECKING:
+    import logging
 
 
 class CollectLatestChangeList(pyblish.api.InstancePlugin):
@@ -19,11 +26,12 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
 
     label = "Collect Latest Changelist"
     order = pyblish.api.CollectorOrder + 0.4995
-    targets = ["local"]
+    targets: ClassVar[list[str]] = ["local"]
+    families: ClassVar[list[str]] = ["changelist_metadata"]
+    log: logging.Logger
 
-    families = ["changelist_metadata"]
-
-    def process(self, instance):
+    def process(self, instance: pyblish.api.Instance) -> None:
+        """Process the plugin."""
         if not instance.context.data.get("perforce"):
             self.log.info("No version control collected, skipping.")
             return
@@ -36,12 +44,13 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
         if not instance.data.get("perforce"):
             instance.data["perforce"] = {}
 
-        usable_info = {}
-        usable_info["change"] = change_info["change"]
-        usable_info["user"] = change_info["user"]
-        usable_info["desc"] = change_info["desc"]
-        usable_info["time"] = change_info["time"]
-
+        usable_info = {
+            "change": change_info["change"],
+            "user": change_info["user"],
+            "desc": change_info["desc"],
+            "time": change_info["time"],
+        }
         instance.data["perforce"]["change_info"] = usable_info
 
-        self.log.debug(f"Latest changelist info: {usable_info}")
+        self.log.debug("Latest changelist info: %s",
+                       usable_info)

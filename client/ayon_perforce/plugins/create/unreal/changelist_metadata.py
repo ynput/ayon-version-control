@@ -1,26 +1,39 @@
-from ayon_core.pipeline import CreatedInstance
-from ayon_api import get_folder_by_path
+"""Change list auto creator for Unreal Engine."""
+from __future__ import annotations
 
-from ayon_unreal.api.plugin import UnrealBaseAutoCreator
+from typing import Optional
+
+from ayon_api import get_folder_by_path
+from ayon_core.pipeline import CreatedInstance
 from ayon_unreal.api.pipeline import create_publish_instance, imprint
+from ayon_unreal.api.plugin import UnrealBaseAutoCreator
 
 
 class UnrealPublishCommit(UnrealBaseAutoCreator):
     """Auto creator to mark current version of project as published.
 
-    It should store identification of latest submitchange to highlight it as
+    It should store identification of latest submit change to highlight it as
     "publish" version. (Not all submits are created equally.)
 
     This logic should be eventually moved to UnrealBaseAutoCreator class in
-    unreal addon andd only be imported from there.
+    unreal addon and only be imported from there.
     """
     identifier = "io.ayon.creators.unreal.changelist_metadata"
     product_type = "changelist_metadata"
     label = "Publish Changelist Metadata"
+    host_name = "unreal"
 
     default_variant = "Main"
 
-    def create(self, options=None):
+    def create(
+            self,
+            options: Optional[dict] = None) -> Optional[CreatedInstance]:
+        """Create a new instance of the product.
+
+        Returns:
+            CreatedInstance: The created instance.
+
+        """
         existing_instance = None
         for instance in self.create_context.instances:
             if instance.product_type == self.product_type:
@@ -68,14 +81,14 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             instance_name = f"{product_name}{self.suffix}"
 
             pub_instance = create_publish_instance(instance_name, self.root)
-            pub_instance.set_editor_property('add_external_assets', True)
+            pub_instance.set_editor_property("add_external_assets", True)
 
             imprint(f"{self.root}/{instance_name}",
                     new_instance.data_to_store())
 
             return pub_instance
 
-        elif (
+        if (
                 existing_instance["folderPath"] != folder_path
                 or existing_instance.get("task") != task_name
         ):
@@ -85,4 +98,6 @@ class UnrealPublishCommit(UnrealBaseAutoCreator):
             )
             existing_instance["folderPath"] = folder_path
             existing_instance["task"] = task_name
-            existing_instance["productName"] = product_name
+
+            return existing_instance
+        return None

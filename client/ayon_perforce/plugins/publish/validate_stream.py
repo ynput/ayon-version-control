@@ -1,7 +1,13 @@
-import pyblish.api
+"""Validate if Perforce stream is collected."""
+from __future__ import annotations
 
-from ayon_core.pipeline.publish import ValidateContentsOrder
-from ayon_core.pipeline.publish import PublishValidationError
+from typing import ClassVar
+
+import pyblish.api
+from ayon_core.pipeline.publish import (
+    PublishValidationError,
+    ValidateContentsOrder,
+)
 
 
 class ValidateStream(pyblish.api.InstancePlugin):
@@ -13,10 +19,17 @@ class ValidateStream(pyblish.api.InstancePlugin):
 
     order = ValidateContentsOrder
     label = "Validate P4 Stream"
-    families = ["changelist_metadata"]
-    targets = ["local"]
+    families: ClassVar[list[str]] = ["changelist_metadata"]
+    targets: ClassVar[list[str]] = ["local"]
 
-    def process(self, instance):
+    def process(  # noqa: PLR6301
+            self, instance: pyblish.api.Instance) -> None:
+        """Process the plugin.
+
+        Raises:
+            PublishValidationError: If stream is not collected.
+
+        """
         stream = instance.context.data["perforce"]["stream"]
 
         if not stream:
@@ -25,4 +38,4 @@ class ValidateStream(pyblish.api.InstancePlugin):
                 "Please let your Perforce admin set up your workspace with "
                 "stream connected."
             )
-            raise PublishValidationError(self, msg)
+            raise PublishValidationError(msg)
