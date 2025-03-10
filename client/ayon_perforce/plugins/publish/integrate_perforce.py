@@ -1,32 +1,45 @@
-import os.path
+"""Integrate Perforce items."""
+from __future__ import annotations
+
 import copy
-import shutil
 import datetime
+import os.path
+import shutil
+from typing import ClassVar
 
 import pyblish.api
-
 from ayon_core.lib import StringTemplate
-
 from ayon_perforce.rest.rest_stub import PerforceRestStub
 
 
 class IntegratePerforce(pyblish.api.InstancePlugin):
-    """Integrate perforce items
+    """Integrate perforce items.
 
     Commits published files as a new version in Perforce
     """
 
     label = "Integrate Perforce items"
     order = pyblish.api.IntegratorOrder + 0.499
-    targets = ["local"]
+    targets: ClassVar[list[str]] = ["local"]
 
-    families = ["perforce"]
+    families: ClassVar[list[str]] = ["perforce"]
 
-    def process(self, instance):
+    def process(self, instance: pyblish.api.Instance) -> None:
+        """Process the plugin.
+
+        Raises:
+            RuntimeError: If the instance data is missing Anatomy.
+            RuntimeError: If the data is checked out by someone else.
+            ValueError: If the file is not checked out.
+            ValueError: If the file is not added to the changelist.
+            ValueError: If the changelist is not submitted.
+
+        """
         version_template_key = (
             instance.data.get("perforce", {})["template_name"])
         if not version_template_key:
-            raise RuntimeError("Instance data missing 'perforce[template_name]'")   # noqa
+            msg = "Instance data missing 'perforce[template_name]'"
+            raise RuntimeError(msg)
 
         if "_" in version_template_key:
             template_area, template_name = version_template_key.split("_")
@@ -34,10 +47,13 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
             template_area = version_template_key
             template_name = "default"
         anatomy = instance.context.data["anatomy"]
-        template = anatomy.templates_obj.templates[template_area][template_name]  # noqa
+        template = anatomy.templates_obj.templates[template_area][template_name]  # noqa: E501
         if not template:
-            raise RuntimeError("Anatomy is missing configuration for '{}'".
-                               format(version_template_key))
+            msg = (
+                "Anatomy is missing configuration "
+                f"for '{version_template_key}'"
+            )
+            raise RuntimeError(msg)
 
         template_file_path = os.path.join(
             template["directory"], template["file"])
@@ -65,23 +81,22 @@ class IntegratePerforce(pyblish.api.InstancePlugin):
             comment = os.path.basename(perforce_file_path) + actual_time
             if is_on_server:
                 if PerforceRestStub.is_checkouted(perforce_file_path):
-                    raise RuntimeError(
-                        f"{perforce_file_path} is checkouted by someone "
-                        f"already, cannot commit right now."
+                    msg = (
+                        f"{perforce_file_path} is checked out by someone "
+                        "already, cannot commit right now."
                     )
+                    raise RuntimeError(msg)
                 if not PerforceRestStub.checkout(
                         perforce_file_path, comment):
-                    raise ValueError(
-                        f"File {perforce_file_path} not checkouted"
-                    )
+                    msg = f"File {perforce_file_path} not checked out"
+                    raise ValueError(msg)
 
             shutil.copy(source_path, perforce_file_path)
-            if not is_on_server:
-                if not PerforceRestStub.add(perforce_file_path,
-                                            comment):
-                    raise ValueError(
-                        f"File {perforce_file_path} not added to changelist"
-                    )
+            if not is_on_server and not PerforceRestStub.add(
+                    perforce_file_path, comment):
+                msg = f"File {perforce_file_path} not added to changelist"
+                raise ValueError(msg)
 
             if not PerforceRestStub.submit_change_list(comment):
-                raise ValueError("Changelist not submitted")
+                msg = "Changelist not submitted"
+                raise ValueError(msg)

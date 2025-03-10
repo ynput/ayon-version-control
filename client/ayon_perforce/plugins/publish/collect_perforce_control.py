@@ -1,14 +1,21 @@
-"""
+"""Mark instance to be submitted to Perforce.
+
 Requires:
     instance.context.data["perforce"] - connection info for VC
 
 Provides:
     instance     -> families ([])
 """
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar
+
 import pyblish.api
 from ayon_core.lib import filter_profiles
-
 from ayon_perforce.rest.rest_stub import PerforceRestStub
+
+if TYPE_CHECKING:
+    import logging
 
 
 class CollectPerforceControl(pyblish.api.InstancePlugin):
@@ -20,13 +27,15 @@ class CollectPerforceControl(pyblish.api.InstancePlugin):
 
     label = "Collect Perforce Submission Info"
     order = pyblish.api.CollectorOrder + 0.4992
-    targets = ["local"]
+    targets: ClassVar[list[str]] = ["local"]
 
     settings_category = "perforce"
 
     profiles = None
+    log: logging.Logger
 
-    def process(self, instance):
+    def process(self, instance: pyblish.api.Instance) -> None:
+        """Process the plugin."""
         conn_info = instance.context.data.get("perforce")
         if not conn_info:
             self.log.info("No Perforce control set and enabled")
@@ -67,7 +76,7 @@ class CollectPerforceControl(pyblish.api.InstancePlugin):
             return
 
         families = instance.data.setdefault("families", [])
-        if not version_control_family in families:
+        if version_control_family not in families:
             instance.data["families"].append(version_control_family)
 
         result_str = "Adding"
@@ -82,9 +91,10 @@ class CollectPerforceControl(pyblish.api.InstancePlugin):
         instance.data["perforce"]["username"] = username
         instance.data["perforce"]["password"] = password
         instance.data["perforce"]["template_name"] = \
-            profile["template_name"]
+                profile["template_name"]
 
         self.log.debug(
-            f"{result_str} 'perforce' product_type "
-            f"for instance with '{product_type}' product type."
+            "%s 'perforce' product_type "
+                 "for instance with '%s' product type.",
+            result_str, product_type
         )

@@ -1,7 +1,9 @@
+"""Controller for the changes viewer."""
 import os
-import requests
 import pathlib
-from typing import Union, Dict
+from typing import Dict, Union
+
+import requests
 
 
 class PerforceRestStub:
@@ -104,7 +106,7 @@ class PerforceRestStub:
         return response
 
     @staticmethod
-    def get_workspace_dir(workspace_name: str) -> Dict:
+    def get_workspace_dir(workspace_name: str) -> str:
         response = PerforceRestStub._wrap_call(
             "get_workspace_dir", workspace_name=workspace_name)
         return response

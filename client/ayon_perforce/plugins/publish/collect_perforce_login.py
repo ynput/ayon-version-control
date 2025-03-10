@@ -1,18 +1,26 @@
-"""
+"""Collect Perforce login info.
+
 Requires:
     none
 
 Provides:
     context.data     -> "perforce" ({})
 """
+from __future__ import annotations
+
+from dataclasses import asdict
+from typing import TYPE_CHECKING, Any, ClassVar, Optional
 
 import pyblish.api
-
 from ayon_common.utils import get_local_site_id
-
-from ayon_perforce.rest.rest_stub import PerforceRestStub
 from ayon_perforce import is_perforce_enabled
 from ayon_perforce.lib import WorkspaceProfileContext
+from ayon_perforce.rest.rest_stub import PerforceRestStub
+
+if TYPE_CHECKING:
+    from logging import Logger
+
+    from ayon_perforce.addon import ConnectionInfo, PerforceAddon
 
 
 class CollectPerforceLogin(pyblish.api.ContextPlugin):
@@ -22,18 +30,19 @@ class CollectPerforceLogin(pyblish.api.ContextPlugin):
     Not all artists need to have credentials, not all DCCs should use
     version control.
     """
-
     label = "Collect Perforce Connection Info"
     order = pyblish.api.CollectorOrder + 0.4990
-    targets = ["local"]
+    targets: ClassVar = ["local"]
+    log: Logger
 
-    def process(self, context):
+    def process(self, context: pyblish.api.Context) -> None:
+        """Collect Perforce login info to the Context."""
         project_name = context.data["projectName"]
         project_settings = context.data["project_settings"]
         if not is_perforce_enabled(project_settings):
             self.log.info(
-                "Perforce addon is not enabled"
-                f" for project '{project_name}'"
+                "Perforce addon is not enabled "
+                "for project '%s'", project_name
             )
             return
 
@@ -47,39 +56,35 @@ class CollectPerforceLogin(pyblish.api.ContextPlugin):
 
         context.data["perforce"] = conn_info
 
-        PerforceRestStub.login(
-            conn_info["host"],
-            conn_info["port"],
-            conn_info["username"],
-            conn_info["password"],
-            conn_info["workspace_name"]
-        )
+        PerforceRestStub.login(**asdict(conn_info))
 
         stream = PerforceRestStub.get_stream(
             workspace_name=conn_info["workspace_name"])
         context.data["perforce"]["stream"] = stream
-        self.log.debug(f"stream::{stream}")
+        self.log.debug("stream: %s", stream)
 
         workspace_dir = PerforceRestStub.get_workspace_dir(
-            workspace_name=conn_info["workspace_name"])
+            workspace_name=conn_info.workspace_name)
         context.data["perforce"]["workspace_dir"] = workspace_dir
 
     def _get_conn_info(
         self,
-        project_name,
-        perforce_addon,
-        project_settings,
-        context
-    ):
-        """Gets and check credentials for version-control
+        project_name: str,
+        perforce_addon: PerforceAddon,
+        project_settings: dict[str, Any],
+        context: pyblish.api.Context
+    ) -> Optional[ConnectionInfo]:
+        """Gets and check credentials for Perforce.
 
         Args:
-            project_name (str)
-            perforce_addon (Union[AYONAddon, Any]): addon from AddonsManager
+            project_name (str): Name of the project.
+            perforce_addon (PerforceAddon): PerforceAddon instance.
             project_settings (Dict[str, Any]): Prepared project settings.
+            context (pyblish.api.Context): Context object.
 
         Returns:
             dict[str, str]: Connection info or None if validation failed
+
         """
         task_entity = context.data.get("taskEntity")
         task_name = task_type = None
@@ -97,30 +102,24 @@ class CollectPerforceLogin(pyblish.api.ContextPlugin):
 
         missing_creds = False
         if not all([
-            conn_info["username"],
-            conn_info["password"],
-            conn_info["workspace_name"]
+            conn_info.username,
+            conn_info.password,
+            conn_info.workspace_name
         ]):
             site_name = get_local_site_id()
-            sett_str = (
-                "ayon+settings://perforce?project="
-                f"{project_name}&site={site_name}"
-            )
             self.log.warning(
                 "Required credentials are missing. "
-                f"Please go to `{sett_str}` to fill it.")
+                "Please go to "
+                "`ayon+settings://perforce?project=%s&site=%s` to fill it.",
+                project_name, site_name
+            )
             missing_creds = True
 
-        if not all([conn_info["host"], conn_info["port"]]):
-            sett_str = (
-                f"ayon+settings://perforce?project={project_name}"
-            )
+        if not all([conn_info.host, conn_info.port]):
             self.log.warning(
                 "Required Perforce settings are missing. "
-                f"Please ask your AYON admin to fill `{sett_str}`.")
+                "Please ask your AYON admin to fill "
+                "`ayon+settings://perforce?project=%s`.", project_name)
             missing_creds = True
 
-        if missing_creds:
-            return None
-
-        return conn_info
+        return None if missing_creds else conn_info
