@@ -801,35 +801,6 @@ class P4ConnectionManager:
 
         # warnings.clear()
 
-
-    @typing.overload
-    def _process_result(
-        self,
-        result: T_Result,
-        keys: T_Keys,
-        actions: T_Actions,
-        none_keys: T_NoneKeys=None,
-        none_actions: T_NoneActions=None,
-        true_pattern: str=...,
-        false_pattern: str=...,
-        set_none: Literal[False]=False
-    ) -> list[bool]:
-        ...
-
-    @typing.overload
-    def _process_result(
-        self,
-        result: T_Result,
-        keys: T_Keys,
-        actions: T_Actions,
-        none_keys: T_NoneKeys = None,
-        none_actions: T_NoneActions = None,
-        true_pattern: str = ...,
-        false_pattern: str = ...,
-        set_none: Literal[False] = False
-    ):
-        ...
-
     def _process_result(
         self,
         result: T_Result,
