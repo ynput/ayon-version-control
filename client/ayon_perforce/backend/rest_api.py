@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ayon_core.lib import Logger
+
 from ayon_perforce.backend import rest_routes
 
 if TYPE_CHECKING:

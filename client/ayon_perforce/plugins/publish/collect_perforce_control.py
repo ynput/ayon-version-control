@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import pyblish.api
 from ayon_core.lib import filter_profiles
-from ayon_perforce.rest.rest_stub import PerforceRestStub
+from ayon_perforce.backend import PerforceRestStub
 
 if TYPE_CHECKING:
     import logging

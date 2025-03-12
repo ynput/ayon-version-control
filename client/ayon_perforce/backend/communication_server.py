@@ -10,7 +10,8 @@ from contextlib import closing
 from typing import TYPE_CHECKING, Union
 
 from aiohttp import web
-from ayon_perforce.rest.rest_api import PerforceModuleRestAPI
+
+from ayon_perforce.backend import PerforceModuleRestAPI
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
@@ -24,6 +25,7 @@ log.setLevel(logging.DEBUG)
 
 class WebServer:
     """Websocket server for communication with Perforce module."""
+
     def __init__(self):
         """Initializes WebServer."""
         self.client = None
@@ -88,6 +90,10 @@ class WebServerThread(threading.Thread):
     example Harmony needs to run something on main thread), but currently
     it creates separate thread and separate asyncio event loop.
     """
+
+    runner: web.AppRunner
+    site: web.TCPSite
+
     def __init__(self,
                  webserver: WebServer, port: int, loop: AbstractEventLoop):
         """Initializes WebServerThread."""
@@ -97,9 +103,7 @@ class WebServerThread(threading.Thread):
         self.port = port
         self.webserver = webserver
         self.loop: AbstractEventLoop = loop
-        self.runner = None
-        self.site = None
-        self.tasks = []
+        self.tasks: list = []
 
     def run(self) -> None:
         """Runs WebServerThread."""

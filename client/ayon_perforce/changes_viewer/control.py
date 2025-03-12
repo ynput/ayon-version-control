@@ -1,15 +1,15 @@
+"""Changes Viewer Controller."""
 from __future__ import annotations
 
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Callable, Optional
 
 from ayon_core.addon import AddonsManager
 from ayon_core.lib.events import QueuedEventSystem
 from ayon_core.pipeline import registered_host
 
-from ayon_perforce.rest.rest_stub import PerforceRestStub
+from ayon_perforce.backend import PerforceRestStub
 from ayon_perforce.lib import WorkspaceProfileContext
-from ayon_perforce.rest.perforce.rest_stub import PerforceRestStub
 
 if TYPE_CHECKING:
     from ayon_core.host import HostBase
@@ -25,6 +25,7 @@ class ChangesViewerController:
 
     def __init__(
             self, launch_data: LaunchData, host: Optional[HostBase] = None):
+        """Initialize ChangesViewerController."""
         if host is None:
             host = registered_host()
         self._host = host
@@ -51,12 +52,18 @@ class ChangesViewerController:
 
         self._event_system = self._create_event_system()
 
-    def emit_event(self, topic, data=None, source=None):
+    def emit_event(
+            self, topic: str,
+            data: Optional[dict] = None,
+            source: Optional[str] = None) -> None:
+        """Emit event."""
         if data is None:
             data = {}
         self._event_system.emit(topic, data, source)
 
-    def register_event_callback(self, topic, callback):
+    def register_event_callback(
+            self, topic: str, callback: Callable) -> None:
+        """Register event callback."""
         self._event_system.add_callback(topic, callback)
 
     def login(self) -> None:
@@ -99,12 +106,30 @@ class ChangesViewerController:
         PerforceRestStub.sync_to_version(
             f"{workspace_dir}/...", change_id)
 
+    def get_current_project_name(self) -> str:
+        """Get current project name.
 
-    def get_current_project_name(self):
+        Returns:
+            str: Current project name.
+
+        """
         return self._current_project
 
-    def get_current_folder_id(self):
+    def get_current_folder_id(self) -> str:
+        """Get current folder id.
+
+        Returns:
+            str: Current folder id.
+
+        """
         return self._current_folder_id
 
-    def _create_event_system(self):
+    @staticmethod
+    def _create_event_system() -> QueuedEventSystem:
+        """Create event system.
+
+        Returns:
+            QueuedEventSystem: Event system instance.
+
+        """
         return QueuedEventSystem()
