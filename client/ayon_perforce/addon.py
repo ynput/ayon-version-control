@@ -144,7 +144,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     def tray_start(self) -> None:
         """Called when the tray is starting."""
         if self.enabled:
-            from ayon_perforce.backend import WebServer
+            from ayon_perforce.backend.communication_server import WebServer
             self.webserver = WebServer()
             self.webserver.start()
 
