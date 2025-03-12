@@ -49,7 +49,7 @@ class SyncUnrealProject(PreLaunchHook):
         """Show dialog to sync Unreal project."""
         perforce_addon = self._get_enabled_perforce_addon()
         if not perforce_addon:
-            self.log.info("Version control is not enabled, skipping")
+            self.log.info("Perforce Addon is not enabled, skipping")
             return
         launch_data = LaunchData(
             project_name=self.data["project_name"],
