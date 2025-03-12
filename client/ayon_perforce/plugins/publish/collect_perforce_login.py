@@ -54,7 +54,7 @@ class CollectPerforceLogin(pyblish.api.ContextPlugin):
         if not conn_info:
             return
 
-        context.data["perforce"] = conn_info
+        context.data["perforce"] = asdict(conn_info)
 
         PerforceRestStub.login(**asdict(conn_info))
 
