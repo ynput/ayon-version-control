@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Union
 
 from aiohttp import web
 
-from ayon_perforce.backend import PerforceModuleRestAPI
+from ayon_perforce.backend.rest_api import PerforceModuleRestAPI
 
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop

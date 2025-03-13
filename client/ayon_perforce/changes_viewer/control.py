@@ -8,7 +8,7 @@ from ayon_core.addon import AddonsManager
 from ayon_core.lib.events import QueuedEventSystem
 from ayon_core.pipeline import registered_host
 
-from ayon_perforce.backend import PerforceRestStub
+from ayon_perforce.backend.rest_stub import PerforceRestStub
 from ayon_perforce.lib import WorkspaceProfileContext
 
 if TYPE_CHECKING:

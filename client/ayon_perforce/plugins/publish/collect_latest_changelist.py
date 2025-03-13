@@ -15,7 +15,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 import pyblish.api
-from ayon_perforce.backend import PerforceRestStub
+from ayon_perforce.backend.rest_stub import PerforceRestStub
 
 if TYPE_CHECKING:
     import logging

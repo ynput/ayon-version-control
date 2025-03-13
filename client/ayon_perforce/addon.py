@@ -111,7 +111,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             change_id: Change ID to sync to.
 
         """
-        from ayon_perforce.backend import PerforceRestStub
+        from ayon_perforce.backend.rest_stub import PerforceRestStub
 
         PerforceRestStub.login(**asdict(conn_info))
 

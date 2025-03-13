@@ -9,7 +9,7 @@ from typing import ClassVar
 
 import pyblish.api
 from ayon_core.lib import StringTemplate
-from ayon_perforce.backend import PerforceRestStub
+from ayon_perforce.backend.rest_stub import PerforceRestStub
 
 
 class IntegratePerforce(pyblish.api.InstancePlugin):

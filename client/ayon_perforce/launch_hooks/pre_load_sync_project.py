@@ -21,7 +21,7 @@ from ayon_core.addon import AddonsManager
 from ayon_core.tools.utils import qt_app_context
 from ayon_perforce import is_perforce_enabled
 from ayon_perforce.addon import LaunchData
-from ayon_perforce.backend import PerforceRestStub
+from ayon_perforce.backend.rest_stub import PerforceRestStub
 from ayon_perforce.changes_viewer import ChangesWindows
 from ayon_perforce.lib import WorkspaceProfileContext
 
