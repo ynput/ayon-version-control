@@ -46,31 +46,6 @@ class CollectPerforceControlModel(BaseSettingsModel):
     )
 
 
-class WorkspaceProfileModel(BaseSettingsModel):
-    _layout = "expanded"
-    folder_paths: list[str] = SettingsField(
-        default_factory=list,
-        title="Folder paths",
-        scope=["site"]
-    )
-    task_types: list[str] = SettingsField(
-        default_factory=list,
-        title="Task types",
-        enum_resolver=task_types_enum,
-        scope=["site"]
-    )
-    task_names: list[str] = SettingsField(
-        default_factory=list,
-        title="Task names",
-        scope=["site"]
-    )
-    workspace_name: str = Field(
-        "",
-        title="My Workspace Name",
-        scope=["site"]
-    )
-
-
 class PublishPluginsModel(BaseSettingsModel):
     CollectPerforceControl: CollectPerforceControlModel = Field(
         default_factory=CollectPerforceControlModel,
@@ -82,51 +57,31 @@ class PublishPluginsModel(BaseSettingsModel):
     )
 
 
+class WorkspaceModel(BaseSettingsModel):
+    """Workspace settings."""
 
-class LocalSubmodel(BaseSettingsModel):
-    """Provide artist based values"""
-
-    username: str = Field(
-        "",
-        title="Username",
-        scope=["site"]
-    )
-    password: str = Field(
-        "",
-        title="Password",
-        scope=["site"]
-    )
-    workspace_profiles: list[WorkspaceProfileModel] = SettingsField(
-        default_factory=list,
-        scope=["site"]
-    )
+    template: bool = Field(default=False)
 
 
 class PerforceSettings(BaseSettingsModel):
     """Version Control Project Settings."""
 
     enabled: bool = Field(default=False)
-
     host_name: str = Field(
         "perforce",
         title="Host name"
     )
-
     port: int = Field(
         1666,
         title="Port"
     )
-
+    workspace_template: str = Field(
+        "",
+        title="Workspace Name Template"
+    )
     publish: PublishPluginsModel = Field(
         default_factory=PublishPluginsModel,
         title="Publish Plugins",
-    )
-
-    local_setting: LocalSubmodel = Field(
-        default_factory=LocalSubmodel,
-        title="Local setting",
-        scope=["site"],
-        description="This setting is only applicable for artist's site",
     )
 
 
