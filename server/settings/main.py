@@ -102,7 +102,7 @@ class LocalSubmodel(BaseSettingsModel):
     )
 
 
-class VersionControlSettings(BaseSettingsModel):
+class PerforceSettings(BaseSettingsModel):
     """Version Control Project Settings."""
 
     enabled: bool = Field(default=False)

@@ -1,13 +1,10 @@
-#from typing import Type
-
 from ayon_server.addons import BaseServerAddon
 
-from .settings import VersionControlSettings, DEFAULT_VALUES
+from .settings import PerforceSettings, DEFAULT_VALUES
 
 
 class PerforceAddon(BaseServerAddon):
-    #settings_model: Type[VersionControlSettings] = VersionControlSettings
-    settings_model = VersionControlSettings
+    settings_model = PerforceSettings
 
 
     async def get_default_settings(self):
