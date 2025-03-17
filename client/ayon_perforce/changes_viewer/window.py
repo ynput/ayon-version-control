@@ -1,15 +1,20 @@
-import sys
+"""Changes Viewer Window."""
 
-from qtpy import QtWidgets, QtCore
+from __future__ import annotations
+
+import contextlib
+import sys
+from typing import TYPE_CHECKING, Optional
 
 from ayon_core import style
-from ayon_core.tools.utils.lib import (
-    iter_model_rows,
-    qt_app_context
-)
-from .control import ChangesViewerController
+from ayon_core.tools.utils.lib import qt_app_context
+from qtpy import QtCore, QtWidgets
 
+from .control import ChangesViewerController
 from .widgets import ChangesDetailWidget
+
+if TYPE_CHECKING:
+    from ayon_perforce.addon import LaunchData
 
 
 module = sys.modules[__name__]
@@ -17,8 +22,14 @@ module.window = None
 
 
 class ChangesWindows(QtWidgets.QDialog):
-    def __init__(self, controller=None, parent=None, launch_data=None):
-        super(ChangesWindows, self).__init__(parent=parent)
+    """Changes Viewer Window."""
+    def __init__(
+            self,
+            controller: Optional[ChangesViewerController] = None,
+            parent: Optional[QtWidgets.QtWidget] = None,
+            launch_data: Optional[LaunchData] = None):
+        """Initialize ChangesWindows."""
+        super().__init__(parent=parent)
         self.setWindowTitle("Changes Viewer")
         self.setObjectName("ChangesViewer")
         if not parent:
@@ -41,31 +52,26 @@ class ChangesWindows(QtWidgets.QDialog):
         self._controller = controller
         self._details_widget = details_widget
 
-    def showEvent(self, *args, **kwargs):
-        super(ChangesWindows, self).showEvent(*args, **kwargs)
+    def showEvent(self, *args, **kwargs) -> None:  # noqa: N802, ANN002, ANN003
+        """Show event."""
+        super().showEvent(*args, **kwargs)
         if self._first_show:
             self._first_show = False
             self.setStyleSheet(style.load_stylesheet())
             self._details_widget.reset()
 
 
-def show(root=None, debug=False, parent=None):
-    """Display Change Viewer GUI
+def show(parent: Optional[QtWidgets.QtWidget] = None) -> None:
+    """Display Change Viewer GUI.
 
-    Arguments:
-        debug (bool, optional): Run in debug-mode,
-            defaults to False
-        parent (QtCore.QObject, optional): When provided parent the interface
-            to this QObject.
+    Args:
+        parent (QtWidgets.QtWidget, optional): When provided parent
+            the interface to this QObject.
 
     """
-
-    try:
+    with contextlib.suppress(RuntimeError, AttributeError):
         module.window.close()
         del module.window
-    except (RuntimeError, AttributeError):
-        pass
-
     with qt_app_context():
         window = ChangesWindows(parent)
         window.show()

@@ -1,20 +1,25 @@
-from qtpy import QtWidgets, QtCore
+"""Widgets for the changes viewer."""
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from ayon_core.tools.utils import TreeView
 from ayon_core.tools.utils.delegates import PrettyTimeDelegate
+from qtpy import QtCore, QtWidgets
 
-from .model import (
-    ChangesModel,
-    CHANGE_ROLE,
-    CustomSortProxyModel
-)
+from .model import CHANGE_ROLE, ChangesModel, CustomSortProxyModel
+
+if TYPE_CHECKING:
+    from ayon_perforce.changes_viewer.control import ChangesViewerController
 
 
 class ChangesDetailWidget(QtWidgets.QWidget):
-    """Table printing list of changes from Perforce"""
+    """Table printing list of changes from Perforce."""
     sync_triggered = QtCore.Signal()
 
-    def __init__(self, controller, parent=None):
+    def __init__(self, controller: ChangesViewerController,
+                 parent: QtWidgets.QWidget = None):
+        """Initialize ChangesDetailWidget."""
         super().__init__(parent)
 
         model = ChangesModel(controller=controller, parent=self)
@@ -61,14 +66,16 @@ class ChangesDetailWidget(QtWidgets.QWidget):
         self._controller = controller
         self._changes_view = changes_view
         self.sync_btn = sync_btn
-        self._thread = None
+        self._thread: QtCore.QThread = None
         self._time_delegate = time_delegate
         self._message_label_widget = message_label_widget
 
-    def reset(self):
+    def reset(self) -> None:
+        """Reset the widget."""
         self._model.refresh()
 
-    def _on_sync_clicked(self):
+    def _on_sync_clicked(self) -> None:
+        """Sync to selected change."""
         selection_model = self._changes_view.selectionModel()
         current_index = selection_model.currentIndex()
         if not current_index.isValid():
@@ -85,7 +92,8 @@ class ChangesDetailWidget(QtWidgets.QWidget):
 
         self._thread = thread
 
-    def _on_thread_finished(self, change_id):
+    def _on_thread_finished(self, change_id: int) -> None:
+        """Handle thread finished event."""
         self._message_label_widget.setText(
             f"Synced to '{change_id}'. "
             "Please close Viewer to continue."
@@ -94,11 +102,15 @@ class ChangesDetailWidget(QtWidgets.QWidget):
 
 
 class SyncThread(QtCore.QThread):
+    """Thread for syncing to a specific change."""
 
-    def __init__(self, controller, change_id):
+    def __init__(
+            self, controller: ChangesViewerController, change_id: int):
+        """Initialize SyncThread."""
         super().__init__()
         self._controller = controller
         self._change_id = change_id
 
-    def run(self):
+    def run(self) -> None:
+        """Run SyncThread."""
         self._controller.sync_to(self._change_id)

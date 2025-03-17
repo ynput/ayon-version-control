@@ -111,7 +111,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             change_id: Change ID to sync to.
 
         """
-        from ayon_perforce.rest.rest_stub import PerforceRestStub
+        from ayon_perforce.backend.rest_stub import PerforceRestStub
 
         PerforceRestStub.login(**asdict(conn_info))
 
@@ -144,7 +144,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     def tray_start(self) -> None:
         """Called when the tray is starting."""
         if self.enabled:
-            from ayon_perforce.rest.communication_server import WebServer
+            from ayon_perforce.backend.communication_server import WebServer
             self.webserver = WebServer()
             self.webserver.start()
 

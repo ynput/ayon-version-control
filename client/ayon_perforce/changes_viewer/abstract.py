@@ -1,11 +1,5 @@
-from abc import ABCMeta, abstractmethod
-import six
-
-from ayon_core.lib.attribute_definitions import (
-    AbstractAttrDef,
-    serialize_attr_defs,
-    deserialize_attr_defs,
-)
+"""Abstract classes for changes viewer."""
+from __future__ import annotations
 
 
 class ChangeListItem:
@@ -18,13 +12,20 @@ class ChangeListItem:
         time (str): when it was committed (timestamp)
     """
 
-    def __init__(self, change, user, desc, time):
+    def __init__(self, change: str, user: str, desc: str, time: str):
+        """Initialize ChangeListItem."""
         self.change = change
         self.user = user
         self.desc = desc
         self.time = time
 
-    def to_data(self):
+    def to_data(self) -> dict:
+        """Convert to data.
+
+        Returns:
+            dict: Data representation of the object.
+
+        """
         return {
             "change": self.change,
             "user": self.user,
@@ -33,5 +34,14 @@ class ChangeListItem:
         }
 
     @classmethod
-    def from_data(cls, data):
+    def from_data(cls, data) -> ChangeListItem:
+        """Create instance from data.
+
+        Args:
+            data (dict): Data to create instance from.
+
+        Returns:
+            ChangeListItem: Instance of the class.
+
+        """
         return cls(**data)
