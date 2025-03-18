@@ -56,11 +56,37 @@ class PublishPluginsModel(BaseSettingsModel):
         )
     )
 
+class StreamProfile(BaseSettingsModel):
+    """Stream profile settings."""
+    template: str = Field(
+        default="",
+        title="Stream Name Template"
+    )
+    task_types: list[str] = Field(
+        enum_resolver=task_types_enum,
+        title="Task Type"
+    )
+
+
+class StreamModel(BaseSettingsModel):
+    """Stream settings."""
+    enabled: bool = Field(default=False)
+    profiles: list[StreamProfile] = Field(
+        default_factory=list,
+        title="Stream Profiles" 
+    )
 
 class WorkspaceModel(BaseSettingsModel):
     """Workspace settings."""
 
-    template: bool = Field(default=False)
+    depot: str = Field(
+        "",
+        title="Depot Name Template"
+    )
+    template: str = Field(
+        "",
+        title="Workspace Name Template"
+    )
 
 
 class PerforceSettings(BaseSettingsModel):
@@ -75,9 +101,15 @@ class PerforceSettings(BaseSettingsModel):
         1666,
         title="Port"
     )
-    workspace_template: str = Field(
-        "",
-        title="Workspace Name Template"
+    
+    workspace: WorkspaceModel = Field(
+        default_factory=WorkspaceModel,
+        title="Workspace Settings"
+    )
+    stream: StreamModel = Field(
+        default_factory=StreamModel,
+        title="Stream Settings",
+        description="WIP: enable to use streams in p4"
     )
     publish: PublishPluginsModel = Field(
         default_factory=PublishPluginsModel,
