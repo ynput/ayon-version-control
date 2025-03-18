@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<error id="main">
+<title>Workspace directory not collected</title>
+<description>
+## Workspace directory not collected
+
+To use external version control, you must provide local workspace dir on your machine.
+
+</description>
+<detail>
+### __Detailed Info__ (optional)
+
+   Externally version controlled files must be first copied locally to workspace area before they are committed to the version control server (like Perforce).
+
+
+### How to repair?
+
+   Connect to Ayon server and set your local workspace folder in `ayon+settings://perforce:0.0.1/local_setting/workspace_dir`
+</detail>
+</error>
+</root>

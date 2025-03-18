@@ -6,13 +6,7 @@ from ayon_server.settings import (
 )
 
 
-def backend_enum():
-    return [
-        {"label": "Perforce", "value": "perforce"}
-    ]
-
-
-class CollectVersionControlProfileModel(BaseSettingsModel):
+class CollectPerforceProfileModel(BaseSettingsModel):
     _layout = "expanded"
     host_names: list[str] = Field(
         default_factory=list,
@@ -30,21 +24,25 @@ class CollectVersionControlProfileModel(BaseSettingsModel):
         default_factory=list,
         title="Task names",
     )
-    add_version_control: bool = Field(
+    add_perforce_control: bool = Field(
         True,
-        title="Add Version Control to representations",
+        title="Commit representations to Perforce",
     )
-    template_name: str = Field("", title="Template name",
-                               description="Name from Anatomy to provide path and name of "
-                                           "committed file")
+    template_name: str = Field(
+        "",
+        title="Template name",
+        description="Name from Anatomy to provide path and name of "
+                    "committed file")
 
 
-class CollectVersionControlModel(BaseSettingsModel):
+class CollectPerforceControlModel(BaseSettingsModel):
     _isGroup = True
     enabled: bool = False
-    profiles: list[CollectVersionControlProfileModel] = Field(
+    profiles: list[CollectPerforceProfileModel] = Field(
         default_factory=list,
-        title="Profiles to add version control",
+        title="Profiles to trigger Perforce commit",
+        description="Provide profile in which context representation should be"
+         " tracked outside of AYON with Perforce commit"
     )
 
 
@@ -74,9 +72,9 @@ class WorkspaceProfileModel(BaseSettingsModel):
 
 
 class PublishPluginsModel(BaseSettingsModel):
-    CollectVersionControl: CollectVersionControlModel = Field(
-        default_factory=CollectVersionControlModel,
-        title="Collect Version Control",
+    CollectPerforceControl: CollectPerforceControlModel = Field(
+        default_factory=CollectPerforceControlModel,
+        title="Collect Perforce Control",
         description=(
             "Configure which published products should be committed to P4. "
             "Keep disabled if published files should be versioned only in AYON"
@@ -108,12 +106,6 @@ class VersionControlSettings(BaseSettingsModel):
     """Version Control Project Settings."""
 
     enabled: bool = Field(default=False)
-
-    active_version_control_system: str = Field(
-        "",
-        enum_resolver=backend_enum,
-        title="Backend name"
-    )
 
     host_name: str = Field(
         "perforce",
