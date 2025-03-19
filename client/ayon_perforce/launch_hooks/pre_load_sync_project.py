@@ -23,7 +23,6 @@ from ayon_perforce import is_perforce_enabled
 from ayon_perforce.addon import LaunchData
 from ayon_perforce.backend.rest_stub import PerforceRestStub
 from ayon_perforce.changes_viewer import ChangesWindows
-from ayon_perforce.lib import WorkspaceProfileContext
 
 if TYPE_CHECKING:
     from ayon_perforce.addon import ConnectionInfo, PerforceAddon
@@ -86,20 +85,18 @@ class SyncUnrealProject(PreLaunchHook):
             RuntimeError: If workspace or project file is not
 
         """
-        task_entity = launch_data.task_entity
-        workspace_profile_context = WorkspaceProfileContext(
-            folder_paths=launch_data.folder_path,
-            task_names=task_entity["name"],
-            task_types=task_entity["taskType"],
-        )
         conn_info: ConnectionInfo = perforce_addon.get_connection_info(
             project_name=launch_data.project_name,
+            task_entity=launch_data.task_entity,
+            folder_entity=launch_data.folder_entity,
+            folder_path=launch_data.folder_path,
             project_settings=launch_data.project_settings,
-            context=workspace_profile_context
         )
 
         if not conn_info or not conn_info.workspace_name:
             msg = "Cannot find workspace for this context."
+            # TODO: check with p4 whether ws exists or not
+            #       - just the ws_name isn't enough
             raise RuntimeError(msg)
 
         PerforceRestStub.login(**asdict(conn_info))

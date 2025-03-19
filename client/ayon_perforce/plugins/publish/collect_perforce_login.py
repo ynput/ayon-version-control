@@ -15,7 +15,6 @@ import pyblish.api
 from ayon_common.utils import get_local_site_id
 from ayon_perforce import is_perforce_enabled
 from ayon_perforce.backend.rest_stub import PerforceRestStub
-from ayon_perforce.lib import WorkspaceProfileContext
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -85,20 +84,21 @@ class CollectPerforceLogin(pyblish.api.ContextPlugin):
         Returns:
             dict[str, str]: Connection info or None if validation failed
 
+        Raises:
+            RuntimeError: If any connection info payload value is missing.
         """
-        task_entity = context.data.get("taskEntity")
-        task_name = task_type = None
-        if task_entity:
-            task_name = task_entity["name"]
-            task_type = task_entity["taskType"]
-
-        workspace_context = WorkspaceProfileContext(
-            folder_paths=context.data["folderPath"],
-            task_names=task_name,
-            task_types=task_type
-        )
-        conn_info = perforce_addon.get_connection_info(
-            project_name, project_settings, workspace_context)
+        conn_info_payload = {
+            "project_name": project_name,
+            "task_entity": context.data.get("taskEntity"),
+            "folder_entity": context.data.get("folderEntity"),
+            "folder_path": context.data.get("folderPath"),
+            "project_settings": project_settings,
+        }
+        if not all(conn_info_payload.values()):
+            msg = f"Missing connection info payload: {conn_info_payload}"
+            self.log.error(msg)
+            raise RuntimeError(msg)
+        conn_info = perforce_addon.get_connection_info(**conn_info_payload)
 
         missing_creds = False
         if not all([

@@ -4,16 +4,15 @@ from __future__ import annotations
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from ayon_core.addon import AYONAddon, IPluginPaths, ITrayService
-from ayon_core.lib import filter_profiles
+from ayon_core.lib import StringTemplate, ayon_info
+from ayon_core.pipeline.template_data import get_template_data_with_names
 from ayon_core.settings import get_project_settings
 
 from .version import __version__
 
-if TYPE_CHECKING:
-    from .lib import WorkspaceProfileContext
 
 PERFORCE_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -56,49 +55,48 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     def get_connection_info(
         self,
         project_name: str,
+        task_entity: dict,  # use ayon type hint
+        folder_entity: dict,  # use ayon type hint
+        folder_path: str,
         project_settings: Optional[dict] = None,
-        context: WorkspaceProfileContext = None
     ) -> ConnectionInfo:
         """Get connection information for Perforce.
 
         Args:
-            project_name: Name of the project.
-            project_settings: Project settings.
-            context: Workspace profile context.
+            project_name (str): Name of the project.
+            task_entity (dict): Task entity.
+            folder_entity (dict): Folder entity.
+            folder_path (str): Folder path.
+            project_settings (Optional[dict]): Project settings.
 
         Returns:
             ConnectionInfo: Connection information for Perforce.
 
+        Raises:
+            RuntimeError: If Perforce is disabled in server settings
         """
         if not project_settings:
             project_settings = get_project_settings(project_name)
-
         settings = project_settings["perforce"]
-        local_setting = settings["local_setting"]
+        if not settings["enabled"]:
+            msg = "Perforce is disabled in server settings."
+            raise RuntimeError(msg)
 
-        filtering_criteria = {
-            "folder_paths": None,
-            "task_names": None,
-            "task_types": None
-        }
-        if context:
-            filtering_criteria = {
-                "folder_paths": context.folder_paths,
-                "task_names": context.task_names,
-                "task_types": context.task_types
-            }
-        profile = filter_profiles(
-            local_setting["workspace_profiles"],
-            filtering_criteria,
-            logger=self.log
-        )
-        workspace_name = profile["workspace_name"] if profile else None
+        tmpl_data = get_template_data_with_names(project_name)
+        tmpl_data.update({
+            "workstation": ayon_info.get_workstation_info(),
+            "task": task_entity,
+            "folder": folder_entity
+        })
+        ws_tmpl = StringTemplate(settings["workspace"]["template"])
+        ws_name = ws_tmpl.format_strict(tmpl_data)
+
         return ConnectionInfo(
             host=settings["host_name"],
             port=settings["port"],
-            username=local_setting["username"],
-            password=local_setting["password"],
-            workspace_name=workspace_name
+            username="hardcode for now",
+            password="hardcode for now",  # that will come from tray login
+            workspace_name=ws_name
         )
 
     @staticmethod
