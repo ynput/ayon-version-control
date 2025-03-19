@@ -12,6 +12,7 @@ from ayon_core.pipeline.template_data import get_template_data_with_names
 from ayon_core.settings import get_project_settings
 
 from .version import __version__
+from .tray.login import PerforceLoginTray
 
 
 PERFORCE_ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -44,6 +45,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     name = "perforce"
     version = __version__
     webserver = None
+    login_tray = None
 
     # Public Methods:
     def initialize(self, settings: dict[str, Any]) -> None:
@@ -120,6 +122,7 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
 
     def tray_init(self) -> None:
         """Called when the tray is initializing."""
+        self.login_tray = PerforceLoginTray(self)
 
     def get_plugin_paths(self) -> dict[str, list[str]]:  # noqa: PLR6301
         """Called to get the plugin paths.
@@ -145,6 +148,16 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             from ayon_perforce.backend.communication_server import WebServer
             self.webserver = WebServer()
             self.webserver.start()
+
+    def tray_menu(self, tray_menu: dict[str, Any]) -> None:
+        """Add Perforce menu to the tray.
+
+        Args:
+            tray_menu (dict[str, Any]): Tray menu.
+
+        """
+        if self.enabled:
+            self.login_tray.tray_menu(tray_menu)
 
     # PLR6301: This method is defined by the interface
     def get_create_plugin_paths(  # noqa: PLR6301
