@@ -50,9 +50,9 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     # Public Methods:
     def initialize(self, settings: dict[str, Any]) -> None:
         """Initialize the addon."""
-        vc_settings: dict[str, Any] = settings.get(self.name)
-        enabled: bool = vc_settings and vc_settings["enabled"]
-        self.set_service_running_icon() if enabled else self.set_service_failed_icon()  # noqa: E501
+        self.settings: dict[str, Any] = settings.get(self.name)
+        self.enabled: bool = self.settings and self.settings["enabled"]
+        self.set_service_running_icon() if self.enabled else self.set_service_failed_icon()  # noqa: E501
 
     def get_connection_info(
         self,
