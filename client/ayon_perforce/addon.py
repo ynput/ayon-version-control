@@ -101,6 +101,18 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
             workspace_name=ws_name
         )
 
+    def get_server_url(self, project_settings: Optional[dict] = None) -> str:
+        """Get Perforce server URL.
+
+        Returns:
+            str: Perforce server URL.
+
+        """
+        if project_settings:
+            self.settings = project_settings["perforce"]
+
+        return f"{self.settings['host_name']}:{self.settings['port']}"
+
     @staticmethod
     def sync_to_version(
             conn_info: ConnectionInfo, change_id: int) -> None:

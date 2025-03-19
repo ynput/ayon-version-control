@@ -21,12 +21,11 @@ class PerforceLoginTray:
     def __init__(self, addon):
         self.addon = addon
 
-        # server_url = self.addon.get_sg_url()
+        server_url = self.addon.get_server_url()
+        if not server_url:
+            server_url = "No Perforce Server set in AYON Settings."
 
-        # if not server_url:
-        #     server_url = "No Shotgrid Server set in AYON Settings."
-
-        self.p4_host_action = QtWidgets.QAction(f"Server: get from server settings")
+        self.p4_host_action = QtWidgets.QAction(f"Server: {server_url}")
         self.p4_host_action.setDisabled(True)
         self.p4_username_action = QtWidgets.QAction("")
         self.p4_username_action.triggered.connect(self.show_p4_username_dialog)
