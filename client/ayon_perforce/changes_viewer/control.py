@@ -85,7 +85,15 @@ class ChangesViewerController:
         """
         return PerforceRestStub.get_changes()
 
-    def sync_to(self, change_id: int):
+    def sync_to(self, change_id: int) -> None:
+        """Sync to specific changelist number.
+
+        Args:
+            change_id (int): Changelist number.
+
+        Raises:
+            RuntimeError: If Perforce connection information is not collected.
+        """
         if not self.enabled:
             return
 
