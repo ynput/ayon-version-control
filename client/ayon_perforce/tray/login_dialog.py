@@ -107,3 +107,4 @@ class PerforceLoginDialog(QtWidgets.QDialog):
             p4lib.save_local_login(username, password)
         else:
             p4lib.clear_local_login()
+        self.close()

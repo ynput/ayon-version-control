@@ -10,6 +10,20 @@ from ayon_perforce import lib as p4lib
 from ayon_perforce.tray.login_dialog import PerforceLoginDialog
 
 
+def _get_username_action_text() -> str:
+    """Get the text for the username action.
+
+    Returns:
+        str: The text used for the username action
+    """
+    username, _ = p4lib.get_local_login()
+    return (
+        f"Username: {username} (Click to change)"
+        if username
+        else "Specify a Username..."
+    )
+
+
 class PerforceLoginTray:
     """Shotgrid menu entry for the AYON tray.
 
@@ -27,11 +41,11 @@ class PerforceLoginTray:
         server_url = self.addon.get_server_url()
         if not server_url:
             server_url = "No Perforce Server set in AYON Settings."
-
         self.p4_host_action = QtWidgets.QAction(f"Server: {server_url}")
         self.p4_host_action.setDisabled(True)
 
-        self.p4_username_action = QtWidgets.QAction("")
+        text = _get_username_action_text()
+        self.p4_username_action = QtWidgets.QAction(text)
         self.p4_username_action.triggered.connect(self.show_p4_username_dialog)
 
         self.p4_username_dialog = PerforceLoginDialog(self.addon)
@@ -69,12 +83,10 @@ class PerforceLoginTray:
         another in the Perforce submenu action.
         """
         username, _ = p4lib.get_local_login()
-
+        text = _get_username_action_text()
         if username:
-            lbl = f"Username: {username} (Click to change)"
-            self.p4_username_action.setText(lbl)
             os.environ["P4USER"] = username
         else:
-            self.p4_username_action.setText("Specify a Username...")
             os.environ["P4USER"] = ""
             self.show_p4_username_dialog()
+        self.p4_username_action.setText(text)
