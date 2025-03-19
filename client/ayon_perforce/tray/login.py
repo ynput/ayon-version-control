@@ -41,15 +41,15 @@ class PerforceLoginTray:
         server_url = self.addon.get_server_url()
         if not server_url:
             server_url = "No Perforce Server set in AYON Settings."
-        self.p4_host_action = QtWidgets.QAction(f"Server: {server_url}")
-        self.p4_host_action.setDisabled(True)
+        self.host_action = QtWidgets.QAction(f"Server: {server_url}")
+        self.host_action.setDisabled(True)
 
         text = _get_username_action_text()
-        self.p4_username_action = QtWidgets.QAction(text)
-        self.p4_username_action.triggered.connect(self.show_p4_username_dialog)
+        self.username_action = QtWidgets.QAction(text)
+        self.username_action.triggered.connect(self.show_username_dialog)
 
-        self.p4_username_dialog = PerforceLoginDialog(self.addon)
-        self.p4_username_dialog.dialog_closed.connect(self.set_username_label)
+        self.username_dialog = PerforceLoginDialog(self.addon)
+        self.username_dialog.dialog_closed.connect(self.set_username_label)
 
     def tray_menu(self, tray_menu: QtWidgets.QMenu) -> None:
         """Add Perforce Submenu to AYON tray.
@@ -66,15 +66,15 @@ class PerforceLoginTray:
         p4_tray_menu.addAction(self.p4_username_action)
         tray_menu.addMenu(p4_tray_menu)
 
-    def show_p4_username_dialog(self) -> None:
+    def show_username_dialog(self) -> None:
         """Display the Perforce login dialog.
 
         Used to set a Shotgrid Username, that will then be used by any API call
         and to check that the user can access the Shotgrid API.
         """
-        self.p4_username_dialog.show()
-        self.p4_username_dialog.activateWindow()
-        self.p4_username_dialog.raise_()
+        self.username_dialog.show()
+        self.username_dialog.activateWindow()
+        self.username_dialog.raise_()
 
     def set_username_label(self) -> None:
         """Set the Username Label based on local login setting.
@@ -88,5 +88,5 @@ class PerforceLoginTray:
             os.environ["P4USER"] = username
         else:
             os.environ["P4USER"] = ""
-            self.show_p4_username_dialog()
-        self.p4_username_action.setText(text)
+            self.show_username_dialog()
+        self.username_action.setText(text)
