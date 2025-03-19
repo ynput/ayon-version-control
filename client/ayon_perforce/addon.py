@@ -58,8 +58,8 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
     def get_connection_info(
         self,
         project_name: str,
-        task_entity: dict,  # use ayon type hint
-        folder_entity: dict,  # use ayon type hint
+        task_entity: dict,
+        folder_entity: dict,
         folder_path: str,
         project_settings: Optional[dict] = None,
     ) -> ConnectionInfo:
