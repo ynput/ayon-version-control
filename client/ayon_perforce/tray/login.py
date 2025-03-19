@@ -4,7 +4,9 @@ import os
 
 from qtpy import QtWidgets
 
-# from ayon_shotgrid.lib import credentials
+from ayon_core.addon import AYONAddon
+
+from ayon_perforce import lib as p4lib
 from ayon_perforce.tray.login_dialog import PerforceLoginDialog
 
 
@@ -18,7 +20,8 @@ class PerforceLoginTray:
     API.
     """
 
-    def __init__(self, addon):
+    def __init__(self, addon: AYONAddon) -> None:
+        """Initialize the PerforceLoginTray."""
         self.addon = addon
 
         server_url = self.addon.get_server_url()
@@ -27,27 +30,18 @@ class PerforceLoginTray:
 
         self.p4_host_action = QtWidgets.QAction(f"Server: {server_url}")
         self.p4_host_action.setDisabled(True)
+
         self.p4_username_action = QtWidgets.QAction("")
         self.p4_username_action.triggered.connect(self.show_p4_username_dialog)
 
         self.p4_username_dialog = PerforceLoginDialog(self.addon)
         self.p4_username_dialog.dialog_closed.connect(self.set_username_label)
 
-    def show_p4_username_dialog(self) -> None:
-        """Display the Shotgrid Username dialog.
+    def tray_menu(self, tray_menu: QtWidgets.QMenu) -> None:
+        """Add Perforce Submenu to AYON tray.
 
-        Used to set a Shotgrid Username, that will then be used by any API call
-        and to check that the user can access the Shotgrid API.
-        """
-        self.p4_username_dialog.show()
-        self.p4_username_dialog.activateWindow()
-        self.p4_username_dialog.raise_()
-
-    def tray_menu(self, tray_menu):
-        """Add Shotgrid Submenu to AYON tray.
-
-        A non-actionable action displays the Shotgrid URL and the other
-        action allows the person to set and check their Shotgrid username.
+        A non-actionable action displays the Perforce URL and the other
+        action allows the user to set and check their Perforce username.
 
         Args:
             tray_menu (QtWidgets.QMenu): The AYON Tray menu.
@@ -58,19 +52,28 @@ class PerforceLoginTray:
         p4_tray_menu.addAction(self.p4_username_action)
         tray_menu.addMenu(p4_tray_menu)
 
+    def show_p4_username_dialog(self) -> None:
+        """Display the Perforce login dialog.
+
+        Used to set a Shotgrid Username, that will then be used by any API call
+        and to check that the user can access the Shotgrid API.
+        """
+        self.p4_username_dialog.show()
+        self.p4_username_dialog.activateWindow()
+        self.p4_username_dialog.raise_()
+
     def set_username_label(self) -> None:
         """Set the Username Label based on local login setting.
 
-        Depending on the login credentiasl we want to display one message or
-        another in the Shotgrid submenu action.
+        Depending on the login credentials we want to display one message or
+        another in the Perforce submenu action.
         """
-        # sg_username, _ = credentials.get_local_login()  # TODO: use AYONSecureRegistry directly
-        p4_username = None
-        if p4_username:
-            self.p4_username_action.setText(
-                "Username: {} (Click to change)".format(p4_username)
-            )
-            os.environ["AYON_SG_USERNAME"] = p4_username
+        username, _ = p4lib.get_local_login()
+
+        if username:
+            lbl = f"Username: {username} (Click to change)"
+            self.p4_username_action.setText(lbl)
+            os.environ["P4USER"] = username
         else:
             self.p4_username_action.setText("Specify a Username...")
             os.environ["P4USER"] = ""
