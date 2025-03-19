@@ -12,6 +12,7 @@ from ayon_core.pipeline.template_data import get_template_data_with_names
 from ayon_core.settings import get_project_settings
 
 from .version import __version__
+from .lib import get_local_login
 from .tray.login import PerforceLoginTray
 
 
@@ -92,12 +93,13 @@ class PerforceAddon(AYONAddon, ITrayService, IPluginPaths):
         })
         ws_tmpl = StringTemplate(settings["workspace"]["template"])
         ws_name = ws_tmpl.format_strict(tmpl_data)
+        username, password = get_local_login()
 
         return ConnectionInfo(
             host=settings["host_name"],
             port=settings["port"],
-            username="hardcode for now",
-            password="hardcode for now",  # that will come from tray login
+            username=username,
+            password=password,
             workspace_name=ws_name
         )
 
