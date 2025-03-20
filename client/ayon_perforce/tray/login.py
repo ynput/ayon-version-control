@@ -61,9 +61,9 @@ class PerforceLoginTray:
             tray_menu (QtWidgets.QMenu): The AYON Tray menu.
         """
         p4_tray_menu = QtWidgets.QMenu("Perforce", tray_menu)
-        p4_tray_menu.addAction(self.p4_host_action)
+        p4_tray_menu.addAction(self.host_action)
         p4_tray_menu.addSeparator()
-        p4_tray_menu.addAction(self.p4_username_action)
+        p4_tray_menu.addAction(self.username_action)
         tray_menu.addMenu(p4_tray_menu)
 
     def show_username_dialog(self) -> None:
