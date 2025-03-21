@@ -1,12 +1,13 @@
-from pydantic import Field
+"""Main settings."""
 from ayon_server.settings import (
     BaseSettingsModel,
-    SettingsField,
-    task_types_enum
+    task_types_enum,
 )
+from pydantic import Field
 
 
 class CollectPerforceProfileModel(BaseSettingsModel):
+    """Collect Perforce profile settings."""
     _layout = "expanded"
     host_names: list[str] = Field(
         default_factory=list,
@@ -36,7 +37,8 @@ class CollectPerforceProfileModel(BaseSettingsModel):
 
 
 class CollectPerforceControlModel(BaseSettingsModel):
-    _isGroup = True
+    """Collect Perforce Control settings."""
+    _isGroup = True  # noqa: N815
     enabled: bool = False
     profiles: list[CollectPerforceProfileModel] = Field(
         default_factory=list,
@@ -47,6 +49,7 @@ class CollectPerforceControlModel(BaseSettingsModel):
 
 
 class PublishPluginsModel(BaseSettingsModel):
+    """Publish plugins settings."""
     CollectPerforceControl: CollectPerforceControlModel = Field(
         default_factory=CollectPerforceControlModel,
         title="Collect Perforce Control",
@@ -55,6 +58,7 @@ class PublishPluginsModel(BaseSettingsModel):
             "Keep disabled if published files should be versioned only in AYON"
         )
     )
+
 
 class StreamProfile(BaseSettingsModel):
     """Stream profile settings."""
@@ -73,8 +77,9 @@ class StreamModel(BaseSettingsModel):
     enabled: bool = Field(default=False)
     profiles: list[StreamProfile] = Field(
         default_factory=list,
-        title="Stream Profiles" 
+        title="Stream Profiles"
     )
+
 
 class WorkspaceModel(BaseSettingsModel):
     """Workspace settings."""
@@ -101,7 +106,7 @@ class PerforceSettings(BaseSettingsModel):
         1666,
         title="Port"
     )
-    
+
     workspace: WorkspaceModel = Field(
         default_factory=WorkspaceModel,
         title="Workspace Settings"
@@ -117,4 +122,20 @@ class PerforceSettings(BaseSettingsModel):
     )
 
 
-DEFAULT_VALUES = {}
+DEFAULT_VALUES = {
+  "port": 1666,
+  "workspace": {
+    "depot": "{project[code]}",
+    "template": "{workstation[hostname]}_{workstation[system_name]}_{project[code]}"  # noqa: E501
+  },
+  "stream": {
+    "enabled": False,
+    "profiles": []
+  },
+  "publish": {
+    "CollectPerforceControl": {
+      "enabled": False,
+      "profiles": []
+    }
+  }
+}
