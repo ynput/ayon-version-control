@@ -9,7 +9,6 @@ from ayon_core.lib.events import QueuedEventSystem
 from ayon_core.pipeline import registered_host
 
 from ayon_perforce.backend.rest_stub import PerforceRestStub
-from ayon_perforce.lib import WorkspaceProfileContext
 
 if TYPE_CHECKING:
     from ayon_core.host import HostBase
@@ -37,17 +36,12 @@ class ChangesViewerController:
         self._perforce_addon: PerforceAddon = perforce_addon
         self.enabled = perforce_addon and perforce_addon.enabled
 
-        task_entity = launch_data.task_entity
-        workspace_profile_context = WorkspaceProfileContext(
-            folder_paths=launch_data.folder_path,
-            task_names=task_entity["name"],
-            task_types=task_entity["taskType"],
-        )
-
         self._conn_info: ConnectionInfo = (
             self._perforce_addon.get_connection_info(
                 project_name=launch_data.project_name,
-                context=workspace_profile_context
+                task_entity=launch_data.task_entity,
+                folder_entity=launch_data.folder_entity,
+                folder_path=launch_data.folder_path,
             ))
 
         self._event_system = self._create_event_system()
@@ -91,7 +85,15 @@ class ChangesViewerController:
         """
         return PerforceRestStub.get_changes()
 
-    def sync_to(self, change_id: int):
+    def sync_to(self, change_id: int) -> None:
+        """Sync to specific changelist number.
+
+        Args:
+            change_id (int): Changelist number.
+
+        Raises:
+            RuntimeError: If Perforce connection information is not collected.
+        """
         if not self.enabled:
             return
 

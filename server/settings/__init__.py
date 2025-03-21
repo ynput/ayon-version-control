@@ -1,10 +1,10 @@
 from .main import (
-    VersionControlSettings,
+    PerforceSettings,
     DEFAULT_VALUES
 )
 
 
 __all__ = (
-    "VersionControlSettings",
+    "PerforceSettings",
     "DEFAULT_VALUES",
 )
