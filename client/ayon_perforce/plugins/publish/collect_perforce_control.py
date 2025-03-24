@@ -28,6 +28,9 @@ class CollectPerforceControl(pyblish.api.InstancePlugin):
     label = "Collect Perforce Submission Info"
     order = pyblish.api.CollectorOrder + 0.4992
     targets: ClassVar[list[str]] = ["local"]
+    # TODO (antirotor): https://github.com/ynput/ayon-perforce/issues/15
+    #    because of this issue, limit this plugin to Unreal hosts only
+    hosts: ClassVar[list[str]] = ["unreal"]
 
     settings_category = "perforce"
 

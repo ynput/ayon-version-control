@@ -28,6 +28,9 @@ class CollectLatestChangeList(pyblish.api.InstancePlugin):
     order = pyblish.api.CollectorOrder + 0.4995
     targets: ClassVar[list[str]] = ["local"]
     families: ClassVar[list[str]] = ["changelist_metadata"]
+    # TODO (antirotor): https://github.com/ynput/ayon-perforce/issues/15
+    #    because of this issue, limit this plugin to Unreal hosts only
+    hosts: ClassVar[list[str]] = ["unreal"]
     log: logging.Logger
 
     def process(self, instance: pyblish.api.Instance) -> None:
