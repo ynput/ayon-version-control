@@ -32,6 +32,10 @@ class CollectPerforceLogin(pyblish.api.ContextPlugin):
     label = "Collect Perforce Connection Info"
     order = pyblish.api.CollectorOrder + 0.4990
     targets: ClassVar = ["local"]
+    # TODO (antirotor): limit this plugin to Unreal hosts only, until issues
+    #   with pywin32are resolved.
+    #   https://github.com/ynput/ayon-perforce/issues/15
+    hosts: ClassVar[list[str]] = ["unreal"]
     log: Logger
 
     def process(self, context: pyblish.api.Context) -> None:
