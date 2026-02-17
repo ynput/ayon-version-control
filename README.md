@@ -1,3 +1,6 @@
+> [!WARNING]
+> This addon is deprecated and not maintained anymore. It is replaced by [ynput/ayon-perforce](https://github.com/ynput/ayon-perforce)
+
 Version control addon
 ---------------------
 
